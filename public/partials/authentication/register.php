@@ -153,7 +153,7 @@ if ($user_ID)
 		</p>
         <?php wp_nonce_field("register","register_form"); ?>
         <div class="et_contact_bottom_container">
-		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Sign Up</button>
+		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Register</button>
 		</div>
 
         
