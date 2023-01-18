@@ -1,0 +1,22 @@
+.error_messages {
+    color: red;
+  }
+
+
+  .success_flash {
+    color: green;
+    max-height: 100%;
+    opacity: 1;
+    overflow: hidden;
+    webkit-transition: all .45s ease-in-out;
+    -moz-transition: all .45s ease-in-out;
+     -ms-transition: all .45s ease-in-out;
+      -o-transition: all .45s ease-in-out;
+         transition: all .45s ease-in-out;
+}
+.success_flashnotification.slideup {
+    max-height: 0;
+}
+.success_flashnotification.fadeaway{
+    opacity: 0;
+}
