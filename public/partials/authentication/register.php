@@ -1,26 +1,4 @@
-<?php  
-/* 
-Template Name: Register 
-*/  
-
-?>
-<script type="text/javascript">
-var ajaxurl = "<?php echo admin_url('admin-ajax.php').'?action=getStates'; ?>";
-</script>
-
 <?php 
-
-global $wpdb, $user_ID;  
-$countries= $wpdb->get_results( "SELECT * FROM wp_countries " );
-
-//Check whether the user is already logged in  
-if ($user_ID) 
-{  
-   // header( 'Location:' . home_url() );  
-} else
- { 
-}
-
 ?> 
 <div class="et_pb_inner_shadow">
 <div class="et_pb_row et_pb_row_0">

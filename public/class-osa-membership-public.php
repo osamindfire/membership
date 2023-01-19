@@ -40,6 +40,14 @@ class Osa_Membership_Public
 	 * @var      string    $version    The current version of this plugin.
 	 */
 	private $version;
+	/**
+     * Array of php variables localized to JS.
+     *
+     * @since    1.0.0
+     * @access   private
+     * @var      array $localized_data Array of php variables localized to JS.
+     */
+    private static $localized_data = array();
 
 	/**
 	 * Initialize the class and set its properties.
@@ -99,18 +107,21 @@ class Osa_Membership_Public
 		 */
 
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/osa-membership-public.js', array('jquery'), $this->version, false);
+		// Localize the constants to be used from JS.
+        wp_localize_script($this->plugin_name,'ajax_url',[admin_url('admin-ajax.php')]
+        );
 	}
 
-	public function sessionStart()
+	public function initFunction()
 	{
-		if(!isset($_SESSION)){
-			session_start();}
-	}
-	public function register_shortcodes()
-	{
-		add_shortcode('member_register', array($this, 'memberRegister'));
-		add_shortcode('member_login', array($this, 'memberLogin'));
-		add_shortcode('membership_plan', array($this, 'membershipPlan'));
+		if(!isset($_SESSION))
+		{
+			session_start();
+		}
+		flush_rewrite_rules();
+		add_rewrite_endpoint( 'payment-cancel', EP_ALL );
+		add_rewrite_endpoint( 'payment-success', EP_ALL );
+		add_rewrite_endpoint( 'payment-notify', EP_ALL );
 	}
 
 	/* 
@@ -119,28 +130,20 @@ class Osa_Membership_Public
 	*/
 	public function membershipPlan()
 	{
-		if ($_POST) {
+		if ($_POST && !empty($_SESSION['user_id'])) {
 			global $wpdb;
 			$userInfo= $wpdb->get_results( "SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = ".$_SESSION['user_id']." limit 1" );
 			$membershipTypeInfo= $wpdb->get_results( "SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = ".$_POST['membershhip_type_id']." limit 1" );
-
-			$enableSandbox = true;
 			// PayPal settings. Change these to your account details and the relevant URLs
 			// for your site.
-			$paypalConfig = [
-				'email' => 'sb-bmszd23949600@business.example.com',
-				'return_url' => 'http://example.com/payment-successful.html',
-				'cancel_url' => admin_url('admin-ajax.php').'?action=cancelPayment',
-				'notify_url' => 'http://example.com/payments.php'
-			];
-			$paypalUrl = $enableSandbox ? 'https://www.sandbox.paypal.com/cgi-bin/webscr' : 'https://www.paypal.com/cgi-bin/webscr';
+			$paypalUrl = PAYPAL_ENABLE_SANDBOX ? PAYPAL_SANDBOX_URL : PAYPAL_LIVE_URL;
 
 			// Product being purchased.
 			$itemName = $membershipTypeInfo[0]->membership;
 			$itemAmount = $membershipTypeInfo[0]->fee;
 			// Check if paypal request or response
 			if (!isset($_POST["txn_id"]) && !isset($_POST["txn_type"])) {
-
+				
 				// Grab the post data so that we can set up the query string for PayPal.
 				// Ideally we'd use a whitelist here to check nothing is being injected into
 				// our post data.
@@ -148,23 +151,21 @@ class Osa_Membership_Public
 				foreach ($_POST as $key => $value) {
 					$data[$key] = stripslashes($value);
 				}
-				
 				// Set the PayPal account.
-				$data['business'] = $paypalConfig['email'];
+				$data['business'] = PAYPAL_BUSSINESS_EMAIL;
 
 				// Set the PayPal return addresses.
-				$data['return'] = stripslashes($paypalConfig['return_url']);
-				$data['cancel_return'] = stripslashes($paypalConfig['cancel_url']);
-				$data['notify_url'] = stripslashes($paypalConfig['notify_url']);
+				$data['return'] = stripslashes(PAYPAL_RETURN_URL);
+				$data['cancel_return'] = stripslashes(PAYPAL_CANCEL_URL);
+				$data['notify_url'] = stripslashes(PAYPAL_NOTIFY_URL);
 
 				// Set the details about the product being purchased, including the amount
 				// and currency so that these aren't overridden by the form data.
 				$data['item_name'] = $itemName;
 				$data['amount'] = $itemAmount;
-				$data['currency_code'] = 'GBP';
 				
 				// Add any custom fields for the query string.
-				//$data['custom'] = USERID;
+				$data['custom'] = $_SESSION['user_id'];
 
 				// Build the query string from the data.
 				$queryString = http_build_query($data);
@@ -176,6 +177,28 @@ class Osa_Membership_Public
 				//exit();
 
 			} else {
+				$data = [
+					'item_name' => $_POST['item_name'],
+					//'item_number' => $_POST['item_number'],
+					'payment_status' => $_POST['payment_status'],
+					'payment_amount' => $_POST['mc_gross'],
+					'payment_currency' => $_POST['mc_currency'],
+					'txn_id' => $_POST['txn_id'],
+					'receiver_email' => $_POST['receiver_email'],
+					'payer_email' => $_POST['payer_email'],
+					'custom' => $_POST['custom'],
+				];
+				
+				// We need to verify the transaction comes from PayPal and check we've not
+				// already processed the transaction before adding the payment to our
+				// database.
+				/* if (verifyTransaction($_POST) && checkTxnid($data['txn_id'])) {
+					if (addPayment($data) !== false) {
+						// Payment successfully added.
+					}
+				} */
+				print_r('response here');
+				die;
 				// Handle the PayPal response.
 			}
 
@@ -188,9 +211,89 @@ class Osa_Membership_Public
 
 	public function cancelPayment()
 	{
-		ob_start();
+		//ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/payment/cancel_payment.php');
-		return ob_get_clean();
+		//ob_end_flush();
+		//return ob_get_clean();
+	}
+	public function successPayment()
+	{
+		echo "<pre>";
+		print_r($_POST);
+		die;
+		// Assign posted variables to local data array.
+		/* $data = [
+			'item_name' => $_POST['item_name'],
+			'item_number' => $_POST['item_number'],
+			'payment_status' => $_POST['payment_status'],
+			'payment_amount' => $_POST['mc_gross'],
+			'payment_currency' => $_POST['mc_currency'],
+			'txn_id' => $_POST['txn_id'],
+			'receiver_email' => $_POST['receiver_email'],
+			'payer_email' => $_POST['payer_email'],
+			'custom' => $_POST['custom'],
+		];
+
+		// We need to verify the transaction comes from PayPal and check we've not
+		// already processed the transaction before adding the payment to our
+		// database.
+		if ($this->verifyTransaction($_POST) && $this->checkTxnid($this->$data['txn_id'])) {
+			if (addPayment($data) !== false) {
+				// Payment successfully added.
+			}
+		} */
+		//ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/payment/success_payment.php');
+		//ob_end_flush();
+		//return ob_get_clean();
+	}
+	
+	private function verifyTransaction($data) {
+		$req = 'cmd=_notify-validate';
+		foreach ($data as $key => $value) {
+			$value = urlencode(stripslashes($value));
+			$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
+			$req .= "&$key=$value";
+		}
+	
+		$ch = curl_init(PAYPAL_SANDBOX_URL);
+		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
+		curl_setopt($ch, CURLOPT_SSLVERSION, 6);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+		curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
+		$res = curl_exec($ch);
+	
+		if (!$res) {
+			$errno = curl_errno($ch);
+			$errstr = curl_error($ch);
+			curl_close($ch);
+			throw new Exception("cURL error: [$errno] $errstr");
+		}
+	
+		$info = curl_getinfo($ch);
+	
+		// Check the http response
+		$httpCode = $info['http_code'];
+		if ($httpCode != 200) {
+			throw new Exception("PayPal responded with http code $httpCode");
+		}
+		curl_close($ch);
+	
+		return $res === 'VERIFIED';
+	}
+	private function checkTxnid($txnid) {
+		global $db;
+	
+		$txnid = $db->real_escape_string($txnid);
+		$results = $db->query('SELECT * FROM `payments` WHERE txnid = \'' . $txnid . '\'');
+	
+		return ! $results->num_rows;
 	}
 
 	/* 
@@ -199,10 +302,8 @@ class Osa_Membership_Public
 	*/
 	public function memberLogin()
 	{
+		global $wpdb, $user_ID;
 		if ($_POST) {
-
-			global $wpdb;
-
 			//We shall SQL escape all inputs  
 			$username = esc_sql($_REQUEST['username']);
 			$password = esc_sql($_REQUEST['password']);
@@ -250,6 +351,9 @@ class Osa_Membership_Public
 	*/
 	public function memberRegister()
 	{
+		global $wpdb, $user_ID;  
+		$countries= $wpdb->get_results( "SELECT * FROM wp_countries " );
+
 		if (isset($_POST['register_form']) && wp_verify_nonce($_POST['register_form'], 'register')) {
 			try {
 				$errors = $this->validateForm(); //echo "<pre>";print_r($errors);die;
@@ -509,7 +613,7 @@ class Osa_Membership_Public
 	public function getStates()
 	{
 		$countryId = $_POST['country_id'];
-		$stateId = $_POST['state_id'];
+		$stateId = isset($_POST['state_id']) ? $_POST['state_id'] : '';
 
 		global $wpdb;
 		$states = $wpdb->get_results("SELECT * FROM wp_states WHERE country_type_id = '" . $countryId . "' order by state ASC");

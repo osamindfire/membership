@@ -32,9 +32,11 @@ $membershipPlans= $wpdb->get_results( "SELECT * FROM wp_membership_type where st
                 <input type="hidden" name="cmd" value="_xclick" />
                 <input type="hidden" name="no_note" value="1" />
                 <input type="hidden" name="lc" value="US" />
-                <input type="hidden" name="bn" value="PP-BuyNowBF:btn_buynow_LG.gif:NonHostedGuest" />
+                <input type="hidden" name="bn" value="DesignerFotos_BuyNow_WPS_US" />
                 <input type="hidden" name="membershhip_type_id" value="<?= $plan->membership_type_id;?>" />
-                <input type="hidden" name="item_number" value="123456" / >
+                <!-- <input type="hidden" name="item_number" value="123456" / > -->
+                <input type="hidden" name="currency_code" value="USD">
+                <input type="hidden" name="rm" value="2">
                 <input type="submit" name="submit" value="Submit Payment"/>
           </form>
            <!--  <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="osaPayPal">
