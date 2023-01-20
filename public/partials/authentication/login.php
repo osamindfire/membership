@@ -1,9 +1,4 @@
-<?php  
-/* 
-Template Name: Login 
-*/  
-global $wpdb, $user_ID;
-?> 
+<?php  ?> 
 <div class="et_pb_inner_shadow et_pb_row et_pb_row_0">
 <div class="et_pb_contact">
 <?php if(!empty($errors)) { foreach($errors as $error) { ?>
@@ -32,10 +27,7 @@ global $wpdb, $user_ID;
 				</span>
                 <span class="error_messages"><?php if(!empty($errors['agree'])) { echo $errors['agree']; } ?></span>
 		</p>
-
-      
 		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Login</button>
-		
-        </form>
+    </form>
 </div>
 </div>

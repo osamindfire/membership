@@ -57,6 +57,10 @@ class Osa_Membership {
 	 */
 	protected $version;
 
+	protected $plugin_public;
+
+	protected $plugin_admin;
+
 	/**
 	 * Define the core functionality of the plugin.
 	 *
@@ -76,9 +80,11 @@ class Osa_Membership {
 		$this->plugin_name = 'osa-membership';
 
 		$this->load_dependencies();
+		$this->inject_dependencies();
 		$this->set_locale();
 		$this->define_admin_hooks();
 		$this->define_public_hooks();
+		$this->define_shortcodes();
 	}
 
 	/**
@@ -123,9 +129,26 @@ class Osa_Membership {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-osa-membership-public.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/constants.php';
+
 		$this->loader = new Osa_Membership_Loader();
 
 	}
+	/**
+     * Creates all the dependent objects.
+     *
+     * @since    1.0.0
+     *
+     * @access   private
+     */
+    private function inject_dependencies() {
+
+        // Plugin public object.
+        $this->plugin_public = new Osa_Membership_Public( $this->get_plugin_name(), $this->get_version() );
+
+        // Plugin admin object.
+        $this->plugin_admin = new Osa_Membership_Admin( $this->get_plugin_name(), $this->get_version() );
+    }
 
 	/**
 	 * Define the locale for this plugin for internationalization.
@@ -182,17 +205,37 @@ class Osa_Membership {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-
-		$plugin_public = new Osa_Membership_Public( $this->get_plugin_name(), $this->get_version() );
-
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
-		$this->loader->add_action( 'init', $plugin_public, 'sessionStart' );
-		$this->loader->add_action('wp_ajax_nopriv_getStates',$plugin_public, 'getStates');
-		$this->loader->add_action('cancelPayment',$plugin_public, 'cancelPayment');
 		
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_styles' );
+		$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_scripts' );
+		//$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
+		$this->loader->add_action( 'init', $this->plugin_public, 'initFunction' );
+		$this->loader->add_action('wp_ajax_getStates',$this->plugin_public, 'getStates');
+		$this->loader->add_action('wp_ajax_nopriv_getStates',$this->plugin_public, 'getStates');
+
+		if ( SLUG_VALUE == 'payment-cancel') {
+			$this->loader->add_filter('template_include',$this->plugin_public, 'cancelPayment');
+		}elseif(SLUG_VALUE == 'payment-success') {
+			$this->loader->add_filter('template_include',$this->plugin_public, 'successPayment');
+		}elseif(SLUG_VALUE == 'payment-notify'){
+			$this->loader->add_filter('template_include',$this->plugin_public, 'membershipPlan');
+		}
+		
+
 	}
+
+	  /**
+     * Register all of the shortcodes provided by the plugin.
+     *
+     * @since    1.0.0
+     *
+     * @access   private
+     */
+    private function define_shortcodes() {
+        $this->loader->add_shortcode('member_register',$this->plugin_public,'memberRegister');
+		$this->loader->add_shortcode('member_login',$this->plugin_public,'memberLogin');
+		$this->loader->add_shortcode('membership_plan',$this->plugin_public,'membershipPlan');
+    }
 	
 
 	/**
