@@ -1,19 +1,23 @@
 <?php  ?> 
-<div class="et_pb_inner_shadow et_pb_row et_pb_row_0">
+<?php 
+?> 
+<div class="et_pb_inner_shadow form_background">
+<div class="et_pb_row et_pb_row_0">
 <div class="et_pb_contact">
+
 <?php if(!empty($errors)) { foreach($errors as $error) { ?>
     <span class="error_messages"><?php if(!empty($error[0])) { echo $error[0]; } ?></span><br>
 <?php }} ?>  
 <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
-    <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+<form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         
-        <p class=" et_pb_contact_field ui-sortable">
+        <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half ui-sortable">
             <label for="" class="et_pb_contact_form_label">Username</label>
             <input type="text" name="username"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Username" value="<?php if(!empty($_REQUEST['username'])) { echo $_REQUEST['username']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
         </p>
         
-        <p class="et_pb_contact_field ui-sortable">
+        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="et_pb_contact_form_label">Password</label>
             <input type="password" name="password"  class="input <?php if(!empty($errors['password'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Password" value="">
             <span class="error_messages"><?php if(!empty($errors['password'])) { echo $errors['password']; } ?></span>
@@ -29,5 +33,6 @@
 		</p>
 		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Login</button>
     </form>
+</div>
 </div>
 </div>
