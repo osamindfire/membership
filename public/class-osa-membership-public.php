@@ -135,7 +135,7 @@ class Osa_Membership_Public
 
 			if ($_POST) {
 				global $wpdb;
-				$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
+				//$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
 				$membershipTypeInfo = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = " . $_POST['membershhip_type_id'] . " limit 1");
 				// PayPal settings. Change these to your account details and the relevant URLs
 				// for your site.
@@ -203,12 +203,12 @@ class Osa_Membership_Public
 	}
 	public function successPayment()
 	{
-		$paymentInfoSaved = 1;
+		$paymentInfoSaved = 0;
 		global $wpdb;
-		if ($_REQUEST) {
-			if ($_REQUEST['PayerID']) {
+
+			if ($_REQUEST['PayerID'] || $_POST['payer_id'] || $_POST['txn_id']) {
 				$paymentInfoSaved = 1;
-				$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
+				$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id,wp_member_user.first_name,wp_member_user.last_name,wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
 				$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.total_days FROM wp_membership_type WHERE membership_type_id  = " . $_SESSION['membership_type_id'] . " ");
 
 				$starttDate = date('Y-m-d');
@@ -232,10 +232,13 @@ class Osa_Membership_Public
 					SET membership_expiry_date = %s 
 					WHERE member_id = %d", $endDate, $userInfo[0]->member_id)
 				);
+				$subject="Member registered successfully";
+				$memberDetails = ['member_name' => $userInfo[0]->first_name . ' ' . $userInfo[0]->last_name];
+
+				$this->sendMail($userInfo[0]->email,$subject,$memberDetails);
 				unset($_SESSION['user_id']);
 				unset($_SESSION['membership_type_id']);
 			}
-		}
 		$fileName = ($paymentInfoSaved == 1) ? 'payment_success.php' : 'payment_cancel.php';
 		include_once(plugin_dir_path(__FILE__) . 'partials/payment/' . $fileName);
 	}
@@ -626,4 +629,21 @@ class Osa_Membership_Public
 		echo $html;
 		die();
 	}
+
+	public function sendMail($to,$subject,$data=array())
+	{
+		
+		ob_start();
+		$memberName = $data['member_name'];
+		include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/registration_email.php');
+		$headers = array('Content-Type: text/html; charset=UTF-8');
+		try {
+			$response = wp_mail($to, $subject, $emailBody, $headers);
+			return $response;
+		}catch (Exception $e) {
+			echo 'Error while sendnig mail: ',  $e->getMessage(), "\n";
+		}
+		return ob_get_clean();
+		
+	}	
 }

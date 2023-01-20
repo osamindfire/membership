@@ -1,6 +1,6 @@
 <?php 
 ?> 
-<div class="et_pb_inner_shadow">
+<div class="et_pb_inner_shadow form_background">
 <div class="et_pb_row et_pb_row_0">
 <div class="et_pb_contact">
     <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
@@ -130,7 +130,7 @@
 		</p>
         <?php wp_nonce_field("register","register_form"); ?>
         <div class="et_contact_bottom_container">
-		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Register</button>
+		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Register</button>
 		</div>
 
         

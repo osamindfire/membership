@@ -20,7 +20,7 @@
           <td class="text-center"><?= $plan->membership; ?></td>
           <td class="text-center"><?= $plan->fee; ?> (*)</td>
           <td class="text-center">
-          <form class="paypal" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" id="paypal_form">
+          <form class="paypal" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
                 <input type="hidden" name="cmd" value="_xclick" />
                 <input type="hidden" name="no_note" value="1" />
                 <input type="hidden" name="lc" value="US" />
