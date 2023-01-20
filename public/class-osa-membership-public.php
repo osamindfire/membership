@@ -206,7 +206,7 @@ class Osa_Membership_Public
 		$paymentInfoSaved = 0;
 		global $wpdb;
 		if ($_REQUEST) {
-			if ($_REQUEST['PayerID']) {
+			if ($_REQUEST['PayerID'] || $_POST['payer_id'] || $_POST['txn_id']) {
 				$paymentInfoSaved = 1;
 				$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
 				$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.total_days FROM wp_membership_type WHERE membership_type_id  = " . $_SESSION['membership_type_id'] . " ");
