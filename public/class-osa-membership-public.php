@@ -41,13 +41,13 @@ class Osa_Membership_Public
 	 */
 	private $version;
 	/**
-     * Array of php variables localized to JS.
-     *
-     * @since    1.0.0
-     * @access   private
-     * @var      array $localized_data Array of php variables localized to JS.
-     */
-    private static $localized_data = array();
+	 * Array of php variables localized to JS.
+	 *
+	 * @since    1.0.0
+	 * @access   private
+	 * @var      array $localized_data Array of php variables localized to JS.
+	 */
+	private static $localized_data = array();
 
 	/**
 	 * Initialize the class and set its properties.
@@ -83,7 +83,7 @@ class Osa_Membership_Public
 		 * class.
 		 */
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/osa-membership-public.css', array(), $this->version, 'all');
-		wp_enqueue_style($this->plugin_name.time(), plugin_dir_url(__FILE__) . 'css/form.min.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name . time(), plugin_dir_url(__FILE__) . 'css/form.min.css', array(), $this->version, 'all');
 	}
 
 	/**
@@ -108,20 +108,19 @@ class Osa_Membership_Public
 
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/osa-membership-public.js', array('jquery'), $this->version, false);
 		// Localize the constants to be used from JS.
-        wp_localize_script($this->plugin_name,'ajax_url',[admin_url('admin-ajax.php')]
-        );
+		wp_localize_script($this->plugin_name,'ajax_url',[admin_url('admin-ajax.php')]);
 	}
 
 	public function initFunction()
 	{
-		if(!isset($_SESSION))
-		{
+		if (!isset($_SESSION)) {
 			session_start();
 		}
+		
+		add_rewrite_endpoint('payment-cancel', EP_ALL);
+		add_rewrite_endpoint('payment-success', EP_ALL);
+		add_rewrite_endpoint('payment-notify', EP_ALL);
 		flush_rewrite_rules();
-		add_rewrite_endpoint( 'payment-cancel', EP_ALL );
-		add_rewrite_endpoint( 'payment-success', EP_ALL );
-		add_rewrite_endpoint( 'payment-notify', EP_ALL );
 	}
 
 	/* 
@@ -130,132 +129,126 @@ class Osa_Membership_Public
 	*/
 	public function membershipPlan()
 	{
-		if ($_POST && !empty($_SESSION['user_id'])) {
-			global $wpdb;
-			$userInfo= $wpdb->get_results( "SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = ".$_SESSION['user_id']." limit 1" );
-			$membershipTypeInfo= $wpdb->get_results( "SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = ".$_POST['membershhip_type_id']." limit 1" );
-			// PayPal settings. Change these to your account details and the relevant URLs
-			// for your site.
-			$paypalUrl = PAYPAL_ENABLE_SANDBOX ? PAYPAL_SANDBOX_URL : PAYPAL_LIVE_URL;
+		if (!empty($_SESSION['user_id'])) {
+		global $wpdb, $user_ID;
+		$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 ");
 
-			// Product being purchased.
-			$itemName = $membershipTypeInfo[0]->membership;
-			$itemAmount = $membershipTypeInfo[0]->fee;
-			// Check if paypal request or response
-			if (!isset($_POST["txn_id"]) && !isset($_POST["txn_type"])) {
-				
-				// Grab the post data so that we can set up the query string for PayPal.
-				// Ideally we'd use a whitelist here to check nothing is being injected into
-				// our post data.
-				$data = [];
-				foreach ($_POST as $key => $value) {
-					$data[$key] = stripslashes($value);
-				}
-				// Set the PayPal account.
-				$data['business'] = PAYPAL_BUSSINESS_EMAIL;
+			if ($_POST) {
+				global $wpdb;
+				$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
+				$membershipTypeInfo = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = " . $_POST['membershhip_type_id'] . " limit 1");
+				// PayPal settings. Change these to your account details and the relevant URLs
+				// for your site.
+				$paypalUrl = PAYPAL_ENABLE_SANDBOX ? PAYPAL_SANDBOX_URL : PAYPAL_LIVE_URL;
 
-				// Set the PayPal return addresses.
-				$data['return'] = stripslashes(PAYPAL_RETURN_URL);
-				$data['cancel_return'] = stripslashes(PAYPAL_CANCEL_URL);
-				$data['notify_url'] = stripslashes(PAYPAL_NOTIFY_URL);
+				// Product being purchased.
+				$itemName = $membershipTypeInfo[0]->membership;
+				$itemAmount = $membershipTypeInfo[0]->fee;
+				$itemNo = $membershipTypeInfo[0]->membership_type_id;
+				// Check if paypal request or response
+				if (!isset($_POST["txn_id"]) && !isset($_POST["txn_type"])) {
 
-				// Set the details about the product being purchased, including the amount
-				// and currency so that these aren't overridden by the form data.
-				$data['item_name'] = $itemName;
-				$data['amount'] = $itemAmount;
-				
-				// Add any custom fields for the query string.
-				$data['custom'] = $_SESSION['user_id'];
-
-				// Build the query string from the data.
-				$queryString = http_build_query($data);
-				$finalUrl= $paypalUrl . '?' . $queryString;
-				echo "<script type='text/javascript'>window.location.href='" . $finalUrl . "'</script>";
-				exit();
-				// Redirect to paypal IPN
-				//header('location:' . $paypalUrl . '?' . $queryString);
-				//exit();
-
-			} else {
-				$data = [
-					'item_name' => $_POST['item_name'],
-					//'item_number' => $_POST['item_number'],
-					'payment_status' => $_POST['payment_status'],
-					'payment_amount' => $_POST['mc_gross'],
-					'payment_currency' => $_POST['mc_currency'],
-					'txn_id' => $_POST['txn_id'],
-					'receiver_email' => $_POST['receiver_email'],
-					'payer_email' => $_POST['payer_email'],
-					'custom' => $_POST['custom'],
-				];
-				
-				// We need to verify the transaction comes from PayPal and check we've not
-				// already processed the transaction before adding the payment to our
-				// database.
-				/* if (verifyTransaction($_POST) && checkTxnid($data['txn_id'])) {
-					if (addPayment($data) !== false) {
-						// Payment successfully added.
+					// Grab the post data so that we can set up the query string for PayPal.
+					// Ideally we'd use a whitelist here to check nothing is being injected into
+					// our post data.
+					$data = [];
+					foreach ($_POST as $key => $value) {
+						$data[$key] = stripslashes($value);
 					}
-				} */
-				print_r('response here');
-				die;
-				// Handle the PayPal response.
+					// Set the PayPal account.
+					$data['business'] = PAYPAL_BUSSINESS_EMAIL;
+
+					// Set the PayPal return addresses.
+					$data['return'] = stripslashes(PAYPAL_RETURN_URL);
+					$data['cancel_return'] = stripslashes(PAYPAL_CANCEL_URL);
+					$data['notify_url'] = stripslashes(PAYPAL_NOTIFY_URL);
+
+					// Set the details about the product being purchased, including the amount
+					// and currency so that these aren't overridden by the form data.
+					$data['item_name'] = $itemName;
+					$data['item_number'] = $_SESSION['membership_type_id'] = $itemNo;
+					$data['amount'] = $itemAmount;
+
+					// Add any custom fields for the query string.
+					$data['custom'] = $_SESSION['user_id'];
+					// Build the query string from the data.
+					$queryString = http_build_query($data);
+					$finalUrl = $paypalUrl . '?' . $queryString;
+					echo "<script type='text/javascript'>window.location.href='" . $finalUrl . "'</script>";
+					exit();
+					// Redirect to paypal IPN
+					//header('location:' . $paypalUrl . '?' . $queryString);
+					//exit();
+
+				}
 			}
 
-			echo "<pre>";print_r($membershipTypeInfo);die;
+			ob_start();
+			include_once(plugin_dir_path(__FILE__) . 'partials/membership_plan.php');
+			return ob_get_clean();
+		} else {
+			$redirectTo = home_url() . '/login';
+			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+			exit();
+			
 		}
-		ob_start();
-		include_once(plugin_dir_path(__FILE__) . 'partials/membership_plan.php');
-		return ob_get_clean();
 	}
 
 	public function cancelPayment()
 	{
 		//ob_start();
-		include_once(plugin_dir_path(__FILE__) . 'partials/payment/cancel_payment.php');
+		include_once(plugin_dir_path(__FILE__) . 'partials/payment/payment_cancel.php');
 		//ob_end_flush();
 		//return ob_get_clean();
 	}
 	public function successPayment()
 	{
-		echo "<pre>";
-		print_r($_POST);
-		die;
-		// Assign posted variables to local data array.
-		/* $data = [
-			'item_name' => $_POST['item_name'],
-			'item_number' => $_POST['item_number'],
-			'payment_status' => $_POST['payment_status'],
-			'payment_amount' => $_POST['mc_gross'],
-			'payment_currency' => $_POST['mc_currency'],
-			'txn_id' => $_POST['txn_id'],
-			'receiver_email' => $_POST['receiver_email'],
-			'payer_email' => $_POST['payer_email'],
-			'custom' => $_POST['custom'],
-		];
+		$paymentInfoSaved = 1;
+		global $wpdb;
+		if ($_REQUEST) {
+			if ($_REQUEST['PayerID']) {
+				$paymentInfoSaved = 1;
+				$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
+				$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.total_days FROM wp_membership_type WHERE membership_type_id  = " . $_SESSION['membership_type_id'] . " ");
 
-		// We need to verify the transaction comes from PayPal and check we've not
-		// already processed the transaction before adding the payment to our
-		// database.
-		if ($this->verifyTransaction($_POST) && $this->checkTxnid($this->$data['txn_id'])) {
-			if (addPayment($data) !== false) {
-				// Payment successfully added.
+				$starttDate = date('Y-m-d');
+				$endDate = date('Y-m-d', strtotime($starttDate . ' + ' . $membershipPackage[0]->total_days . ' days'));
+
+				$wpdb->query($wpdb->prepare(
+					"INSERT INTO wp_member_membership (user_id, member_id, start_date, end_date, membership_type_id, comment , update_by,payment_info) VALUES ( %d, %d, %s, %s, %d, %s, %s,%s)",
+					array(
+						'user_id' => $_SESSION['user_id'],
+						'member_id' => $userInfo[0]->member_id,
+						'start_date' =>  $starttDate,
+						'end_date' => $endDate,
+						'membership_type_id' => $_SESSION['membership_type_id'],
+						'comment' => '',
+						'update_by' => $_SESSION['user_id'],
+						'payment_info' => serialize($_REQUEST),
+					)
+				));
+				$wpdb->query(
+					$wpdb->prepare("UPDATE wp_member_other_info 
+					SET membership_expiry_date = %s 
+					WHERE member_id = %d", $endDate, $userInfo[0]->member_id)
+				);
+				unset($_SESSION['user_id']);
+				unset($_SESSION['membership_type_id']);
 			}
-		} */
-		//ob_start();
-		include_once(plugin_dir_path(__FILE__) . 'partials/payment/success_payment.php');
-		//ob_end_flush();
-		//return ob_get_clean();
+		}
+		$fileName = ($paymentInfoSaved == 1) ? 'payment_success.php' : 'payment_cancel.php';
+		include_once(plugin_dir_path(__FILE__) . 'partials/payment/' . $fileName);
 	}
-	
-	private function verifyTransaction($data) {
+
+	private function verifyTransaction($data)
+	{
 		$req = 'cmd=_notify-validate';
 		foreach ($data as $key => $value) {
 			$value = urlencode(stripslashes($value));
 			$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
 			$req .= "&$key=$value";
 		}
-	
+
 		$ch = curl_init(PAYPAL_SANDBOX_URL);
 		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
 		curl_setopt($ch, CURLOPT_POST, 1);
@@ -268,32 +261,33 @@ class Osa_Membership_Public
 		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
 		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
 		$res = curl_exec($ch);
-	
+
 		if (!$res) {
 			$errno = curl_errno($ch);
 			$errstr = curl_error($ch);
 			curl_close($ch);
 			throw new Exception("cURL error: [$errno] $errstr");
 		}
-	
+
 		$info = curl_getinfo($ch);
-	
+
 		// Check the http response
 		$httpCode = $info['http_code'];
 		if ($httpCode != 200) {
 			throw new Exception("PayPal responded with http code $httpCode");
 		}
 		curl_close($ch);
-	
+
 		return $res === 'VERIFIED';
 	}
-	private function checkTxnid($txnid) {
+	private function checkTxnid($txnid)
+	{
 		global $db;
-	
+
 		$txnid = $db->real_escape_string($txnid);
 		$results = $db->query('SELECT * FROM `payments` WHERE txnid = \'' . $txnid . '\'');
-	
-		return ! $results->num_rows;
+
+		return !$results->num_rows;
 	}
 
 	/* 
@@ -330,7 +324,7 @@ class Osa_Membership_Public
 					exit();
 				} else {
 
-					$redirectTo = home_url() . '/membership';
+					$redirectTo = home_url() . '/membership-plan';
 					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 					exit();
 				}
@@ -351,15 +345,15 @@ class Osa_Membership_Public
 	*/
 	public function memberRegister()
 	{
-		global $wpdb, $user_ID;  
-		$countries= $wpdb->get_results( "SELECT * FROM wp_countries " );
+		global $wpdb, $user_ID;
+		$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
 
 		if (isset($_POST['register_form']) && wp_verify_nonce($_POST['register_form'], 'register')) {
 			try {
 				$errors = $this->validateForm(); //echo "<pre>";print_r($errors);die;
 				if (0 === count($errors)) {
 					if ($this->createUser()) {
-						$redirectTo = home_url() . '/membership?register_success=1';
+						$redirectTo = home_url() . '/membership-plan?register_success=1';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 						exit();
 					}
@@ -502,11 +496,12 @@ class Osa_Membership_Public
 		$_SESSION['user_id'] = $userId;
 		if ($userId) {
 			add_user_meta($userId, 'wp_capabilities', 'a:1:{s:10:"subscriber";b:1;}', true);
+			$newMemberId = $this->getNewmemberId();
 			$wpdb->query($wpdb->prepare(
 				"INSERT INTO wp_member_user (user_id, member_id, parent_id, first_name, last_name, type , modified_date, alive, email_valid, is_deleted) VALUES ( %d, %d, %d, %s, %s, %s, %s, %d, %d, %d)",
 				array(
 					'user_id' => $userId,
-					'member_id' => $this->getNewmemberId(),
+					'member_id' => $newMemberId,
 					'parent_id' =>  0,
 					'first_name' => $_POST['first_name'],
 					'last_name' => $_POST['last_name'],
@@ -519,10 +514,10 @@ class Osa_Membership_Public
 			));
 			$wpdb->insert_id;
 			//add other members of user
-			$this->addSubMember($this->getNewmemberId(), $userId, $wpdb->insert_id);
+			$this->addSubMember($newMemberId, $userId, $wpdb->insert_id);
 			$wpdb->insert('wp_member_other_info', array(
 				'user_id' => $userId,
-				'member_id' => $this->getNewmemberId(),
+				'member_id' => $newMemberId,
 				'address_line_1' => $_POST['address_line_1'],
 				'address_line_2' => isset($_POST['address_line_2']) ? $_POST['address_line_2'] : '',
 				'city' => $_POST['city'],
@@ -621,9 +616,9 @@ class Osa_Membership_Public
 		$html =  "<option value=''>Select State</option>";
 		foreach ($states as $state) {
 			if ($stateId == $state->state_type_id) {
-				$html .=  "<option value='" . $state->state_type_id . "' selected >" . $state->state . "</option>";
+				$html .=  "<option class='option_feild' value='" . $state->state_type_id . "' selected >" . $state->state . "</option>";
 			} else {
-				$html .=  "<option value='" . $state->state_type_id . "' >" . $state->state . "</option>";
+				$html .=  "<option class='option_feild' value='" . $state->state_type_id . "' >" . $state->state . "</option>";
 			}
 		}
 

@@ -205,9 +205,7 @@ class Osa_Membership {
 	 * @access   private
 	 */
 	private function define_public_hooks() {
-		//add_rewrite_endpoint( 'cancelPayment', EP_PERMALINK | EP_PAGES );
-		//$plugin_public = new Osa_Membership_Public( $this->get_plugin_name(), $this->get_version() );
-
+		
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_styles' );
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_scripts' );
 		//$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );

@@ -1,7 +1,7 @@
 <?php
 
 define('PAYPAL_ENABLE_SANDBOX', true);
-define('PAYPAL_BUSSINESS_EMAIL', 'sb-bmszd23949600@business.example.com');
+define('PAYPAL_BUSSINESS_EMAIL', 'sb-nz8gr22345592@business.example.com');
 define('PAYPAL_RETURN_URL', home_url('payment-success'));
 define('PAYPAL_CANCEL_URL', home_url('payment-cancel'));
 define('PAYPAL_NOTIFY_URL', home_url('payment-notify'));

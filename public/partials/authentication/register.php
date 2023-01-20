@@ -106,9 +106,9 @@
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="et_pb_contact_form_label">Country</label>
             <select name="country" id="country" onchange="getstate()" class="et_pb_contact_select input <?php if(!empty($errors['country'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Country">
-            <option value="">Country</option>
+            <option value="">Select Country</option>
             <?php foreach($countries as $country) { ?> 
-                <option value="<?= $country->country_type_id;?>" <?php if(!empty($_REQUEST['country']) && $_REQUEST['country'] == $country->country_type_id ){ echo "selected";} ?> > <?= $country->country;?> </option>
+                <option class="option_feild" value="<?= $country->country_type_id;?>" <?php if(!empty($_REQUEST['country']) && $_REQUEST['country'] == $country->country_type_id ){ echo "selected";} ?> > <?= $country->country;?> </option>
             <?php } ?>
             </select>
             <span class="error_messages"><?php if(!empty($errors['country'])) { echo $errors['country']; } ?></span>
@@ -123,9 +123,8 @@
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last" data-type="checkbox">
 				<span class="et_pb_contact_field_options_wrapper">
 						<span class="et_pb_contact_field_options_list"><span class="et_pb_contact_field_checkbox">
-							<input type="checkbox" id="et_pb_contact_field_7_6_0" name="agree"class="input" value="yes">
-							<label for="et_pb_contact_field_7_6_0"><i></i><a href="www.google.com" target="_blank">I acknowledge the Statement of Rights</a></label>
-						</span></span>
+							<input type="checkbox" id="et_pb_contact_field_7_6_0" name="agree"class="input" value="yes" <?php if(!empty($_REQUEST['agree']) && $_REQUEST['agree'] == 'yes') { echo 'checked'; } ?>>
+							<label for="et_pb_contact_field_7_6_0"><i></i><a href="#" target="_blank">I acknowledge the Statement of Rights</a></''/span>
 				</span>
                 <span class="error_messages"><?php if(!empty($errors['agree'])) { echo $errors['agree']; } ?></span>
 		</p>
