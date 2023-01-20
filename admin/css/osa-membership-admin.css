@@ -5,3 +5,15 @@
  #the-member-list .vers {
     padding-left: 1em;
 }
+
+.td-lable{
+font-weight: bold;
+}
+
+.border-top{
+border-top: 1px solid #dcdcde;
+}
+
+.member-view .form-table td {
+    padding: 8px 10px;
+}

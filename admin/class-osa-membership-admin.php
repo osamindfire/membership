@@ -137,24 +137,58 @@ class Osa_Membership_Admin
 
 			global $wpdb;
 			$member_id = $_GET['id'];
+
+			// $query = "SELECT * FROM `wp_member_user`";
+			// $query .= " WHERE member_id LIKE $member_id ";
+			// $memberData = $wpdb->get_results($query);
+			// echo "<pre>";print_r($memberData);die;
+			//queryto get memebr info from wp_member_user and wp_user
+			$memerData=array();
+			//$memerData['main_member_info']['fiirst']= $data;
+			//$memerData['other_member_info']['spousse_first']= ;
 			
 			$query = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
-            wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
-            t2.first_name as partner_first_name, t2.last_name as partner_last_name, wp_membership_type.membership FROM `wp_users` 
+            wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no, 
+			wp_member_other_info.souvenir, wp_member_other_info.city, wp_countries.country, wp_states.state,  
+            t2.first_name as partner_first_name, t2.last_name as partner_last_name, wp_membership_type.membership, wp_chapters.name as chapter_name FROM `wp_users` 
             INNER JOIN wp_member_user t1 ON t1.user_id = wp_users.ID
             LEFT JOIN wp_member_user t2 ON t2.member_id = t1.member_id and t2.type='parent'
             INNER JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
             LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
             INNER JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_membership.membership_type_id
+			INNER JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
+			INNER JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			INNER JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
+
+
 			";
 
-			$query .= " WHERE t1.member_id LIKE $member_id ";
+			$query .= " WHERE t1.member_id = $member_id ";
 
 			$query .= " GROUP by t1.member_id ORDER BY t1.member_id ASC ";
 
 			$data = $wpdb->get_results($query);
 
+			// $parents = $wpdb->get_results(
+			// "SELECT  * FROM wp_member_user 
+			// where member_id = $member_id AND parent_id !=0 AND type = 'parent';");
+
+			$parents = $wpdb->get_results(
+				"SELECT  t1.first_name, t1.last_name, t2.user_email FROM wp_member_user t1
+				LEFT JOIN wp_users t2 ON  t1.user_id = t2.ID
+				where t1.member_id = $member_id 
+				AND t1.parent_id !=0 AND t1.type = 'parent';");
+
+			$childs = $wpdb->get_results("SELECT  * FROM wp_member_user where member_id = $member_id AND parent_id !=0 AND type = 'child';");
+
+			// $test = $wpdb->get_results("SELECT t1.amount, t1.date, t2.description FROM wp_member_donation t1 
+			// LEFT JOIN wp_donation_type t2 ON t1.donation_type_id = t2.donation_type_id
+			// WHERE member_id = $member_id ;");
+
+			//$test = json_encode($test);
+
 			// $data = json_encode($data);
+			
 			wp_reset_query();
 
 		}
@@ -185,6 +219,8 @@ class Osa_Membership_Admin
 		if (isset($_GET['page']) || isset($_GET['search'])) {
 
 			$search = $_GET['search'];
+			$orderby = $_GET['orderby'];
+			//$orderbydate = $_GET['orderbydate'];
 
 			$query = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
             wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
@@ -207,7 +243,16 @@ class Osa_Membership_Admin
 						   ";
 			}
 
-			$query .= " GROUP by t1.member_id ORDER BY t1.member_id ASC ";
+			// if(!empty($orderbydate)){
+			// 	$query .= " GROUP by t1.member_id ORDER BY wp_users.user_registered ".$orderbydate." ";
+
+			// }else{
+			// 	$query .= " GROUP by t1.member_id ORDER BY t1.member_id ".$orderby." ";
+			// 	// $query .= " GROUP by t1.member_id ORDER BY t1.member_id DESC";
+			// }
+			
+			$query .= " GROUP by t1.member_id ORDER BY t1.member_id ".$orderby." ";
+
 			
 
 			/**
@@ -229,7 +274,8 @@ class Osa_Membership_Admin
 			 */
 			$query .=  " LIMIT " . $page_first_result . ',' . $results_per_page;
 
-
+// echo $query;
+// die;
 			$data = $wpdb->get_results($query);
 
 			wp_reset_query();
