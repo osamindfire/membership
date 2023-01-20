@@ -57,10 +57,10 @@
             <thead>
                 <tr>
                     <td id="cb" class="manage-column column-cb check-column"><label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox"></td>
-                    <th scope="col" id="member-title" class="manage-column column-title column-primary sortable asc"><a href=""><span>Member ID</span><span class="sorting-indicator"></span></a></th>
+                    <th scope="col" id="member-title" data-type="t1.member_id" class="manage-column column-title column_sort column-primary sortable asc"><a href=""><span>Member ID</span><span class="sorting-indicator"></span></a></th>
                     <th scope="col" id="author" class="manage-column column-author">Name</th>
                     <th scope="col" id="tags" class="manage-column column-tags">Email</th>
-                    <th scope="col" id="date-title" class="manage-column column-title column-primary sortable asc"><a href=""><span>Join Date</span><span class="sorting-indicator"></span></a></th>
+                    <th scope="col" id="date-title" data-type="wp_users.user_registered" class="manage-column column-title column_sort column-primary sortable asc"><a href=""><span>Join Date</span><span class="sorting-indicator"></span></a></th>
                     <!-- <th scope="col" id="categories" class="manage-column">Join Date</th> -->
                     <th scope="col" id="tags" class="manage-column">Phone</th>
                     <th scope="col" id="tags" class="manage-column">Status</th>
