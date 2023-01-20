@@ -57,10 +57,11 @@
             <thead>
                 <tr>
                     <td id="cb" class="manage-column column-cb check-column"><label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox"></td>
-                    <th scope="col" id="title" class="manage-column column-title column-primary sortable desc"><a href=""><span>Member ID</span><span class="sorting-indicator"></span></a></th>
+                    <th scope="col" id="member-title" class="manage-column column-title column-primary sortable asc"><a href=""><span>Member ID</span><span class="sorting-indicator"></span></a></th>
                     <th scope="col" id="author" class="manage-column column-author">Name</th>
                     <th scope="col" id="tags" class="manage-column column-tags">Email</th>
-                    <th scope="col" id="categories" class="manage-column">Join Date</th>
+                    <th scope="col" id="date-title" class="manage-column column-title column-primary sortable asc"><a href=""><span>Join Date</span><span class="sorting-indicator"></span></a></th>
+                    <!-- <th scope="col" id="categories" class="manage-column">Join Date</th> -->
                     <th scope="col" id="tags" class="manage-column">Phone</th>
                     <th scope="col" id="tags" class="manage-column">Status</th>
                     <th scope="col" id="tags" class="manage-column">Action</th>
@@ -74,7 +75,7 @@
             <tfoot>
                 <tr>
                     <td class="manage-column column-cb check-column"><label class="screen-reader-text" for="cb-select-all-2">Select All</label><input id="cb-select-all-2" type="checkbox"></td>
-                    <th scope="col" class="manage-column column-primary sortable desc"><a href="http://osa-membership-local.com/wp-admin/edit.php?orderby=title&amp;order=asc"><span>Member ID</span><span class="sorting-indicator"></span></a></th>
+                    <th scope="col" class="manage-column column-primary sortable desc"><a href=""><span>Member ID</span><span class="sorting-indicator"></span></a></th>
                     <th scope="col" class="manage-column column-author">Name</th>
                     <th scope="col" class="manage-column column-tags">Email</th>
                     <th scope="col" class="manage-column">Join Date</th>
@@ -105,6 +106,7 @@
         <!-- <div class="">
             <span><a class="dashicons-before dashicons-visibility"></a>  <a class="dashicons-before dashicons-edit"></a></span>
         </div> -->
+        
 
     </form>
 
