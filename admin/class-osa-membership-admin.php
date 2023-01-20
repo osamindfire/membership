@@ -109,12 +109,12 @@ class Osa_Membership_Admin
 		add_menu_page('Members', 'Members', 'manage_options', 'members', array($this, 'render_member_menu_page'), 'dashicons-groups');
 
 		add_submenu_page( 
-			null            // -> Set to null - will hide menu link
-		  , 'member-view'    // -> Page Title
-		  , null   // -> Title that would otherwise appear in the menu
-		  , 'administrator' // -> Capability level
-		  , 'member_view'   // -> Still accessible via admin.php?page=menu_handle
-		  , array($this, 'render_member_view_page') // -> To render the page
+			'members'           
+		  , 'Member View'    
+		  , null   
+		  , 'administrator' 
+		  , 'member-view'  
+		  , array($this, 'render_member_view_page') 
 	  );
 	  
 	}
@@ -220,7 +220,7 @@ class Osa_Membership_Admin
 
 			$search = $_GET['search'];
 			$orderby = $_GET['orderby'];
-			//$orderbydate = $_GET['orderbydate'];
+			$type = $_GET['type'];
 
 			$query = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
             wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
@@ -243,15 +243,17 @@ class Osa_Membership_Admin
 						   ";
 			}
 
-			// if(!empty($orderbydate)){
-			// 	$query .= " GROUP by t1.member_id ORDER BY wp_users.user_registered ".$orderbydate." ";
+			if(!empty($type)){
 
-			// }else{
-			// 	$query .= " GROUP by t1.member_id ORDER BY t1.member_id ".$orderby." ";
-			// 	// $query .= " GROUP by t1.member_id ORDER BY t1.member_id DESC";
-			// }
-			
-			$query .= " GROUP by t1.member_id ORDER BY t1.member_id ".$orderby." ";
+				$query .= " GROUP by t1.member_id ORDER BY ".$type." ".$orderby." ";
+
+			}else{
+
+				$query .= " GROUP by t1.member_id ORDER BY t1.member_id ".$orderby." ";
+
+			}
+
+				//$query .= " GROUP by t1.member_id ORDER BY wp_users.user_registered DESC";
 
 			
 

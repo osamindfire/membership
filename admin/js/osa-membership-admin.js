@@ -34,14 +34,14 @@
 		// Call member data when window loaded
 		filteredData();
 
-		var mafs = $("#member-ajax-filter-search");
-		var mafsForm = mafs.find("#members-filter");
+		let mafs = $("#member-ajax-filter-search");
+		let mafsForm = mafs.find("#members-filter");
 
-		// var current_page = $(document).find(".member-pagination-links #current").attr('data-current');
-		// var current_page = $('.member-pagination-links').find("#current").html();
+		// let current_page = $(document).find(".member-pagination-links #current").attr('data-current');
+		// let current_page = $('.member-pagination-links').find("#current").html();
 
-		var cls = $("#member-ajax-filter-search").find("#member-title").attr('class').split(' ');
-    	let orderby = cls[cls.length-1].toUpperCase();
+		// let cls = $("#member-ajax-filter-search").find("#member-title").attr('class').split(' ');
+    	// let orderby = cls[cls.length-1].toUpperCase();
 		
 
 		mafsForm.submit(function (e) {
@@ -50,54 +50,38 @@
 		});
 
 		//sorting
-		$(document).on('click', '#member-title a', function (e) {
+		$(document).on('click', '.column_sort a', function (e) {
+			e.preventDefault();
+
 			let page = $("#member-ajax-filter-search").find("#pagination #current").attr('data-current');
 
-			var cls = $("#member-ajax-filter-search").find("#member-title").attr('class').split(' ');
+			let cls = $(this).parent().attr('class').split(' ');
+			//let cls = $("#member-ajax-filter-search").find(".column_sort").attr('class').split(' ');
+
     		let orderby = cls[cls.length-1].toUpperCase();
-			e.preventDefault();
+
+			let type = $(this).parent().attr('data-type');
+
 			if(orderby== 'ASC'){
 				cls[cls.length-1]='desc';
 				let newcls = cls.join(' ');
-				$("#member-ajax-filter-search").find("#member-title").attr('class',newcls)
+				$(this).parent().attr('class',newcls)
 				// alert(cls);
 				orderby = cls[cls.length-1].toUpperCase();
 			}
 			else{
 				cls[cls.length-1]='asc';
 				let newcls = cls.join(' ');
-				$("#member-ajax-filter-search").find("#member-title").attr('class',newcls)
+				$(this).parent().attr('class',newcls)
 				orderby = cls[cls.length-1].toUpperCase();
 			}
 
+			$("#member-ajax-filter-search").find(".column_sort").removeAttr('orderby');
+			$(this).parent().attr('orderby','active');
+
 			//alert(test);
-			filteredData(e, page , orderby);
+			filteredData(e, page , orderby, type);
 		});
-
-		//sorting date
-		// $(document).on('click', '#date-title a', function (e) {
-		// 	let page = $("#member-ajax-filter-search").find("#pagination #current").attr('data-current');
-
-		// 	var cls_date = $("#member-ajax-filter-search").find("#date-title").attr('class').split(' ');
-    	// 	let orderbydate = cls[cls.length-1].toUpperCase();
-		// 	e.preventDefault();
-		// 	if(orderbydate== 'ASC'){
-		// 		cls_date[cls_date.length-1]='desc';
-		// 		let newcls = cls_date.join(' ');
-		// 		$("#member-ajax-filter-search").find("#date-title").attr('class',newcls)
-		// 		// alert(cls);
-		// 		orderbydate = cls_date[cls_date.length-1].toUpperCase();
-		// 	}
-		// 	else{
-		// 		cls_date[cls_date.length-1]='asc';
-		// 		let newcls_date = cls_date.join(' ');
-		// 		$("#member-ajax-filter-search").find("#date-title").attr('class',newcls_date)
-		// 		orderbydate = cls_date[cls_date.length-1].toUpperCase();
-		// 	}
-
-		// 	//alert(test);
-		// 	filteredData(e, page ,null ,orderbydate );
-		// });
 
 		$(document).on('click', '#pagination a', function (e) {
 			e.preventDefault();
@@ -109,13 +93,21 @@
 			let currentPage = $(this).parent().find("#current").attr('data-current');
 			let currentId = $(this).attr('id');
 			let lastPage = $(this).parent().find(".total-pages").html();
-			//member-id
-			var cls = $("#member-ajax-filter-search").find("#member-title").attr('class').split(' ');
-    		let orderby = cls[cls.length-1].toUpperCase();
-			//date
-			var cls_date = $("#member-ajax-filter-search").find("#date-title").attr('class').split(' ');
-    		let orderbydate = cls_date[cls_date.length-1].toUpperCase();
+			//sort 
+            let orderby="ASC";
+			let type="member_id";
 
+			if($("[orderby=active]").length){
+				let cls= $("[orderby=active]").attr('class').split(' ');
+				orderby = cls[cls.length-1].toUpperCase();
+				type = $("[orderby=active]").attr('data-type');
+			}
+			
+			//alert(test);
+
+			//let cls = $("#member-ajax-filter-search").find(".column_sort").attr('class').split(' ');
+    		//let orderby = cls[cls.length-1].toUpperCase();
+			
 			if (currentId == 'first') {
 				currentPage = 1;
 			} else if (currentId == 'prev') {
@@ -130,26 +122,27 @@
 				currentPage = lastPage;
 			}
 
-			filteredData(e, currentPage, orderby, orderbydate);
+			filteredData(e, currentPage, orderby, type);
 		});
 
 
 		// ajax for member data
-		function filteredData(e, activepage = 1, orderby='ASC') {
+		function filteredData(e, activepage = 1, orderby='ASC', type='') {
 			console.log("form submitted");
 
-			var mafs = $("#member-ajax-filter-search");
+			let mafs = $("#member-ajax-filter-search");
 
 		    let search='';
 			if (mafs.find("#member-search-input").val().length !== 0) {
 				search = mafs.find("#member-search-input").val();
 		    } 
 
-			var data = {
+			let data = {
 				action: "member_ajax_action",
 				search: search, 
 				page: activepage,
 				orderby: orderby,
+				type: type,
 				//orderbydate: orderbydate,
 			}
 
@@ -184,9 +177,9 @@
 						// determine the sql LIMIT starting number for the results on the displaying page
 						let page_first_result = (pagen - 1) * results_per_page;
 
-						for (var i = 0; i < response.length; i++) {
+						for (let i = 0; i < response.length; i++) {
 
-							var html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized"> \
+							let html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized"> \
 											<th scope="row" class="check-column"> <label class="screen-reader-text" for="cb-select-1"> \
 													Select Hello world! </label> \
 												<input id="cb-select-1" type="checkbox" name="post[]" value="1"> \
@@ -205,7 +198,7 @@
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['user_registered'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['primary_phone_no'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" href="/wp-admin/admin.php?page=member_view&id='+ response[i]['member_id'] +'"></a><a class="vers dashicons-before dashicons-edit"></a> </td> \
+											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" href="?page=member-view&id='+ response[i]['member_id'] +'"></a><a class="vers dashicons-before dashicons-edit"></a> </td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
@@ -246,7 +239,7 @@
 })(jQuery);
 
 
-// var gallerySortable, gallerySortableInit, sortIt, clearAll, w, desc = false;
+// let gallerySortable, gallerySortableInit, sortIt, clearAll, w, desc = false;
 
 // 	gallerySortableInit = function() {
 // 		gallerySortable = $('#media-items').sortable( {
@@ -257,9 +250,9 @@
 // 			handle: 'div.filename',
 // 			stop: function() {
 // 				// When an update has occurred, adjust the order for each item.
-// 				var all = $('#media-items').sortable('toArray'), len = all.length;
+// 				let all = $('#media-items').sortable('toArray'), len = all.length;
 // 				$.each(all, function(i, id) {
-// 					var order = desc ? (len - i) : (1 + i);
+// 					let order = desc ? (len - i) : (1 + i);
 // 					$('#' + id + ' .menu_order input').val(order);
 // 				});
 // 			}
@@ -267,9 +260,9 @@
 // 	};
 
 // 	sortIt = function() {
-// 		var all = $('.menu_order_input'), len = all.length;
+// 		let all = $('.menu_order_input'), len = all.length;
 // 		all.each(function(i){
-// 			var order = desc ? (len - i) : (1 + i);
+// 			let order = desc ? (len - i) : (1 + i);
 // 			$(this).val(order);
 // 		});
 // 	};
