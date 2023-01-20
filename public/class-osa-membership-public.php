@@ -203,7 +203,7 @@ class Osa_Membership_Public
 	}
 	public function successPayment()
 	{
-		$paymentInfoSaved = 1;
+		$paymentInfoSaved = 0;
 		global $wpdb;
 		if ($_REQUEST) {
 			if ($_REQUEST['PayerID']) {
