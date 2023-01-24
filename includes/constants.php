@@ -7,7 +7,8 @@ define('PAYPAL_CANCEL_URL', home_url('payment-cancel'));
 define('PAYPAL_NOTIFY_URL', home_url('payment-notify'));
 define('PAYPAL_SANDBOX_URL', 'https://www.sandbox.paypal.com/cgi-bin/webscr');
 define('PAYPAL_LIVE_URL', 'https://www.paypal.com/cgi-bin/webscr');
-define('SLUG_VALUE',str_replace("/","",$GLOBALS['_SERVER']['REDIRECT_URL']));
+$variable = explode('?', basename($GLOBALS['_SERVER']['REQUEST_URI']));
+define('SLUG_VALUE',$variable[0]);
 /* const paypalConfig = [
     'bussiness_email' => 'sb-bmszd23949600@business.example.com',
     'return_url' => home_url('payment-success'),
