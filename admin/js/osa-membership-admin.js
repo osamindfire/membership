@@ -35,21 +35,16 @@
 		filteredData();
 
 		let mafs = $("#member-ajax-filter-search");
-		let mafsForm = mafs.find("#members-filter");
-
-		// let current_page = $(document).find(".member-pagination-links #current").attr('data-current');
-		// let current_page = $('.member-pagination-links').find("#current").html();
-
-		// let cls = $("#member-ajax-filter-search").find("#member-title").attr('class').split(' ');
-    	// let orderby = cls[cls.length-1].toUpperCase();
-		
+		let mafsForm = mafs.find("#members-search");
 
 		mafsForm.submit(function (e) {
 			e.preventDefault();
 			filteredData(e);
 		});
 
-		//sorting
+		/**
+		 * Sorting code starts
+		 */
 		$(document).on('click', '.column_sort a', function (e) {
 			e.preventDefault();
 
@@ -58,31 +53,35 @@
 			let cls = $(this).parent().attr('class').split(' ');
 			//let cls = $("#member-ajax-filter-search").find(".column_sort").attr('class').split(' ');
 
-    		let orderby = cls[cls.length-1].toUpperCase();
+			let orderby = cls[cls.length - 1].toUpperCase();
 
 			let type = $(this).parent().attr('data-type');
 
-			if(orderby== 'ASC'){
-				cls[cls.length-1]='desc';
+			if (orderby == 'ASC') {
+				cls[cls.length - 1] = 'desc';
 				let newcls = cls.join(' ');
-				$(this).parent().attr('class',newcls)
+				$(this).parent().attr('class', newcls)
 				// alert(cls);
-				orderby = cls[cls.length-1].toUpperCase();
+				orderby = cls[cls.length - 1].toUpperCase();
 			}
-			else{
-				cls[cls.length-1]='asc';
+			else {
+				cls[cls.length - 1] = 'asc';
 				let newcls = cls.join(' ');
-				$(this).parent().attr('class',newcls)
-				orderby = cls[cls.length-1].toUpperCase();
+				$(this).parent().attr('class', newcls)
+				orderby = cls[cls.length - 1].toUpperCase();
 			}
 
 			$("#member-ajax-filter-search").find(".column_sort").removeAttr('orderby');
-			$(this).parent().attr('orderby','active');
+			$(this).parent().attr('orderby', 'active');
 
 			//alert(test);
-			filteredData(e, page , orderby, type);
+			filteredData(e, page, orderby, type);
 		});
+		//sorting code ends
 
+		/**
+		 * Pagination code starts
+		 */
 		$(document).on('click', '#pagination a', function (e) {
 			e.preventDefault();
 			filteredData(e, $(this).html());
@@ -90,24 +89,25 @@
 
 		$(document).on('click', '.member-pagination-links span', function (e) {
 			e.preventDefault();
+
 			let currentPage = $(this).parent().find("#current").attr('data-current');
 			let currentId = $(this).attr('id');
 			let lastPage = $(this).parent().find(".total-pages").html();
 			//sort 
-            let orderby="ASC";
-			let type="member_id";
+			let orderby = "DESC";
+			let type = "member_id";
 
-			if($("[orderby=active]").length){
-				let cls= $("[orderby=active]").attr('class').split(' ');
-				orderby = cls[cls.length-1].toUpperCase();
+			if ($("[orderby=active]").length) {
+				let cls = $("[orderby=active]").attr('class').split(' ');
+				orderby = cls[cls.length - 1].toUpperCase();
 				type = $("[orderby=active]").attr('data-type');
 			}
-			
+
 			//alert(test);
 
 			//let cls = $("#member-ajax-filter-search").find(".column_sort").attr('class').split(' ');
-    		//let orderby = cls[cls.length-1].toUpperCase();
-			
+			//let orderby = cls[cls.length-1].toUpperCase();
+
 			if (currentId == 'first') {
 				currentPage = 1;
 			} else if (currentId == 'prev') {
@@ -124,26 +124,229 @@
 
 			filteredData(e, currentPage, orderby, type);
 		});
+		// Pagination code ends here
 
 
-		// ajax for member data
-		function filteredData(e, activepage = 1, orderby='ASC', type='') {
+		/**
+		 * Filters code starts
+		 */
+		let filterForm = mafs.find("#members-filter");
+
+		$("body").on('change', '#category_filter', function () {
+			let el = $(this);
+
+			if (el.val() === "country") {
+				$(document).find('#filter_input_id').remove();
+				populateCountry();
+
+			} else if (el.val() === "state") {
+				$(document).find('#filter_input_id').remove();
+				populateState();
+
+			} else if (el.val() === "chapter") {
+				$(document).find('#filter_input_id').remove();
+				populateChapter();
+
+			} else if (el.val() === "membership") {
+				$(document).find('#filter_input_id').remove();
+				populateMembership();
+
+			} else {
+				$(document).find('#filter_input_id').remove();
+				$("#filter_input_area").append('<input type="text" name="filter_input" id="filter_input_id" class="" value="">');
+			}
+		});
+
+		 //Add more criteria
+		 $("body").on('click', '#add_more_criteria', function () {
+			 let el = $(this);
+			alert('addmore');
+		  });
+
+		
+
+		filterForm.submit(function (e) {
+			e.preventDefault();
+
+
+			//alert("fired");
+			filteredData(e);
+		});
+
+		function populateCountry() {
+			console.log('hii country');
+
+			let data = {
+				action: "country_ajax_action",
+				country: 'yes',
+			}
+
+			$.ajax({
+				url: ajax_info.ajax_url,
+				data: data,
+				success: function (response) {
+
+					if (response) {
+
+						let html = '<select name="filter_input" id="filter_input_id" class="postform">'
+
+						for (let i = 0; i < response.length; i++) {
+							html += '<option class="level-0" value="'+response[i]['country_type_id']+'">'+response[i]['country']+'</option>';
+						}
+    					
+						html +=	'</select>';
+
+						mafs.find("#filter_input_area").append(html);
+
+					}
+				},
+				error: function (e, response) {
+					console.log("error");
+				}
+			});
+			
+		};
+
+		function populateState() {
+			console.log('hii state');
+
+			let data = {
+				action: "state_ajax_action",
+				state: 'yes',
+				//country: country,
+			}
+
+			$.ajax({
+				url: ajax_info.ajax_url,
+				data: data,
+				success: function (response) {
+
+					if (response) {
+
+						let html = '<select name="filter_input" id="filter_input_id" class="postform">'
+
+						for (let i = 0; i < response.length; i++) {
+							html += '<option class="level-0" value="'+response[i]['state_type_id']+'">'+response[i]['state']+'</option>';
+						}
+    					
+						html +=	'</select>';
+
+						mafs.find("#filter_input_area").append(html);
+
+					}
+				},
+				error: function (e, response) {
+					console.log("error");
+				}
+			});
+		};
+
+		function populateChapter() {
+			console.log('hii chapter');
+
+			let data = {
+				action: "chapter_ajax_action",
+				chapter: 'yes',
+			}
+
+			$.ajax({
+				url: ajax_info.ajax_url,
+				data: data,
+				success: function (response) {
+
+					if (response) {
+
+						let html = '<select name="filter_input" id="filter_input_id" class="postform">'
+
+						for (let i = 0; i < response.length; i++) {
+							html += '<option class="level-0" value="'+response[i]['name']+'">'+response[i]['name']+'</option>';
+						}
+    					
+						html +=	'</select>';
+
+						mafs.find("#filter_input_area").append(html);
+
+					}
+				},
+				error: function (e, response) {
+					console.log("error");
+				}
+			});
+			
+		};
+
+		function populateMembership() {
+			console.log('hii membership');
+
+			let data = {
+				action: "membership_ajax_action",
+				membership: 'yes',
+			}
+
+			$.ajax({
+				url: ajax_info.ajax_url,
+				data: data,
+				success: function (response) {
+
+					if (response) {
+
+						let html = '<select name="filter_input" id="filter_input_id" class="postform">'
+
+						for (let i = 0; i < response.length; i++) {
+							html += '<option class="level-0" value="'+response[i]['membership']+'">'+response[i]['membership']+'</option>';
+						}
+    					
+						html +=	'</select>';
+
+						mafs.find("#filter_input_area").append(html);
+
+					}
+				},
+				error: function (e, response) {
+					console.log("error");
+				}
+			});
+			
+		};
+		//Filters ends here
+
+
+		/**
+		 * Ajax function to retrive member details
+		 */
+		function filteredData(e, activepage = 1, orderby = 'DESC', type = '') {
 			console.log("form submitted");
 
 			let mafs = $("#member-ajax-filter-search");
 
-		    let search='';
+			//for search
+			let search = '';
 			if (mafs.find("#member-search-input").val().length !== 0) {
 				search = mafs.find("#member-search-input").val();
-		    } 
+			}
+
+			// let mm= mafs.find("#category_filter").val();
+			// console.log('here...'+mm);
+			//for filter
+			let filter_option = '';
+			if (mafs.find("#category_filter").val() !== null) {
+				filter_option = mafs.find("#category_filter").val();
+			}
+
+			let filter_input = '';
+			if (mafs.find("#filter_input_id").val() !== null) {
+				filter_input = mafs.find("#filter_input_id").val();
+			}
 
 			let data = {
 				action: "member_ajax_action",
-				search: search, 
+				search: search,
 				page: activepage,
 				orderby: orderby,
 				type: type,
-				//orderbydate: orderbydate,
+				filter_option: filter_option,
+				filter_input: filter_input,
+
 			}
 
 			$.ajax({
@@ -156,9 +359,11 @@
 					mafs.find("#the-member-list").empty();
 					mafs.find("#pagination").empty();
 					mafs.find(".displaying-num").empty();
+					mafs.find("#ajax_error_response").empty();
 
 					if (result.totalrows == 0) {
 						console.log('No data');
+						mafs.find("#ajax_error_response").append('No Records Found');
 					}
 					else if (response) {
 
@@ -196,9 +401,10 @@
 											<td class="author column-author" data-colname="Author">'+ response[i]['first_name'] + ' ' + response[i]['last_name'] + ' </td>  \
 											<td class="categories column-categories" data-colname="Categories"><a class="" href="">'+ response[i]['user_email'] + ' </a></td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['user_registered'] + ' </td> \ \
+											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership_expiry_date'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['primary_phone_no'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" href="?page=member-view&id='+ response[i]['member_id'] +'"></a><a class="vers dashicons-before dashicons-edit"></a> </td> \
+											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" href="?page=member-view&id='+ response[i]['member_id'] + '&name=' + response[i]['first_name'] + '"></a><a class="vers dashicons-before dashicons-edit"></a> </td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
@@ -226,63 +432,16 @@
 
 	});
 
-	$(function() {
+	$(function () {
 
 		// $(document).on('click', '#mem_detail', function (e) {
 		// 	alert('clicked');
 		// 	e.preventDefault();
 		// 	MembersData();
 		// });
-		
+
 	});
 
 })(jQuery);
 
 
-// let gallerySortable, gallerySortableInit, sortIt, clearAll, w, desc = false;
-
-// 	gallerySortableInit = function() {
-// 		gallerySortable = $('#media-items').sortable( {
-// 			items: 'div.media-item',
-// 			placeholder: 'sorthelper',
-// 			axis: 'y',
-// 			distance: 2,
-// 			handle: 'div.filename',
-// 			stop: function() {
-// 				// When an update has occurred, adjust the order for each item.
-// 				let all = $('#media-items').sortable('toArray'), len = all.length;
-// 				$.each(all, function(i, id) {
-// 					let order = desc ? (len - i) : (1 + i);
-// 					$('#' + id + ' .menu_order input').val(order);
-// 				});
-// 			}
-// 		} );
-// 	};
-
-// 	sortIt = function() {
-// 		let all = $('.menu_order_input'), len = all.length;
-// 		all.each(function(i){
-// 			let order = desc ? (len - i) : (1 + i);
-// 			$(this).val(order);
-// 		});
-// 	};
-
-// 	clearAll = function(c) {
-// 		c = c || 0;
-// 		$('.menu_order_input').each( function() {
-// 			if ( this.value === '0' || c ) {
-// 				this.value = '';
-// 			}
-// 		});
-// 	};
-
-// 	$('#asc').on( 'click', function( e ) {
-// 		e.preventDefault();
-// 		desc = false;
-// 		sortIt();
-// 	});
-// 	$('#desc').on( 'click', function( e ) {
-// 		e.preventDefault();
-// 		desc = true;
-// 		sortIt();
-// 	});

@@ -108,15 +108,14 @@ class Osa_Membership_Admin
 	{
 		add_menu_page('Members', 'Members', 'manage_options', 'members', array($this, 'render_member_menu_page'), 'dashicons-groups');
 
-		add_submenu_page( 
-			'members'           
-		  , 'Member View'    
-		  , null   
-		  , 'administrator' 
-		  , 'member-view'  
-		  , array($this, 'render_member_view_page') 
-	  );
-	  
+		add_submenu_page(
+			'members',
+			'Member View',
+			null,
+			'administrator',
+			'member-view',
+			array($this, 'render_member_view_page')
+		);
 	}
 
 	/**
@@ -133,21 +132,21 @@ class Osa_Membership_Admin
 	 */
 	public function render_member_view_page()
 	{
-		if(isset($_GET['id'])){
+		if (isset($_GET['id'])) {
 
 			global $wpdb;
 			$member_id = $_GET['id'];
-
+			$member_name = $_GET['name'];
 			// $query = "SELECT * FROM `wp_member_user`";
 			// $query .= " WHERE member_id LIKE $member_id ";
 			// $memberData = $wpdb->get_results($query);
 			// echo "<pre>";print_r($memberData);die;
 			//queryto get memebr info from wp_member_user and wp_user
-			$memerData=array();
+			$memerData = array();
 			//$memerData['main_member_info']['fiirst']= $data;
 			//$memerData['other_member_info']['spousse_first']= ;
-			
-			$query = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
+
+			$queryex = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
             wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no, 
 			wp_member_other_info.souvenir, wp_member_other_info.city, wp_countries.country, wp_states.state,  
             t2.first_name as partner_first_name, t2.last_name as partner_last_name, wp_membership_type.membership, wp_chapters.name as chapter_name FROM `wp_users` 
@@ -156,41 +155,58 @@ class Osa_Membership_Admin
             INNER JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
             LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
             INNER JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_membership.membership_type_id
-			INNER JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
-			INNER JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
-			INNER JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
-
-
+			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
+			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			LEFT JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
 			";
 
-			$query .= " WHERE t1.member_id = $member_id ";
+			$query = "SELECT
+			DATE_FORMAT(
+				wp_users.user_registered,
+				'%d-%m-%Y'
+			) AS user_registered,
+			wp_users.user_email,
+			t1.first_name,
+			t1.last_name,
+			t1.member_id,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+			DATE_FORMAT(
+				wp_member_other_info.membership_expiry_date,
+				'%d-%m-%Y'
+			) AS membership_expiry_date,
+			wp_membership_type.membership, wp_member_other_info.souvenir, wp_member_other_info.city, wp_countries.country, wp_states.state, wp_chapters.name as chapter_name
+			FROM
+			`wp_users`
+			INNER JOIN wp_member_user t1 ON
+			t1.user_id = wp_users.ID
+			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
+			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
+			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			LEFT JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
+			
+			";
 
-			$query .= " GROUP by t1.member_id ORDER BY t1.member_id ASC ";
+			$query .= " WHERE t1.member_id = $member_id AND t1.first_name = '$member_name' ";
+	
+			// $query .= " GROUP by t1.member_id";
 
 			$data = $wpdb->get_results($query);
 
-			// $parents = $wpdb->get_results(
-			// "SELECT  * FROM wp_member_user 
-			// where member_id = $member_id AND parent_id !=0 AND type = 'parent';");
-
 			$parents = $wpdb->get_results(
-				"SELECT  t1.first_name, t1.last_name, t2.user_email FROM wp_member_user t1
+				"SELECT  t1.first_name, t1.last_name, t1.parent_id, t2.user_email FROM wp_member_user t1
 				LEFT JOIN wp_users t2 ON  t1.user_id = t2.ID
 				where t1.member_id = $member_id 
-				AND t1.parent_id !=0 AND t1.type = 'parent';");
+				AND t1.type = 'parent' AND t1.first_name != '$member_name';"
+			);
 
 			$childs = $wpdb->get_results("SELECT  * FROM wp_member_user where member_id = $member_id AND parent_id !=0 AND type = 'child';");
 
-			// $test = $wpdb->get_results("SELECT t1.amount, t1.date, t2.description FROM wp_member_donation t1 
-			// LEFT JOIN wp_donation_type t2 ON t1.donation_type_id = t2.donation_type_id
-			// WHERE member_id = $member_id ;");
+			//$test = json_encode($parents);
 
-			//$test = json_encode($test);
+			//$data = json_encode($data);
 
-			// $data = json_encode($data);
-			
 			wp_reset_query();
-
 		}
 
 		include_once(plugin_dir_path(__FILE__) . 'partials/member_view.php');
@@ -221,41 +237,96 @@ class Osa_Membership_Admin
 			$search = $_GET['search'];
 			$orderby = $_GET['orderby'];
 			$type = $_GET['type'];
+			$filter_option = $_GET['filter_option'];
+			$filter_input = $_GET['filter_input'];
 
-			$query = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
-            wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
-            t2.first_name as partner_first_name, t2.last_name as partner_last_name, wp_membership_type.membership FROM `wp_users` 
-            INNER JOIN wp_member_user t1 ON t1.user_id = wp_users.ID
-            LEFT JOIN wp_member_user t2 ON t2.member_id = t1.member_id and t2.type='parent'
-            INNER JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
-            LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
-            INNER JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_membership.membership_type_id 
-            WHERE 1 ";
+			//need to remove
+			// $queryx = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
+			// wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+			// t2.first_name as partner_first_name, t2.last_name as partner_last_name, wp_membership_type.membership FROM `wp_users` 
+			// INNER JOIN wp_member_user t1 ON t1.user_id = wp_users.ID
+			// LEFT JOIN wp_member_user t2 ON t2.member_id = t1.member_id and t2.type='parent'
+			// LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+			// LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
+			// INNER JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_membership.membership_type_id 
+			// WHERE 1 ";
 
-			if(!empty($search)){
-				$query .= " AND wp_users.user_registered LIKE '%$search%' 
+			$query = "SELECT
+			DATE_FORMAT(
+				wp_users.user_registered,
+				'%d-%m-%Y'
+			) AS user_registered,
+			wp_users.user_email,
+			t1.first_name,
+			t1.last_name,
+			t1.member_id,
+			t1.parent_id,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+			DATE_FORMAT(
+				wp_member_other_info.membership_expiry_date,
+				'%d-%m-%Y'
+			) AS membership_expiry_date,
+			-- t2.first_name as partner_first_name, t2.last_name as partner_last_name, 
+			wp_membership_type.membership 
+			FROM
+			`wp_users`
+			INNER JOIN wp_member_user t1 ON
+			t1.user_id = wp_users.ID
+			-- LEFT JOIN wp_member_user t2 ON t2.member_id = t1.member_id and t2.type='parent'
+			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+			-- LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
+			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
+			WHERE
+			t1.type != 'child'";
+
+            /**
+			 * Proceed for search
+			 */
+			if (!empty($search)) {
+				$query .= "AND ( wp_users.user_registered LIKE '%$search%' 
 				           OR wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
 						   OR t1.first_name LIKE '%$search%' 
 						   OR t1.last_name LIKE '%$search%'
 						   OR wp_member_other_info.primary_phone_no LIKE '%$search%' 
-						   OR wp_membership_type.membership LIKE '%$search%'
+						   OR wp_membership_type.membership LIKE '%$search%' )
 						   ";
+			} 
+			/**
+			 * Proceed for filters
+			 */
+			else if(!empty($filter_option) && !empty($filter_input)){
+				if($filter_option == "country"){
+					$query .= "AND wp_member_other_info.country_id = $filter_input ";
+				} 
+				else if($filter_option == "state"){
+					$query .= "AND wp_member_other_info.state_id = $filter_input ";
+				}
+				else if($filter_option == "city"){
+					$query .= "AND wp_member_other_info.city LIKE '%$filter_input%' ";
+				}
+				// else if($filter_option == "chapter"){
+				// 	$query .= "AND wp_member_other_info.city LIKE '%$filter_input%' ";
+				// }
+				// else if($filter_option == "membership"){
+				// 	$query .= "AND wp_member_other_info.membership_type LIKE '%$filter_input%' ";
+				// }
 			}
 
-			if(!empty($type)){
+			/**
+			 * Proceed for sorting
+			 */
+			if (!empty($type)) {
 
-				$query .= " GROUP by t1.member_id ORDER BY ".$type." ".$orderby." ";
+				$query .= " ORDER BY " . $type . " " . $orderby . " ";
+			} else {
 
-			}else{
-
-				$query .= " GROUP by t1.member_id ORDER BY t1.member_id ".$orderby." ";
-
+				$query .= " ORDER BY t1.member_id " . $orderby . " ";
 			}
 
-				//$query .= " GROUP by t1.member_id ORDER BY wp_users.user_registered DESC";
+			//$query .= " GROUP by t1.member_id ORDER BY wp_users.user_registered DESC";
 
-			
+
 
 			/**
 			 * pagination 
@@ -276,8 +347,8 @@ class Osa_Membership_Admin
 			 */
 			$query .=  " LIMIT " . $page_first_result . ',' . $results_per_page;
 
-// echo $query;
-// die;
+			// echo $query;
+			// die;
 			$data = $wpdb->get_results($query);
 
 			wp_reset_query();
@@ -288,5 +359,100 @@ class Osa_Membership_Admin
 		}
 		wp_die();
 	}
+
+	public function country_ajax_action(){
+        header("Content-Type: application/json");
+		global $wpdb;
+
+		if (isset($_GET['country'])) {
+
+			$query = "SELECT * from wp_countries ORDER BY country_type_id ASC";
+
+			// echo $query;
+			// die;
+			$data = $wpdb->get_results($query);
+            //echo $data;
+			wp_reset_query();
+
+			echo json_encode($data);
+			
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
+
+	public function state_ajax_action(){
+        header("Content-Type: application/json");
+		global $wpdb;
+
+		if (isset($_GET['state'])) {
+
+			//$country = $_GET['country'] ;
+
+			$query = "SELECT * from wp_states ";
+
+			// if(!empty($country)){
+			// 	$query .= " WHERE country_type_id = ".$country." ";
+			// }
+
+			$query .= " ORDER BY state_type_id ASC ";
+
+			$data = $wpdb->get_results($query);
+            //echo $data;
+			wp_reset_query();
+
+			echo json_encode($data);
+			
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
+
+	public function chapter_ajax_action(){
+        header("Content-Type: application/json");
+		global $wpdb;
+
+		if (isset($_GET['chapter'])) {
+
+			$query = "SELECT * from wp_chapters ORDER BY chapter_type_id ASC";
+
+			// echo $query;
+			// die;
+			$data = $wpdb->get_results($query);
+            //echo $data;
+			wp_reset_query();
+
+			echo json_encode($data);
+			
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
+
+	public function membership_ajax_action(){
+        header("Content-Type: application/json");
+		global $wpdb;
+
+		if (isset($_GET['membership'])) {
+
+			$query = "SELECT * from wp_membership_type ORDER BY membership_type_id ASC";
+
+			// echo $query;
+			// die;
+			$data = $wpdb->get_results($query);
+            //echo $data;
+			wp_reset_query();
+
+			echo json_encode($data);
+			
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
+
 
 }

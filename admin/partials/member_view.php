@@ -15,7 +15,7 @@
 
 <div class="wrap">
     <!-- <?php echo $data; ?> -->
-    <?php echo $test; ?>
+    <!-- <?php echo $test; ?> -->
 
 
 
@@ -94,7 +94,7 @@
 
                                             <?php if (!empty($parents)) { ?>
                                                 <tr class="border-top">
-                                                    <td class="td-lable">Parent(s)</td>
+                                                    <td class="td-lable">Partner</td>
                                                     <td>
                                                         <?php foreach ($parents as $parent) { ?>
                                                             <?php echo $parent->first_name . ' ' . $parent->last_name; ?>
@@ -102,7 +102,7 @@
                                                     </td>
                                                 </tr>
                                                 <tr>
-                                                    <td class="td-lable">Parent Email</td>
+                                                    <td class="td-lable">Partner Email</td>
                                                     <td>
                                                         <?php foreach ($parents as $parent) { ?>
                                                             <?php echo $parent->user_email; ?>
@@ -111,6 +111,7 @@
                                                 </tr>
 
                                             <?php }
+
                                             if (!empty($childs)) {
                                             ?>
                                                 <tr class="border-top">
