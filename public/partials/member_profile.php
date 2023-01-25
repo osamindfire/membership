@@ -1,5 +1,6 @@
 <?php 
 ?> 
+
 <div class="et_pb_inner_shadow form_background">
 <div class="et_pb_row et_pb_row_0">
 <div class="et_pb_contact">
@@ -19,26 +20,14 @@
         </p>
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="et_pb_contact_form_label">Email</label>
-            <input type="email" name="email"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Email" value="<?php if(!empty($_REQUEST['email'])) { echo $_REQUEST['email']; } ?>">
-            <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
-        </p>
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="et_pb_contact_form_label">Mobile No.</label>
-            <input type="text" name="primary_mobile_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Mobile No." value="<?php if(!empty($_REQUEST['primary_mobile_no'])) { echo $_REQUEST['primary_mobile_no']; } ?>">
+            <label for="" class="et_pb_contact_form_label">Primary Mobile No.</label>
+            <input type="text" name="primary_mobile_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Primary Mobile No." value="<?php if(!empty($_REQUEST['primary_mobile_no'])) { echo $_REQUEST['primary_mobile_no']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['primaryMobileNo'])) { echo $errors['primaryMobileNo']; } ?></span>
         </p>
-        
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="et_pb_contact_form_label">Password</label>
-            <input type="password" name="password"  class="input <?php if(!empty($errors['password'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Password" value="">
-            <span class="error_messages"><?php if(!empty($errors['password'])) { echo $errors['password']; } ?></span>
-        </p>
-
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="et_pb_contact_form_label">Confirm Password</label>
-            <input type="password" name="confirm_password"  class="input <?php if(!empty($errors['confirmPassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Confirm Password" value="">
-            <span class="error_messages"><?php if(!empty($errors['confirmPassword'])) { echo $errors['confirmPassword']; } ?></span>
+            <label for="" class="et_pb_contact_form_label">Secondary Mobile No.</label>
+            <input type="text" name="primary_mobile_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Secondary Mobile No." value="<?php if(!empty($_REQUEST['primary_mobile_no'])) { echo $_REQUEST['primary_mobile_no']; } ?>">
+            <span class="error_messages"><?php if(!empty($errors['primaryMobileNo'])) { echo $errors['primaryMobileNo']; } ?></span>
         </p>
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
@@ -51,34 +40,6 @@
             <label for="" class="et_pb_contact_form_label">Spouse Last Name</label>
             <input type="text" name="spouse_last_name"  class="input <?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?>" data-required_mark="required" placeholder="Spouse Last Name" value="<?php if(!empty($_REQUEST['spouse_last_name'])) { echo $_REQUEST['spouse_last_name']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?></span>
-        </p>
-
-        <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half" data-type="email">
-            <label for="" class="et_pb_contact_form_label">Spouse Email</label>
-            <input type="email" name="spouse_email"  class="input <?php if(!empty($errors['spouseEmail'])) { echo "et_contact_error"; } ?>" data-required_mark="required"  data-field_type="email" placeholder="Spouse Email" value="<?php if(!empty($_REQUEST['spouse_email'])) { echo $_REQUEST['spouse_email']; } ?>">
-            <span class="error_messages"><?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?></span>
-        </p>
-        
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="et_pb_contact_form_label">Spouse Password</label>
-            <input type="password" name="spouse_password"  class="input <?php if(!empty($errors['spousePassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Password" value="">
-            <span class="error_messages"><?php if(!empty($errors['spousePassword'])) { echo $errors['spousePassword']; } ?></span>
-        </p>
-
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="et_pb_contact_form_label">Spouse Confirm Password</label>
-            <input type="password" name="spouse_confirm_password"  class="input <?php if(!empty($errors['confirmSpousePassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Confirm Password" value="">
-            <span class="error_messages"><?php if(!empty($errors['confirmSpousePassword'])) { echo $errors['confirmSpousePassword']; } ?></span>
-        </p>
-
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="et_pb_contact_form_label">Child First Name</label>
-            <input type="text" name="child_first_name"  class="input"  placeholder="Child First Name" value="<?php if(!empty($_REQUEST['child_first_name'])) { echo $_REQUEST['child_first_name']; } ?>">
-        </p>
-
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="et_pb_contact_form_label">Child Last Name</label>
-            <input type="text" name="child_last_name"  class="input" placeholder="Child Last Name" value="<?php if(!empty($_REQUEST['child_last_name'])) { echo $_REQUEST['child_last_name']; } ?>">
         </p>
                 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last">
@@ -120,22 +81,18 @@
             </select>
         </p>
         
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last" data-type="checkbox">
-				<span class="et_pb_contact_field_options_wrapper">
-						<span class="et_pb_contact_field_options_list"><span class="et_pb_contact_field_checkbox">
-							<input type="checkbox" id="et_pb_contact_field_7_6_0" name="agree"class="input" value="yes" <?php if(!empty($_REQUEST['agree']) && $_REQUEST['agree'] == 'yes') { echo 'checked'; } ?>>
-							<label for="et_pb_contact_field_7_6_0"><i></i><a href="#" target="_blank">I acknowledge the Statement of Rights</a></''/span>
-				</span>
-                <span class="error_messages"><?php if(!empty($errors['agree'])) { echo $errors['agree']; } ?></span>
-		</p>
+        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
+            <label for="" class="et_pb_contact_form_label">Child First Name</label>
+            <input type="text" name="child_first_name"  class="input"  placeholder="Child First Name" value="<?php if(!empty($_REQUEST['child_first_name'])) { echo $_REQUEST['child_first_name']; } ?>">
+        </p>
+
+        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
+            <label for="" class="et_pb_contact_form_label">Child Last Name</label>
+            <input type="text" name="child_last_name"  class="input" placeholder="Child Last Name" value="<?php if(!empty($_REQUEST['child_last_name'])) { echo $_REQUEST['child_last_name']; } ?>">
+        </p>
         <?php wp_nonce_field("register","register_form"); ?>
-        <div style="margin-left:22px;" class="g-recaptcha" 
-                data-sitekey="<?= GOOGLE_CAPTCHA_SITE_KEY ?>">
-            </div>
-        <span class="error_messages"><?php if(!empty($errors['googlecaptcha'])) { echo $errors['googlecaptcha']; } ?></span>
-            
         <div class="et_contact_bottom_container">
-		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Register</button>
+		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Update</button>
 		</div>
 
         

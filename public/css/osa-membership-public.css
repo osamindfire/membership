@@ -161,7 +161,41 @@
     color: #32a852;
 }
 
+th{
+    text-align: center;
+}
+td{
+    text-align: center;
+}
 
+.vertical_line{
+    border-right: 1px solid #eeeeef;
+}
+
+
+
+.columns {
+    float: left;
+    width: 33.3%;
+    padding: 8px;
+  }
+  
+  .price:hover {
+    box-shadow: 0 8px 12px 0 #3ea3f2
+  }
+  
+  .price .header {
+    background-color: #3ea3f2;
+    color: white;
+    font-size: 25px;
+  }
+  
+  
+  @media only screen and (max-width: 600px) {
+    .columns {
+      width: 100%;
+    }
+  }
 /* 
 @keyframes print {
     0% {
@@ -202,3 +236,56 @@
         -ms-transform: translateY(0%);
     }
 } */
+
+.page-numbers{
+    font-size: 17px;
+    border: 1px solid deepskyblue;
+    padding: 8px;
+  }
+
+/*   table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+    border: 1px solid #ddd;
+  }
+  
+  th, td {
+    text-align: left;
+    padding: 8px;
+  } */
+  
+  tr:nth-child(even){background-color: #f2f2f2}
+  @media screen and (max-width: 600px) {
+    .table {width:100%;}
+    .thead {display: none;}
+    tr:nth-of-type(2n) {background-color: inherit;}
+    tr td:first-child {background: #f0f0f0; font-weight:bold;font-size:1.3em;}
+    tbody td {display: block;  text-align:center;}
+    tbody td:before { 
+        content: attr(data-th); 
+        display: block;
+        text-align:center;  
+    }
+}
+
+.vertical-menu {
+    width: 150;
+  }
+  
+  .vertical-menu a {
+    background-color: #eee;
+    color: black;
+    display: block;
+    padding: 12px;
+    text-decoration: none;
+  }
+  
+  .vertical-menu a:hover {
+    background-color: #ccc;
+  }
+  
+  .vertical-menu a.active {
+    background-color: #04AA6D;
+    color: white;
+  }

@@ -1,10 +1,4 @@
-<?php
-get_header();
-?>
-
-<?php
-get_header();
-?>
+<?php ?>
 
 <div class="et_pb_with_background et_pb_inner_shadow container">
    
@@ -22,7 +16,7 @@ get_header();
                     </div>
                     <div class="order-details">
 						<?php if(!empty($_SESSION['user_id'])){ ?>
-						<a class="et_pb_button et_pb_button_0 et_pb_bg_layout_light" href="<?= home_url('membership'); ?>" data-icon="$">Try Again</a>
+						<a class="et_pb_button et_pb_button_0 et_pb_bg_layout_light" href="<?= home_url('membership-plan'); ?>" data-icon="$">Try Again</a>
 						<?php } ?>
                     </div>
                 </div>
@@ -31,8 +25,4 @@ get_header();
 				</div>
             </div>
         </div>
-		
-    </div>
-
-
-	<?php get_footer(); ?>
+</div>

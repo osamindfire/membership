@@ -5,7 +5,10 @@
 }
 </style>
 <?php 
+$randomPassword = $data['random_password'];
 $memberName = isset($data['user_login']) ? $data['user_login'] : '';
+$memberEmail = isset($data['user_email']) ? $data['user_email'] : '';
+
 $emailBody='<!doctype html>
 		<html>
 		  <head>
@@ -176,8 +179,17 @@ $emailBody='<!doctype html>
 						  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 							  <td>
-							  <p>Welcome <strong>'.$memberName.'</strong>, to OSA directory.You will be able to search other Odia members and manage several activities with this access.<br>Good luck!</p>
+								<p>Hi <strong>'.$memberName.'</strong>,</p>
+								<p>Your request for the new password has been processed. The new password for <strong>'.$memberEmail.' </strong> is <strong>'.$randomPassword .'</strong> </p>
+                                <p>The steps to change password are:<br>
+								1. Login to <a target="_blank" href="'.HOME_URL.'/login">'.HOME_URL.'/login</a><br>
+								2. Click on your name to go to the details.<br>
+								3. Click on Password edit icon.<br>
+								4. Enter your new password and the verify password.<br>
+								5. Click Update Password button.
+								</p>
 							  </td>
+							 
 							</tr>
 							<tr>
 							<td><p>If you have any queries, feel free to <a target="_blank" href="'.CONTACT_US_URL.'">Contact Us</a></p></td>
