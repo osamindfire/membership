@@ -135,7 +135,8 @@ class Osa_Membership_Admin
 		if (isset($_GET['id'])) {
 
 			global $wpdb;
-			$member_id = $_GET['id'];
+			$member_id = $_GET['mid'];
+			$id = $_GET['id'];
 			$member_name = $_GET['name'];
 			// $query = "SELECT * FROM `wp_member_user`";
 			// $query .= " WHERE member_id LIKE $member_id ";
@@ -187,9 +188,12 @@ class Osa_Membership_Admin
 			
 			";
 
-			$query .= " WHERE t1.member_id = $member_id AND t1.first_name = '$member_name' ";
+			$query .= " WHERE t1.id = $id ";
 	
 			// $query .= " GROUP by t1.member_id";
+
+			// echo $query;
+			// die;
 
 			$data = $wpdb->get_results($query);
 
@@ -197,7 +201,7 @@ class Osa_Membership_Admin
 				"SELECT  t1.first_name, t1.last_name, t1.parent_id, t2.user_email FROM wp_member_user t1
 				LEFT JOIN wp_users t2 ON  t1.user_id = t2.ID
 				where t1.member_id = $member_id 
-				AND t1.type = 'parent' AND t1.first_name != '$member_name';"
+				AND t1.type = 'parent' AND t1.id != '$id';"
 			);
 
 			$childs = $wpdb->get_results("SELECT  * FROM wp_member_user where member_id = $member_id AND parent_id !=0 AND type = 'child';");
@@ -257,6 +261,7 @@ class Osa_Membership_Admin
 				'%d-%m-%Y'
 			) AS user_registered,
 			wp_users.user_email,
+			t1.id,
 			t1.first_name,
 			t1.last_name,
 			t1.member_id,
@@ -423,7 +428,16 @@ class Osa_Membership_Admin
 
 		if (isset($_GET['chapter'])) {
 
-			$query = "SELECT * from wp_chapters ORDER BY chapter_type_id ASC";
+			$state = $_GET['state'] ;
+
+			$query = "SELECT t1.* from wp_chapters t1
+			          INNER JOIN wp_states t2 ON t1.chapter_type_id = t2.chapter_type_id " ;
+
+			if(!empty($state)){
+				$query .= " WHERE t2.state_type_id = ".$state." ";
+			}
+
+			$query .= " GROUP BY t1.chapter_type_id ORDER BY chapter_type_id ASC ";
 
 			// echo $query;
 			// die;

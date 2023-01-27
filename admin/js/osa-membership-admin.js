@@ -173,17 +173,21 @@
 				"Membership" : "membership"
 			}
 
-			let form_el_count = $("#members-filter").children().length;
-			//console.log("l-" + form_el_count);
+			//let form_el_count = $("#members-filter").children().length;
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
+			
 
-			for (let i = 0; i < form_el_count; i++) {
-				let option = $("#category_filter_" + i).find(":selected").text();
-                //console.log(option);
-				delete filter_opt_dict[option];
+			for (let i = 0; i <= form_el_count; i++) {
+				if ($("#members-filter").find("#category_filter_"+i).length) {
+					let option = $("#category_filter_" + i).find(":selected").text();
+					//console.log(option);
+					delete filter_opt_dict[option];
+				}
 			}
 
 			console.log(filter_opt_dict);
-
+            
+			if( Object.keys(filter_opt_dict).length !== 0){
 			let html = '<div class="tablenav top"> \
 						<div class="alignleft actions"> \
 							<span id="filter_input_area_'+ add_index + '"> \
@@ -201,29 +205,40 @@
 						<br class="clear"> \
 					</div>' ;
 
-
-			// $('#members-filter').append('<div class="tablenav top"> \
-			// 				<div class="alignleft actions"> \
-			// 					<span id="filter_input_area_'+ add_index + '"> \
-			// 						<select name="filter_option" id="category_filter_'+ add_index + '" data-filter-id="' + add_index + '" class="postform member_filter_option"> \
-			// 							<option value="0" disabled selected>Select</option> \
-			// 							<option class="level-0" value="country">Country</option> \
-			// 							<option class="level-0" value="state">State</option> \
-			// 							<option class="level-0" value="city">City</option> \
-			// 							<option class="level-0" value="chapter">Chapter</option> \
-			// 							<option class="level-0" value="membership">Membership</option> \
-			// 						</select> \
-			// 					</span> \ \
-			// 					<input type="button" name="" id="removeBtn" class="button removeBtn" value="Remove"> \
-			// 				</div> \
-			// 				<br class="clear"> \
-			// 			</div>');
-
 			$('#members-filter').append(html);
+			}
 
 			add_index++;
 		});
 
+		$("body").on('change', '.country_input', function () {
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
+
+			for (let i = 0; i <= form_el_count; i++) {
+				if ($("#members-filter").find("#category_filter_"+i).length) {
+					if($("#members-filter").find("#category_filter_" + i).val() == 'state'){
+						$("#members-filter").find('#filter_input_id_' + i).remove();
+						populateState(i);
+					}
+			    }
+			}
+		});
+
+		$("body").on('change', '.state_input', function () {
+			// alert('statein');
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id') ;
+
+			for (let i = 0; i <= form_el_count; i++) {
+				if ($("#members-filter").find("#category_filter_"+i).length) {
+					if($("#members-filter").find("#category_filter_" + i).val() == 'chapter'){
+						$("#members-filter").find('#filter_input_id_' + i).remove();
+						populateChapter(i);
+					}
+				}
+			}
+		});
+
+		// Remove row from multiple filter
 		$("body").on('click', '.removeBtn', function () {
 			$(this).parent().parent().remove();
 		});
@@ -232,8 +247,6 @@
 
 		filterForm.submit(function (e) {
 			e.preventDefault();
-
-
 			//alert("fired");
 			filteredData(e);
 		});
@@ -253,7 +266,7 @@
 
 					if (response) {
 
-						let html = '<select name="filter_input" id="filter_input_id_' + id + '" class="postform">'
+						let html = '<select name="filter_input" id="filter_input_id_' + id + '" class="postform country_input">'
 
 						for (let i = 0; i < response.length; i++) {
 							html += '<option class="level-0" value="' + response[i]['country_type_id'] + '">' + response[i]['country'] + '</option>';
@@ -275,10 +288,20 @@
 		function populateState(id) {
 			console.log('hii state');
 
-			let country = ''
-			if (id !== 0 && $("body").find("#category_filter_" + (id - 1)).val() === 'country') {
-				country = $("body").find("#filter_input_id_" + (id - 1)).val();
+			let country = '' ;
+
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id'); 
+
+			for (let i = 0; i <= form_el_count; i++) {
+				if ($("#members-filter").find("#category_filter_"+i).length) {
+					if($("#members-filter").find("#category_filter_" + i).val() == 'country'){
+						country = $("#members-filter").find('#filter_input_id_' + i).val();
+					}
+				}
 			}
+			// if (id !== 0 && $("body").find("#category_filter_" + (id - 1)).val() === 'country') {
+			// 	country = $("body").find("#filter_input_id_" + (id - 1)).val();
+			// }
 
 			let data = {
 				action: "state_ajax_action",
@@ -293,7 +316,7 @@
 
 					if (response) {
 
-						let html = '<select name="filter_input" id="filter_input_id_' + id + '" class="postform">'
+						let html = '<select name="filter_input" id="filter_input_id_' + id + '" class="postform state_input">'
 
 						for (let i = 0; i < response.length; i++) {
 							html += '<option class="level-0" value="' + response[i]['state_type_id'] + '">' + response[i]['state'] + '</option>';
@@ -314,9 +337,22 @@
 		function populateChapter(id) {
 			console.log('hii chapter');
 
+			let state = '' ;
+
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
+
+			for (let i = 0; i <= form_el_count; i++) {
+				if ($("#members-filter").find("#category_filter_"+i).length) {
+					if($("#members-filter").find("#category_filter_" + i).val() == 'state'){
+						state = $("#members-filter").find('#filter_input_id_' + i).val();
+					}
+				}
+			}
+
 			let data = {
 				action: "chapter_ajax_action",
 				chapter: 'yes',
+				state: state,
 			}
 
 			$.ajax({
@@ -396,7 +432,7 @@
 			}
 
 			//for filter
-			let form_el_count = $("#members-filter").children().length;
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id') ;
 			console.log("l-" + form_el_count);
 
 			let filter_option = [];
@@ -489,7 +525,7 @@
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership_expiry_date'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['primary_phone_no'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&id='+ response[i]['member_id'] + '&name=' + response[i]['first_name'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit"></a> </td> \
+											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit"></a> </td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
@@ -517,15 +553,6 @@
 
 	});
 
-	$(function () {
-
-		// $(document).on('click', '#mem_detail', function (e) {
-		// 	alert('clicked');
-		// 	e.preventDefault();
-		// 	MembersData();
-		// });
-
-	});
 
 })(jQuery);
 

@@ -63,7 +63,7 @@
                 <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">
                 <input type="button" name="" id="add_more_criteria" class="button" value="Add More Criteria">
 
-                <a class="dashicons-before dashicons-update " title="Reload this page" href=""></a>
+                <a class="dashicons-before dashicons-update vers" title="Reload this page" href=""></a>
 
 
             </div>
