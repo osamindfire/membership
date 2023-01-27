@@ -119,7 +119,7 @@ class Osa_Membership_Public
 		if (!isset($_SESSION)) {
 			session_start();
 		}
-		if(stristr($_SERVER['REQUEST_URI'],'logout'))
+		if(stristr($_SERVER['REQUEST_URI'],'logout') && !current_user_can( 'administrator' ))
 		{
 			wp_logout();
 			unset($_SESSION['user_id']);
@@ -141,7 +141,7 @@ class Osa_Membership_Public
 	*/
 	public function membershipPlan()
 	{
-		if (empty($_SESSION['user_id'])) {
+		if (!empty($_SESSION['user_id'])) {
 		global $wpdb, $user_ID;
 		$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 ");
 
@@ -343,7 +343,7 @@ class Osa_Membership_Public
 
 			if (is_wp_error($user_verify)) {
 				$errors = $user_verify->errors;
-				$errors['incorrect_password'][0]= 'The password you entered for the email address naveenb@mindfiresolutions.com is incorrect.';
+				$errors['incorrect_password'][0]= 'The password you entered for the email address '.$username.' is incorrect.';
 			} else {
 				wp_set_current_user($user_verify->ID);
 				$_SESSION['user_id']=$user_verify->ID;
