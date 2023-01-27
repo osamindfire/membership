@@ -19,7 +19,7 @@
 
                           }else { ?>
 
-                                <table class="table et_pb_with_background et_pb_inner_shadow price" style="width: 100%">
+                                <table class="table et_pb_with_background et_pb_inner_shadow price" style="width: auto">
                                 <thead class="thead">
                                   <tr class="et_pb_pricing_heading">
                                   <th class="text-center vertical_line" width="10%">ID</th>
