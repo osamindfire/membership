@@ -276,6 +276,9 @@ class Osa_Membership_Admin
 			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 			-- LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
 			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
+			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
+			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+		
 			WHERE
 			t1.type != 'child'";
 
@@ -283,7 +286,7 @@ class Osa_Membership_Admin
 			 * Proceed for search
 			 */
 			if (!empty($search)) {
-				$query .= "AND ( wp_users.user_registered LIKE '%$search%' 
+				$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
 				           OR wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
 						   OR t1.first_name LIKE '%$search%' 
@@ -295,22 +298,26 @@ class Osa_Membership_Admin
 			/**
 			 * Proceed for filters
 			 */
-			else if(!empty($filter_option) && !empty($filter_input)){
-				if($filter_option == "country"){
-					$query .= "AND wp_member_other_info.country_id = $filter_input ";
-				} 
-				else if($filter_option == "state"){
-					$query .= "AND wp_member_other_info.state_id = $filter_input ";
+			if (!empty($filter_option) && !empty($filter_input)){
+
+				for ($i = 0; $i < count($filter_option); $i++) {
+
+					if($filter_option[$i] == "country"){
+						$query .= " AND wp_member_other_info.country_id = $filter_input[$i] ";
+					} 
+					else if($filter_option[$i] == "state"){
+						$query .= " AND wp_member_other_info.state_id = $filter_input[$i] ";
+					}
+					else if($filter_option[$i] == "city"){
+						$query .= " AND wp_member_other_info.city LIKE '%$filter_input[$i]%' ";
+					}
+					else if($filter_option[$i] == "chapter"){
+						$query .= " AND wp_chapters.chapter_type_id = $filter_input[$i] ";
+					}
+					else if($filter_option[$i] == "membership"){
+						$query .= " AND wp_member_other_info.membership_type = $filter_input[$i] ";
+					}
 				}
-				else if($filter_option == "city"){
-					$query .= "AND wp_member_other_info.city LIKE '%$filter_input%' ";
-				}
-				// else if($filter_option == "chapter"){
-				// 	$query .= "AND wp_member_other_info.city LIKE '%$filter_input%' ";
-				// }
-				// else if($filter_option == "membership"){
-				// 	$query .= "AND wp_member_other_info.membership_type LIKE '%$filter_input%' ";
-				// }
 			}
 
 			/**
@@ -388,13 +395,13 @@ class Osa_Membership_Admin
 
 		if (isset($_GET['state'])) {
 
-			//$country = $_GET['country'] ;
+			$country = $_GET['country'] ;
 
 			$query = "SELECT * from wp_states ";
 
-			// if(!empty($country)){
-			// 	$query .= " WHERE country_type_id = ".$country." ";
-			// }
+			if(!empty($country)){
+				$query .= " WHERE country_type_id = ".$country." ";
+			}
 
 			$query .= " ORDER BY state_type_id ASC ";
 
