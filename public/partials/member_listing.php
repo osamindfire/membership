@@ -43,7 +43,7 @@
                                     <td class="text-center vertical_line"><a href="<?php echo home_url('member-dashboard/member-info/'); ?>"><i class="fa fa-eye"style="font-size:20px;color:deepskyblue"></i></a></td>
                                   </tr>
                                   <?php }}else{?>
-                                    echo "<tr><td colspan='5'>No records found</td></tr>";
+                                    <tr><td colspan='7'>No records found</td></tr>
                                 <?php  } ?>
                                   </tbody>
                                 

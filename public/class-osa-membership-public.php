@@ -789,7 +789,7 @@ class Osa_Membership_Public
 		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 		LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
 		WHERE
-		t1.type != 'child'" );
+		t1.type != 'child' and wp_member_other_info.membership_type IS NOT NULL" );
 
 		$num_of_pages = ceil( $total / $limit );
 		
