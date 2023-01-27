@@ -3,21 +3,22 @@
 <?php } ?>
 <?php $sNo=1; foreach($membershipPlans as $plan) { ;?>
 <div class="columns">
-<table class="et_pb_with_background et_pb_inner_shadow price" style="width: 100%">
+<table class="et_pb_with_background et_pb_inner_shadow price">
       <thead>
         <tr class="et_pb_pricing_heading">
-        <td class="text-center header">
+        <td class="text-center header" style="background-color:#fff;color:black;">
           <?php if($plan->type == 1) { echo "Single"; }elseif($plan->type == 2){ echo "Family";} ?> 
-          <br><hr><strong> <?= $plan->membership;?> </strong>
+          <hr><?= $plan->membership;?> </strong>
         </td>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <td class="text-center"><h1>$ <?= $plan->fee; ?> (*)</h1></td>
+          <td class="text-center" style="background-color:#fff"><h1><strong>$<?= $plan->fee; ?></strong></h1></td>
         </tr>
         <tr>
-          <td class="text-center">
+          <td class="text-center" style="background-color:#fff">
+          <img src="<?= DIR_URL; ?>/plan.png" style="width:100px;"/>
           <form class="paypal" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
                 <input type="hidden" name="cmd" value="_xclick" />
                 <input type="hidden" name="no_note" value="1" />
@@ -26,7 +27,7 @@
                 <input type="hidden" name="membershhip_type_id" value="<?= $plan->membership_type_id;?>" />
                 <input type="hidden" name="currency_code" value="USD">
                 <input type="hidden" name="rm" value="2">
-                <button type="submit" class="et_pb_button" name="submit">Pay Now</button>
+                <button type="submit" class="et_pb_button" name="submit" style="background-color:#003772!important">Pay Now</button>
           </form>
           </td>
         </tr>

@@ -13,13 +13,13 @@
 <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
 <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         
-        <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
+        <p class=" et_pb_contact_field ui-sortable">
             <label for="" class="et_pb_contact_form_label">Username</label>
             <input type="text" name="username"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Username" value="<?php if(!empty($_REQUEST['username'])) { echo $_REQUEST['username']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
         </p>
         
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
+        <p class="et_pb_contact_field ui-sortable">
             <label for="" class="et_pb_contact_form_label">Password</label>
             <input type="password" name="password"  class="input <?php if(!empty($errors['password'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Password" value="">
             <span class="error_messages"><?php if(!empty($errors['password'])) { echo $errors['password']; } ?></span>

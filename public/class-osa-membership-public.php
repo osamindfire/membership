@@ -119,7 +119,7 @@ class Osa_Membership_Public
 		if (!isset($_SESSION)) {
 			session_start();
 		}
-		if(stristr($_SERVER['REQUEST_URI'],'logout'))
+		if(stristr($_SERVER['REQUEST_URI'],'logout') && !current_user_can( 'administrator' ))
 		{
 			wp_logout();
 			unset($_SESSION['user_id']);
@@ -141,7 +141,7 @@ class Osa_Membership_Public
 	*/
 	public function membershipPlan()
 	{
-		if (empty($_SESSION['user_id'])) {
+		if (!empty($_SESSION['user_id'])) {
 		global $wpdb, $user_ID;
 		$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 ");
 
@@ -231,7 +231,7 @@ class Osa_Membership_Public
 
 				$starttDate = date('Y-m-d');
 				$endDate = date('Y-m-d', strtotime($starttDate . ' + ' . $membershipPackage[0]->total_days . ' days'));
-
+				$membershipType =  $membershipPackage[0]->membership_type_id;
 				$wpdb->query($wpdb->prepare(
 					"INSERT INTO wp_member_membership (user_id, member_id, start_date, end_date, membership_type_id, comment , update_by,payment_info) VALUES ( %d, %d, %s, %s, %d, %s, %s,%s)",
 					array(
@@ -247,8 +247,8 @@ class Osa_Membership_Public
 				));
 				$wpdb->query(
 					$wpdb->prepare("UPDATE wp_member_other_info 
-					SET membership_expiry_date = %s 
-					WHERE member_id = %d", $endDate, $userInfo[0]->member_id)
+					SET membership_expiry_date = %s,membership_type = %d 
+					WHERE member_id = %d", $endDate,$membershipType, $userInfo[0]->member_id)
 				);
 				$subject="Payment successfully";
 				$adminPaymentSubject="New Member Payment successfully";
@@ -343,7 +343,7 @@ class Osa_Membership_Public
 
 			if (is_wp_error($user_verify)) {
 				$errors = $user_verify->errors;
-				$errors['incorrect_password'][0]= 'The password you entered for the email address naveenb@mindfiresolutions.com is incorrect.';
+				$errors['incorrect_password'][0]= 'The password you entered for the email address '.$username.' is incorrect.';
 			} else {
 				wp_set_current_user($user_verify->ID);
 				$_SESSION['user_id']=$user_verify->ID;
@@ -372,9 +372,12 @@ class Osa_Membership_Public
 				}
 			}
 		} else {
-
-			// No login details entered - you should probably add some more user feedback here, but this does the bare minimum  
-			//echo "Invalid login details"; 
+			if(is_user_logged_in())
+			{
+					$redirectTo = home_url() . '/member-dashboard';
+					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+					exit();
+			}
 		}
 		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/login.php');
@@ -420,7 +423,7 @@ class Osa_Membership_Public
 	{
 		if (isset($_POST['forgot_password_form']) && wp_verify_nonce($_POST['forgot_password_form'], 'forgot_password')) {
 			try {
-			$errors = '';
+			$errors = array();
 			$email = esc_sql($_POST['email']);
 			if (empty($email)) {
 				$errors['email'] = "Please enter a Email";
@@ -789,7 +792,7 @@ class Osa_Membership_Public
 		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 		LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
 		WHERE
-		t1.type != 'child'" );
+		t1.type != 'child' and wp_member_other_info.membership_type IS NOT NULL" );
 
 		$num_of_pages = ceil( $total / $limit );
 		
