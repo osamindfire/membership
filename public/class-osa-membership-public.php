@@ -130,6 +130,8 @@ class Osa_Membership_Public
 			wp_set_current_user($_SESSION['user_id']);
 		}
 		add_rewrite_endpoint('profile', EP_PERMALINK | EP_PAGES);
+		add_rewrite_endpoint('member-info', EP_PERMALINK | EP_PAGES);
+		
 		flush_rewrite_rules();
 	}
 
@@ -829,8 +831,50 @@ class Osa_Membership_Public
 
 	public function profile()
 	{
-		print_r($_POST);die;
+		global $wpdb, $user_ID;
+		$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
+		global $current_user;
+		$logged_user = wp_get_current_user();
+		$userInfo = $wpdb->get_results("SELECT
+		wp_users.*,
+		wp_member_other_info.*,
+		t1.*
+		FROM
+		`wp_users`
+		INNER JOIN wp_member_user t1 ON
+		t1.user_id = wp_users.ID
+		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+		WHERE wp_users.ID  = " . $logged_user->data->ID . " limit 1");
+		$othMemberInfo = $wpdb->get_results("SELECT
+		wp_member_user.*
+		FROM wp_member_user 
+		WHERE id !=".$userInfo[0]->id." and member_id  = " . $userInfo[0]->member_id . " ");
+		$userInfo['oth_member_info']=$othMemberInfo;
+		//echo "<pre>";print_r($userInfo);die;
 		include_once(plugin_dir_path(__FILE__) . 'partials/member_profile.php');
 		//print_r('hi');die;
+	}
+
+	public function member_info()
+	{
+		global $wpdb;
+		global $current_user;
+		$logged_user = wp_get_current_user();
+		$memberInfo = $wpdb->get_results("SELECT
+		wp_users.*,
+		wp_member_other_info.*,
+		t1.*
+		FROM
+		`wp_users`
+		INNER JOIN wp_member_user t1 ON
+		t1.user_id = wp_users.ID
+		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+		WHERE wp_users.ID  = " . $logged_user->data->ID . " limit 1");
+		$othMemberInfo = $wpdb->get_results("SELECT
+		wp_member_user.*
+		FROM wp_member_user 
+		WHERE id !=".$memberInfo[0]->id." and member_id  = " . $memberInfo[0]->member_id . " ");
+		$memberInfo['oth_member_info']=$othMemberInfo;
+		include_once(plugin_dir_path(__FILE__) . 'partials/member_info.php');
 	}
 }

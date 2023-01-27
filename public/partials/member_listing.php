@@ -12,9 +12,12 @@
                         <div class="is-layout-flow wp-block-column" style="flex-basis:90%;">
                             <?php 
                             if (home_url($wp->request) == home_url() . '/member-dashboard/profile') {
-                                include_once(plugin_dir_path(__FILE__) . '/member_profile.php');
+                                do_action('profile_update');
 
-                            }else { ?>
+                            }elseif (home_url($wp->request) == home_url() . '/member-dashboard/member-info') {
+                                do_action('member_info');
+
+                          }else { ?>
 
                                 <table class="table et_pb_with_background et_pb_inner_shadow price" style="width: 100%">
                                 <thead class="thead">
@@ -37,7 +40,7 @@
                                     <td class="text-center vertical_line"><?= $member->address_line_1; ?></td>
                                     <td class="text-center vertical_line"><?= $member->primary_phone_no; ?></td>
                                     <td class="text-center vertical_line"><?= $member->membership; ?></td>
-                                    <td class="text-center vertical_line"><i class="fa fa-eye"style="font-size:20px;color:deepskyblue"></i></td>
+                                    <td class="text-center vertical_line"><a href="<?php echo home_url('member-dashboard/member-info/'); ?>"><i class="fa fa-eye"style="font-size:20px;color:deepskyblue"></i></a></td>
                                   </tr>
                                   <?php }}else{?>
                                     echo "<tr><td colspan='5'>No records found</td></tr>";
@@ -66,7 +69,3 @@
                             <?php } ?>
                         </div>
                     </div>
-           
-
-
-    
