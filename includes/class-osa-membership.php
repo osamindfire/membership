@@ -217,14 +217,17 @@ class Osa_Membership {
 		$this->loader->add_action( 'init', $this->plugin_public, 'initFunction' );
 		$this->loader->add_action('wp_ajax_getStates',$this->plugin_public, 'getStates');
 		$this->loader->add_action('wp_ajax_nopriv_getStates',$this->plugin_public, 'getStates');
-
-		if ( SLUG_VALUE == 'payment-cancel') {
+		$this->loader->add_action('profile_update',$this->plugin_public, 'profile');
+		$this->loader->add_action('member_info',$this->plugin_public, 'member_info');
+		
+		
+		/* if ( SLUG_VALUE == 'cancel-payment') {
 			$this->loader->add_filter('template_include',$this->plugin_public, 'cancelPayment');
-		}elseif(SLUG_VALUE == 'payment-success') {
+		}elseif(SLUG_VALUE == 'success-payment') {
 			$this->loader->add_filter('template_include',$this->plugin_public, 'successPayment');
 		}elseif(SLUG_VALUE == 'payment-notify'){
 			$this->loader->add_filter('template_include',$this->plugin_public, 'membershipPlan');
-		}
+		} */
 		
 
 	}
@@ -240,6 +243,11 @@ class Osa_Membership {
         $this->loader->add_shortcode('member_register',$this->plugin_public,'memberRegister');
 		$this->loader->add_shortcode('member_login',$this->plugin_public,'memberLogin');
 		$this->loader->add_shortcode('membership_plan',$this->plugin_public,'membershipPlan');
+		$this->loader->add_shortcode('payment_success',$this->plugin_public,'successPayment');
+		$this->loader->add_shortcode('payment_failure',$this->plugin_public,'cancelPayment');
+		$this->loader->add_shortcode('forgot_password',$this->plugin_public,'forgotPassword');
+		$this->loader->add_shortcode('member_listing',$this->plugin_public,'membersListing');
+		
     }
 	
 

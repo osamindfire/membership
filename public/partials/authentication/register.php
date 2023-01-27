@@ -129,6 +129,11 @@
                 <span class="error_messages"><?php if(!empty($errors['agree'])) { echo $errors['agree']; } ?></span>
 		</p>
         <?php wp_nonce_field("register","register_form"); ?>
+        <div style="margin-left:22px;" class="g-recaptcha" 
+                data-sitekey="<?= GOOGLE_CAPTCHA_SITE_KEY ?>">
+            </div>
+        <span class="error_messages"><?php if(!empty($errors['googlecaptcha'])) { echo $errors['googlecaptcha']; } ?></span>
+            
         <div class="et_contact_bottom_container">
 		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Register</button>
 		</div>

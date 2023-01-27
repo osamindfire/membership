@@ -6,6 +6,7 @@
 </style>
 <?php 
 $memberName = isset($data['user_login']) ? $data['user_login'] : '';
+$memberEmail = isset($data['user_email']) ? $data['user_email'] : '';
 $emailBody='<!doctype html>
 		<html>
 		  <head>
@@ -176,11 +177,9 @@ $emailBody='<!doctype html>
 						  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 							  <td>
-							  <p>Welcome <strong>'.$memberName.'</strong>, to OSA directory.You will be able to search other Odia members and manage several activities with this access.<br>Good luck!</p>
+							  <p>Hi <strong>Admin</strong>,<br>New user has registered on your website.</p>
+                              <p><strong>Username</strong> : '.$memberName.'<br><strong>Email</strong> : '.$memberEmail.'<br></p>
 							  </td>
-							</tr>
-							<tr>
-							<td><p>If you have any queries, feel free to <a target="_blank" href="'.CONTACT_US_URL.'">Contact Us</a></p></td>
 							</tr>
 						  </table>
 						  <tr class="header_color"><td style="text-align:center">'.COPYRIGHT_TEXT.'</td></tr>	

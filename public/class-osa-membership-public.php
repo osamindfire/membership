@@ -84,6 +84,8 @@ class Osa_Membership_Public
 		 */
 		wp_enqueue_style($this->plugin_name, plugin_dir_url(__FILE__) . 'css/osa-membership-public.css', array(), $this->version, 'all');
 		wp_enqueue_style($this->plugin_name . time(), plugin_dir_url(__FILE__) . 'css/form.min.css', array(), $this->version, 'all');
+		wp_enqueue_style($this->plugin_name.time() . time(), 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', array(), $this->version, 'all');
+		
 	}
 
 	/**
@@ -107,6 +109,7 @@ class Osa_Membership_Public
 		 */
 
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/osa-membership-public.js', array('jquery'), $this->version, false);
+		wp_enqueue_script($this->plugin_name.time(), 'https://www.google.com/recaptcha/api.js', array('jquery'), $this->version, false);
 		// Localize the constants to be used from JS.
 		wp_localize_script($this->plugin_name,'ajax_url',[admin_url('admin-ajax.php')]);
 	}
@@ -116,10 +119,19 @@ class Osa_Membership_Public
 		if (!isset($_SESSION)) {
 			session_start();
 		}
+		if(stristr($_SERVER['REQUEST_URI'],'logout'))
+		{
+			wp_logout();
+			unset($_SESSION['user_id']);
+			wp_redirect('login');
+    		exit;
+		}
+		if(isset($_SESSION['user_id'])){
+			wp_set_current_user($_SESSION['user_id']);
+		}
+		add_rewrite_endpoint('profile', EP_PERMALINK | EP_PAGES);
+		add_rewrite_endpoint('member-info', EP_PERMALINK | EP_PAGES);
 		
-		add_rewrite_endpoint('payment-cancel', EP_ALL);
-		add_rewrite_endpoint('payment-success', EP_ALL);
-		add_rewrite_endpoint('payment-notify', EP_ALL);
 		flush_rewrite_rules();
 	}
 
@@ -129,7 +141,7 @@ class Osa_Membership_Public
 	*/
 	public function membershipPlan()
 	{
-		if (!empty($_SESSION['user_id'])) {
+		if (empty($_SESSION['user_id'])) {
 		global $wpdb, $user_ID;
 		$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 ");
 
@@ -196,20 +208,26 @@ class Osa_Membership_Public
 
 	public function cancelPayment()
 	{
-		//ob_start();
+		ob_start();
+		global $wpdb;
+		$user = get_user_by( 'ID', $_SESSION['user_id'] );
+		$userInfo = $user->data;
+		$membershipTypeInfo = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = " . $_SESSION['membership_type_id'] . " limit 1");
+		$userInfo->user_membership = $membershipTypeInfo[0];
+		$this->sendMail($userInfo->user_email,'Payment Failure',(array)$userInfo,'payment_cancel_member');
 		include_once(plugin_dir_path(__FILE__) . 'partials/payment/payment_cancel.php');
-		//ob_end_flush();
-		//return ob_get_clean();
+		return ob_get_clean();
 	}
 	public function successPayment()
 	{
-		$paymentInfoSaved = 0;
-		global $wpdb;
 
-			if ($_REQUEST['PayerID'] || $_POST['payer_id'] || $_POST['txn_id']) {
-				$paymentInfoSaved = 1;
-				$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id,wp_member_user.first_name,wp_member_user.last_name,wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
-				$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.total_days FROM wp_membership_type WHERE membership_type_id  = " . $_SESSION['membership_type_id'] . " ");
+		global $wpdb;
+		if(!empty($_SESSION['user_id'])){
+		$paymentInfoSaved = 0;
+			if (isset($_REQUEST['PayerID']) || isset($_POST['payer_id']) || isset($_POST['txn_id'])) {
+				
+				$userInfo = $wpdb->get_results("SELECT wp_users.*,wp_member_user.member_id,wp_member_user.first_name,wp_member_user.last_name,wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
+				$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = " . $_SESSION['membership_type_id'] . " ");
 
 				$starttDate = date('Y-m-d');
 				$endDate = date('Y-m-d', strtotime($starttDate . ' + ' . $membershipPackage[0]->total_days . ' days'));
@@ -232,15 +250,25 @@ class Osa_Membership_Public
 					SET membership_expiry_date = %s 
 					WHERE member_id = %d", $endDate, $userInfo[0]->member_id)
 				);
-				$subject="Member registered successfully";
-				$memberDetails = ['member_name' => $userInfo[0]->first_name . ' ' . $userInfo[0]->last_name];
-
-				$this->sendMail($userInfo[0]->email,$subject,$memberDetails);
+				$subject="Payment successfully";
+				$adminPaymentSubject="New Member Payment successfully";
+				$userInfo[0]->user_membership = $membershipPackage[0];
+				$this->sendMail($userInfo[0]->user_email,$subject,(array)$userInfo[0],'payment_success_member');
+				$this->sendMail(ADMIN_EMAIL,$adminPaymentSubject,(array)$userInfo[0],'payment_success_admin');
 				unset($_SESSION['user_id']);
 				unset($_SESSION['membership_type_id']);
+				$paymentInfoSaved = 1;
+
 			}
 		$fileName = ($paymentInfoSaved == 1) ? 'payment_success.php' : 'payment_cancel.php';
+		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/payment/' . $fileName);
+		return ob_get_clean();
+		}else{
+			$redirectTo = home_url() . '/login';
+			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+			exit();
+		}
 	}
 
 	private function verifyTransaction($data)
@@ -315,15 +343,26 @@ class Osa_Membership_Public
 
 			if (is_wp_error($user_verify)) {
 				$errors = $user_verify->errors;
+				$errors['incorrect_password'][0]= 'The password you entered for the email address naveenb@mindfiresolutions.com is incorrect.';
 			} else {
 				wp_set_current_user($user_verify->ID);
+				$_SESSION['user_id']=$user_verify->ID;
 				wp_set_auth_cookie($user_verify->ID);
 				$loggedUser = wp_get_current_user();
-				if ($loggedUser->data->user_status == 1) {
+				$memberData = $wpdb->get_results( "SELECT
+				wp_member_other_info.membership_type,
+				wp_member_other_info.membership_expiry_date
+				FROM
+				`wp_users`
+				INNER JOIN wp_member_user t1 ON
+				t1.user_id = wp_users.ID
+				LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+				WHERE t1.user_id=".$loggedUser->data->ID." limit 1");
+				$currentDate = date('Y-m-d'); 
+				if (strtotime($memberData[0]->membership_expiry_date) >= strtotime($currentDate)  ) {
 					do_action('wp_login', $user_verify->user_login, $user_verify);
-					//wp_redirect( site_url() );
-					//exit;
-					echo "<script type='text/javascript'>window.location.href='" . home_url() . "'</script>";
+					$redirectTo = home_url() . '/member-dashboard';
+					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 					exit();
 				} else {
 
@@ -353,9 +392,16 @@ class Osa_Membership_Public
 
 		if (isset($_POST['register_form']) && wp_verify_nonce($_POST['register_form'], 'register')) {
 			try {
-				$errors = $this->validateForm(); //echo "<pre>";print_r($errors);die;
+				$errors = $this->validateForm();
 				if (0 === count($errors)) {
 					if ($this->createUser()) {
+						$userData = get_user_by( 'ID', $_SESSION['user_id'] );
+						$userInfo = $userData->data;
+						$memberSubject="Member Registered successfully";
+						$adminSubject="New Member Registered";
+						$memberDetails =(array)$userInfo;
+						$this->sendMail($memberDetails['user_email'],$memberSubject,$memberDetails,'member_register');//send mail to user
+						$this->sendMail(ADMIN_EMAIL,$adminSubject,$memberDetails,'admin_member_register');//send mail to site admin
 						$redirectTo = home_url() . '/membership-plan?register_success=1';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 						exit();
@@ -370,6 +416,46 @@ class Osa_Membership_Public
 		return ob_get_clean();
 	}
 
+	public function forgotPassword()
+	{
+		if (isset($_POST['forgot_password_form']) && wp_verify_nonce($_POST['forgot_password_form'], 'forgot_password')) {
+			try {
+			$errors = '';
+			$email = esc_sql($_POST['email']);
+			if (empty($email)) {
+				$errors['email'] = "Please enter a Email";
+			} elseif (!is_email($email)) {
+				$errors['email'] = "Please enter a valid Email";
+			} elseif (!email_exists($email)) {
+				$errors['email'] = "This email address is exist";
+			}
+			if (empty($errors)) {
+              // lets generate our new password
+			$random_password = wp_generate_password( 12, false );
+			$user = get_user_by( 'email', $email );
+			$userInfo = $user->data;
+			$update_user = wp_update_user( array(
+				'ID' => $user->ID,
+				'user_pass' => $random_password
+			) );
+
+			$userInfo->random_password= $random_password;
+			if($this->sendMail($userInfo->user_email,'Reset Password',(array)$userInfo,'forgot_password')){
+						$redirectTo = home_url() . '/login?forgot_password=1';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+				}
+					
+				}
+			} catch (Exception $e) {
+				echo 'Error writing to database: ',  $e->getMessage(), "\n";
+			}
+		}
+		ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/forgot_password.php');
+		return ob_get_clean();
+	}
+
 	/* 
 	Function name: validateForm
 	Description : Validate register input feilds
@@ -379,6 +465,21 @@ class Osa_Membership_Public
 		$errors = array();
 
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+			$recaptcha = $_POST['g-recaptcha-response'];
+			$secret_key = GOOGLE_CAPTCHA_SECRET_KEY;
+			$url = 'https://www.google.com/recaptcha/api/siteverify?secret='. $secret_key . '&response=' . $recaptcha;
+		
+			// Making request to verify captcha
+			$response = file_get_contents($url);
+		
+			// Response return by google is in
+			// JSON format, so we have to parse
+			// that json
+			$response = json_decode($response,true);
+			if (!empty($response['error-codes'])) {
+				$errors['googlecaptcha'] = 'CAPTCHA is invalid';
+			}
 
 			$firstName = esc_sql($_REQUEST['first_name']);
 			if (empty($firstName)) {
@@ -531,6 +632,8 @@ class Osa_Membership_Public
 				'secondary_phone_no' => '',
 				'postal_code' => $_POST['postal_code'],
 				'souvenir' => 'CD',
+				'membership_type' => NULL,
+				'membership_expiry_date' => NULL
 			));
 			$success = 1;
 		}
@@ -630,12 +733,32 @@ class Osa_Membership_Public
 		die();
 	}
 
-	public function sendMail($to,$subject,$data=array())
+	public function sendMail($to,$subject,$data=array(),$type='')
 	{
 		
 		ob_start();
-		$memberName = $data['member_name'];
-		include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/registration_email.php');
+		switch ($type) {
+			case "member_register":
+				include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/registration_email.php');
+			  	break;
+			case "admin_member_register":
+				include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/admin_registration_email.php');
+				break;
+			case "forgot_password":
+				include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/reset_password.php');
+			  	break;
+			case "payment_success_member":
+				include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/payment_success_emal.php');
+				break;
+			case "payment_success_admin":
+				include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/payment_success_admin_email.php');
+				break;
+			case "payment_cancel_member":
+				include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/payment_fail_email.php');
+				break;
+			default:
+			  
+		}
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 		try {
 			$response = wp_mail($to, $subject, $emailBody, $headers);
@@ -646,4 +769,112 @@ class Osa_Membership_Public
 		return ob_get_clean();
 		
 	}	
+
+	public function membersListing()
+	{
+		global $wpdb;
+		global $wp;
+		global $current_user;
+		$logged_user = wp_get_current_user();
+		if(is_user_logged_in())
+		{
+        $pagenum = isset( $_GET['pagenum'] ) ? absint( $_GET['pagenum'] ) : 1;      
+        $limit = 10; // number of rows in page
+        $offset = ( $pagenum - 1 ) * $limit;
+
+		$total = $wpdb->get_var( "select count(*) FROM
+		`wp_users`
+		INNER JOIN wp_member_user t1 ON
+		t1.user_id = wp_users.ID
+		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+		LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
+		WHERE
+		t1.type != 'child'" );
+
+		$num_of_pages = ceil( $total / $limit );
+		
+        $rows = $wpdb->get_results( "SELECT
+		DATE_FORMAT(
+			wp_users.user_registered,
+			'%d-%m-%Y'
+		) AS user_registered,
+		wp_users.user_email,
+		t1.first_name,
+		t1.last_name,
+		t1.member_id,
+		t1.parent_id,
+		wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+		DATE_FORMAT(
+			wp_member_other_info.membership_expiry_date,
+			'%d-%m-%Y'
+		) AS membership_expiry_date,
+		wp_membership_type.membership 
+		FROM
+		`wp_users`
+		INNER JOIN wp_member_user t1 ON
+		t1.user_id = wp_users.ID
+		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+		LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
+		WHERE
+		t1.type != 'child' and wp_member_other_info.membership_type IS NOT NULL order by t1.member_id ASC limit  $offset, $limit" );
+
+        $rowcount = $wpdb->num_rows;
+		ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/member_listing.php');
+		return ob_get_clean();
+		}else{
+			$redirectTo = home_url() . '/login';
+			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+			exit();
+		}
+	}
+
+	public function profile()
+	{
+		global $wpdb, $user_ID;
+		$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
+		global $current_user;
+		$logged_user = wp_get_current_user();
+		$userInfo = $wpdb->get_results("SELECT
+		wp_users.*,
+		wp_member_other_info.*,
+		t1.*
+		FROM
+		`wp_users`
+		INNER JOIN wp_member_user t1 ON
+		t1.user_id = wp_users.ID
+		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+		WHERE wp_users.ID  = " . $logged_user->data->ID . " limit 1");
+		$othMemberInfo = $wpdb->get_results("SELECT
+		wp_member_user.*
+		FROM wp_member_user 
+		WHERE id !=".$userInfo[0]->id." and member_id  = " . $userInfo[0]->member_id . " ");
+		$userInfo['oth_member_info']=$othMemberInfo;
+		//echo "<pre>";print_r($userInfo);die;
+		include_once(plugin_dir_path(__FILE__) . 'partials/member_profile.php');
+		//print_r('hi');die;
+	}
+
+	public function member_info()
+	{
+		global $wpdb;
+		global $current_user;
+		$logged_user = wp_get_current_user();
+		$memberInfo = $wpdb->get_results("SELECT
+		wp_users.*,
+		wp_member_other_info.*,
+		t1.*
+		FROM
+		`wp_users`
+		INNER JOIN wp_member_user t1 ON
+		t1.user_id = wp_users.ID
+		LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+		WHERE wp_users.ID  = " . $logged_user->data->ID . " limit 1");
+		$othMemberInfo = $wpdb->get_results("SELECT
+		wp_member_user.*
+		FROM wp_member_user 
+		WHERE id !=".$memberInfo[0]->id." and member_id  = " . $memberInfo[0]->member_id . " ");
+		$memberInfo['oth_member_info']=$othMemberInfo;
+		include_once(plugin_dir_path(__FILE__) . 'partials/member_info.php');
+	}
 }
