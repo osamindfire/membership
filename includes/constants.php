@@ -13,8 +13,14 @@ define('CONTACT_US_URL',HOME_URL.'/contact-us');
 define('ADMIN_EMAIL','mfsi.naveenb@gmail.com');
 define('COPYRIGHT_TEXT','Copyrights © 1969-'.date('Y').' The Odisha Society of the Americas. <br>All Rights Reserved');
 define('DIR_URL',plugins_url('osa-membership/public/img'));
-define('GOOGLE_CAPTCHA_SITE_KEY','6LdSiSUkAAAAAB-DiZc5Vdapb2QKPlB4UoNAQSDd');
-define('GOOGLE_CAPTCHA_SECRET_KEY','6LdSiSUkAAAAADUOlpalfGvsmlFNJ4uaR83Scx_o');
+if( home_url() == 'http://osa.dev.local')
+{
+        define('GOOGLE_CAPTCHA_SITE_KEY','6LdSiSUkAAAAAB-DiZc5Vdapb2QKPlB4UoNAQSDd');
+        define('GOOGLE_CAPTCHA_SECRET_KEY','6LdSiSUkAAAAADUOlpalfGvsmlFNJ4uaR83Scx_o');
+}else{
+        define('GOOGLE_CAPTCHA_SITE_KEY','6Ld-lS4kAAAAAAqEROukn-IsDdBkGwNDumjGX2Rr');
+        define('GOOGLE_CAPTCHA_SECRET_KEY','6Ld-lS4kAAAAAG8-KwWxMMWMcr5C_YLx9DUXQFnj');
+}
 
 
 //define('DIR_URL','https://newsite.odishasociety.org/wp-content/uploads/2023/01');
