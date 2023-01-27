@@ -14,10 +14,10 @@
       </thead>
       <tbody>
         <tr>
-          <td class="text-center"><h1>$ <?= $plan->fee; ?> (*)</h1></td>
+          <td class="text-center" style="background-color:#fff"><h1>$ <?= $plan->fee; ?> (*)</h1></td>
         </tr>
         <tr>
-          <td class="text-center">
+          <td class="text-center" style="background-color:#fff">
           <form class="paypal" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
                 <input type="hidden" name="cmd" value="_xclick" />
                 <input type="hidden" name="no_note" value="1" />
