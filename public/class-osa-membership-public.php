@@ -231,7 +231,7 @@ class Osa_Membership_Public
 
 				$starttDate = date('Y-m-d');
 				$endDate = date('Y-m-d', strtotime($starttDate . ' + ' . $membershipPackage[0]->total_days . ' days'));
-
+				$membershipType =  $membershipPackage[0]->membership_type_id;
 				$wpdb->query($wpdb->prepare(
 					"INSERT INTO wp_member_membership (user_id, member_id, start_date, end_date, membership_type_id, comment , update_by,payment_info) VALUES ( %d, %d, %s, %s, %d, %s, %s,%s)",
 					array(
@@ -247,8 +247,8 @@ class Osa_Membership_Public
 				));
 				$wpdb->query(
 					$wpdb->prepare("UPDATE wp_member_other_info 
-					SET membership_expiry_date = %s 
-					WHERE member_id = %d", $endDate, $userInfo[0]->member_id)
+					SET membership_expiry_date = %s,membership_type = %d 
+					WHERE member_id = %d", $endDate,$membershipType, $userInfo[0]->member_id)
 				);
 				$subject="Payment successfully";
 				$adminPaymentSubject="New Member Payment successfully";
