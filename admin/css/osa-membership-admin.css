@@ -2,8 +2,9 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
- #the-member-list .vers {
+ #the-member-list .vers , #members-filter .vers{
     padding-left: 1em;
+    text-decoration: none;
 }
 
 .td-lable{
