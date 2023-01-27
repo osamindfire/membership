@@ -219,6 +219,7 @@ class Osa_Membership {
 		$this->loader->add_action('wp_ajax_nopriv_getStates',$this->plugin_public, 'getStates');
 		$this->loader->add_action('profile_update',$this->plugin_public, 'profile');
 		$this->loader->add_action('member_info',$this->plugin_public, 'member_info');
+		$this->loader->add_action('after_setup_theme',$this->plugin_public, 'remove_admin_bar');
 		
 		
 		/* if ( SLUG_VALUE == 'cancel-payment') {

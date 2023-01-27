@@ -35,6 +35,7 @@
 		</p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last" data-type="checkbox">
         <a href="<?php echo home_url() . '/forgot-password';?>">Forgot password ?</a>
+        <a href="<?php echo home_url() . '/forgot-password';?>" style="float:right">Become a member</a>
 		</p>
 		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Login</button>
     </form>

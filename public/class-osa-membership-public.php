@@ -430,7 +430,7 @@ class Osa_Membership_Public
 			} elseif (!is_email($email)) {
 				$errors['email'] = "Please enter a valid Email";
 			} elseif (!email_exists($email)) {
-				$errors['email'] = "This email address is exist";
+				$errors['email'] = "This email address is not exist";
 			}
 			if (empty($errors)) {
               // lets generate our new password
@@ -879,5 +879,11 @@ class Osa_Membership_Public
 		WHERE id !=".$memberInfo[0]->id." and member_id  = " . $memberInfo[0]->member_id . " ");
 		$memberInfo['oth_member_info']=$othMemberInfo;
 		include_once(plugin_dir_path(__FILE__) . 'partials/member_info.php');
+	}
+
+	public function remove_admin_bar() {
+		if (!current_user_can('administrator') && !is_admin()) {
+		  show_admin_bar(false);
+		}
 	}
 }
