@@ -2,14 +2,14 @@
 ?>
                        <div class="is-layout-flex wp-block-columns">
                         
-                            <div class="vertical-menu" //style="flex-basis:10%">
+                            <div class="vertical-menu">
                               <a href="<?php echo home_url('member-dashboard'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard'){ echo "active";}?>">Dashboard</a>
                               <a href="<?php echo home_url('member-dashboard/profile/'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard/profile'){ echo "active";}?>">Profile</a>
                               <a href="<?php echo home_url('member-dashboard/transaction/'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard/transaction'){ echo "active";}?>">Transaction</a>
                               <a href="<?php echo wp_logout_url('login'); ?>">Logout</a>
                             </div>
 
-                        <div class="is-layout-flow wp-block-column" //style="flex-basis:90%;">
+                        <div class="is-layout-flow wp-block-column">
                             <?php 
                             if (home_url($wp->request) == home_url() . '/member-dashboard/profile') {
                                 do_action('profile_update');
