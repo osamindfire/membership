@@ -35,11 +35,11 @@
     </form>
 
     <form id="members-filter" method="get">
-    <div class="tablenav top">
+        <div class="tablenav top">
             <div class="alignleft actions">
-                <span id="filter_input_area">
+                <span id="filter_input_area_0">
                     <label class="screen-reader-text" for="cat">Filter by category</label>
-                    <select name="filter_option" id="category_filter" class="postform">
+                    <select name="filter_option" id="category_filter_0" data-filter-id="0" class="postform member_filter_option">
                         <option value="0" disabled selected>Select</option>
 
                         <?php
@@ -52,29 +52,33 @@
                         );
                         foreach ($filter_option as $key => $value) {
                         ?><option class="level-0" value="<?php echo $value; ?>"><?php echo $key; ?></option>
-                        <?php }?>
+                        <?php } ?>
 
                     </select>
 
 
-                   
+
 
                 </span>
                 <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">
-                <!-- <input type="button" name="" id="add_more_criteria" class="button" value="Add More Criteria"> -->
+                <input type="button" name="" id="add_more_criteria" class="button" value="Add More Criteria">
+
+                <a class="dashicons-before dashicons-update " title="Reload this page" href=""></a>
+
 
             </div>
-    
-        <!-- pagination section -->
-        <div class="tablenav-pages one-page"><span class="displaying-num">1 item</span>
-            <span class="pagination-links"><span class="tablenav-pages-navspan button disabled" aria-hidden="true">«</span>
-                <span class="tablenav-pages-navspan button disabled" aria-hidden="true">‹</span>
-                <span class="paging-input"><label for="current-page-selector" class="screen-reader-text">Current Page</label><input class="current-page" id="current-page-selector" type="text" name="paged" value="1" size="1" aria-describedby="table-paging"><span class="tablenav-paging-text"> of <span class="total-pages">1</span></span></span>
-                <span class="tablenav-pages-navspan button disabled" aria-hidden="true">›</span>
-                <span class="tablenav-pages-navspan button disabled" aria-hidden="true">»</span></span>
+
+            <!-- pagination section -->
+            <div class="tablenav-pages one-page"><span class="displaying-num">1 item</span>
+                <span class="pagination-links"><span class="tablenav-pages-navspan button disabled" aria-hidden="true">«</span>
+                    <span class="tablenav-pages-navspan button disabled" aria-hidden="true">‹</span>
+                    <span class="paging-input"><label for="current-page-selector" class="screen-reader-text">Current Page</label><input class="current-page" id="current-page-selector" type="text" name="paged" value="1" size="1" aria-describedby="table-paging"><span class="tablenav-paging-text"> of <span class="total-pages">1</span></span></span>
+                    <span class="tablenav-pages-navspan button disabled" aria-hidden="true">›</span>
+                    <span class="tablenav-pages-navspan button disabled" aria-hidden="true">»</span></span>
+            </div>
+            <br class="clear">
         </div>
-        <br class="clear">
-    </div>
+
     </form>
 
     <h2 class="screen-reader-text">Members list</h2>
