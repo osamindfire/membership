@@ -20,5 +20,7 @@ a,abbr,acronym,address,applet,b,big,blockquote,body,center,cite,code,dd,del,dfn,
   background-color:#e5f5ff;
 }
 .et_pb_button{
-  background-color:#d91313!important;color:#ffffff
+  background-color:#d91313!important;
+  color:#ffffff;
+  cursor: pointer;
 }

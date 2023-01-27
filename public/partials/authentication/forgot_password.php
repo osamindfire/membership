@@ -5,10 +5,6 @@
 <div class="et_pb_row et_pb_row_0">
 <div class="et_pb_contact">
 
-<?php if(!empty($errors)) { foreach($errors as $error) { ?>
-    <span class="error_messages"><?php if(!empty($error[0])) { echo $error[0]; } ?></span><br>
-<?php }} ?>  
-<span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
 <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         
         <p class=" et_pb_contact_field ui-sortable">

@@ -372,9 +372,12 @@ class Osa_Membership_Public
 				}
 			}
 		} else {
-
-			// No login details entered - you should probably add some more user feedback here, but this does the bare minimum  
-			//echo "Invalid login details"; 
+			if(is_user_logged_in())
+			{
+					$redirectTo = home_url() . '/member-dashboard';
+					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+					exit();
+			}
 		}
 		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/login.php');
@@ -420,7 +423,7 @@ class Osa_Membership_Public
 	{
 		if (isset($_POST['forgot_password_form']) && wp_verify_nonce($_POST['forgot_password_form'], 'forgot_password')) {
 			try {
-			$errors = '';
+			$errors = array();
 			$email = esc_sql($_POST['email']);
 			if (empty($email)) {
 				$errors['email'] = "Please enter a Email";
