@@ -12,10 +12,15 @@
             <input type="text" name="email"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="email" value="<?php if(!empty($_REQUEST['email'])) { echo $_REQUEST['email']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
         </p>
-        <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_last">
+        <div  style="margin-left:22px; transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;" class="g-recaptcha" 
+                data-sitekey="<?= GOOGLE_CAPTCHA_SITE_KEY ?>">
+        </div>
+        <span class="error_messages"><?php if(!empty($errors['googlecaptcha'])) { echo $errors['googlecaptcha']; } ?></span>
         <?php wp_nonce_field("forgot_password","forgot_password_form"); ?>
+        <div class="et_contact_bottom_container">
 		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Submit</button>
-        </p>
+		</div>
+
     </form>
 </div>
 </div>

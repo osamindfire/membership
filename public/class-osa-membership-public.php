@@ -423,6 +423,17 @@ class Osa_Membership_Public
 	{
 		if (isset($_POST['forgot_password_form']) && wp_verify_nonce($_POST['forgot_password_form'], 'forgot_password')) {
 			try {
+			$recaptcha = $_POST['g-recaptcha-response'];
+			$secret_key = GOOGLE_CAPTCHA_SECRET_KEY;
+			$url = 'https://www.google.com/recaptcha/api/siteverify?secret='. $secret_key . '&response=' . $recaptcha;
+		
+			// Making request to verify captcha
+			$response = file_get_contents($url);
+		
+			// Response return by google is in
+			// JSON format, so we have to parse
+			// that json
+			$response = json_decode($response,true);
 			$errors = array();
 			$email = esc_sql($_POST['email']);
 			if (empty($email)) {
@@ -431,6 +442,8 @@ class Osa_Membership_Public
 				$errors['email'] = "Please enter a valid Email";
 			} elseif (!email_exists($email)) {
 				$errors['email'] = "This email address is not exist";
+			}elseif (!empty($response['error-codes'])) {
+				$errors['googlecaptcha'] = 'CAPTCHA is invalid';
 			}
 			if (empty($errors)) {
               // lets generate our new password

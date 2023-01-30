@@ -1,16 +1,58 @@
 <?php 
 ?>
-                       <div class="is-layout-flex wp-block-columns">
-                        
-                            <div class="vertical-menu">
-                              <a href="<?php echo home_url('member-dashboard'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard'){ echo "active";}?>">Dashboard</a>
-                              <a href="<?php echo home_url('member-dashboard/profile/'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard/profile'){ echo "active";}?>">Profile</a>
-                              <a href="<?php echo home_url('member-dashboard/transaction/'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard/transaction'){ echo "active";}?>">Transaction</a>
-                              <a href="<?php echo wp_logout_url('login'); ?>">Logout</a>
-                            </div>
-
-                        <div class="is-layout-flow wp-block-column">
-                            <?php 
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap');
+/* * {
+    box-sizing: border-box;
+}
+body{
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+  
+} */
+.col-1{
+  width: 20%;/* 
+  background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+	background-size: 400% 400%;
+	animation: gradient 15s ease infinite; */
+}
+.col-2{
+  width: 80%;
+  /* background-color:#ddd;
+  box-shadow: 2px 0 0 2px #ddd; */
+}
+@keyframes gradient {
+	0% {
+		background-position: 0% 50%;
+	}
+	50% {
+		background-position: 100% 50%;
+	}
+	100% {
+		background-position: 0% 50%;
+	}
+}
+.column {
+    float: left;
+    padding: 10px 0 0 10px;
+    height: auto; 
+}
+/* Mobile responsive */
+@media screen and (max-width: 600px) {
+    .column {
+        width: 100%;
+    }
+}
+  </style>
+<div class="main">
+  <div class="column col-1 vertical-menu">
+    <p><a href="<?php echo home_url('member-dashboard'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard'){ echo "active";}?>"><img src="<?= DIR_URL; ?>/dashboard_icon.png" style="width:36px;margin-bottom: -11px;"/> Dashboard</a></p>
+    <p><a href="<?php echo home_url('member-dashboard/profile/'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard/profile'){ echo "active";}?>"><img src="<?= DIR_URL; ?>/profile_icon.png" style="width:36px;margin-bottom: -11px;"/> Profile</a></p>
+    <p><a href="<?php echo home_url('member-dashboard/transaction/'); ?>" class="<?php if(home_url($wp->request) == home_url() . '/member-dashboard/transaction'){ echo "active";}?>"><img src="<?= DIR_URL; ?>/transaction_icon.png" style="width:36px;margin-bottom: -11px;"/> Transaction</a></p>
+    <p><a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;"/> Logout</a></p>
+  </div>
+  <div class="column col-2">
+    <?php 
                             if (home_url($wp->request) == home_url() . '/member-dashboard/profile') {
                                 do_action('profile_update');
 
@@ -22,13 +64,13 @@
                                 <table class="table et_pb_with_background et_pb_inner_shadow price" style="width: auto">
                                 <thead class="thead">
                                   <tr class="et_pb_pricing_heading">
-                                  <th class="text-center vertical_line" width="10%">ID</th>
+                                  <th class="text-center vertical_line" width="10%">Member ID</th>
                                   <th class="text-center vertical_line" >Name</th>
                                   <th class="text-center vertical_line" >Join Date</th>
                                   <th class="text-center vertical_line" >Address</th>
                                   <th class="text-center vertical_line" >Phone</th>
                                   <th class="text-center vertical_line" >Status</th>
-                                  <th class="text-center vertical_line"></th>
+                                  <th class="text-center vertical_line">View Details</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -67,5 +109,5 @@
                                     ?>
 
                             <?php } ?>
-                        </div>
-                    </div>
+</div>
+                       
