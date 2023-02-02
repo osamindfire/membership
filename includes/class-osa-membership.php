@@ -220,8 +220,12 @@ class Osa_Membership {
 		$this->loader->add_action('profile_update',$this->plugin_public, 'profile');
 		$this->loader->add_action('member_info',$this->plugin_public, 'member_info');
 		$this->loader->add_action('after_setup_theme',$this->plugin_public, 'remove_admin_bar');
+		$this->loader->add_action('update_password',$this->plugin_public, 'update_password');
+		$this->loader->add_action('member_transaction',$this->plugin_public, 'member_transaction');
 		
-		
+		$this->loader->add_action('wp_ajax_country_action', $this->plugin_public, 'country_action');
+		$this->loader->add_action('wp_ajax_state_action', $this->plugin_public, 'state_action');
+		$this->loader->add_action('wp_ajax_chapter_action', $this->plugin_public, 'chapter_action');
 		/* if ( SLUG_VALUE == 'cancel-payment') {
 			$this->loader->add_filter('template_include',$this->plugin_public, 'cancelPayment');
 		}elseif(SLUG_VALUE == 'success-payment') {
