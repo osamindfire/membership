@@ -2,7 +2,7 @@
  * All of the CSS for your admin-specific functionality should be
  * included in this file.
  */
- #the-member-list .vers , #members-filter .vers{
+ #the-member-list .vers , #members-filter .vers, #member_edit .vers, #member_view .vers{
     padding-left: 1em;
     text-decoration: none;
 }
@@ -17,4 +17,39 @@ border-top: 1px solid #dcdcde;
 
 .member-view .form-table td {
     padding: 8px 10px;
+}
+
+.welcome-panel{
+    background: none;
+}
+
+.postbox, .stuffbox {
+     margin-bottom: 0;
+}
+
+.welcome-panel .welcome-panel-column-container {
+    grid-template-columns: repeat(2,1fr) !important;
+    padding: 25px;
+    background: none;
+}
+
+.container-column{
+    background-color: #ffffff;
+    padding: 2em;
+}
+
+error{
+    color :rgb(228, 5, 35);
+}
+
+.form-table td {
+    padding: 7px 10px;
+}
+
+#heading{
+    text-align: center;
+}
+
+.form-table th {
+    padding: 10px 13px 16px 11px;
 }

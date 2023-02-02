@@ -13,7 +13,7 @@
  */
 ?>
 
-<div class="wrap">
+<div class="wrap" id="member_view">
     <!-- <?php echo $data; ?> -->
     <!-- <?php echo $test; ?> -->
 
@@ -21,7 +21,10 @@
 
     <?php if (!empty($data)) {
         foreach ($data as $key => $val) { ?>
-            <h1>Member Details - <?php echo $val->first_name . ' ' . $val->last_name; ?></h1>
+
+            <div class="postbox" id="heading">
+                <h1><strong>Member Details - </strong><?php echo $val->first_name . ' ' . $val->last_name; ?> <a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=<?php echo $_GET['mid']; ?>&id=<?php echo $_GET['id']; ?>"></a></h1>
+            </div>
 
             <div id="dashboard-widgets-wrap" class="member-view">
                 <div id="dashboard-widgets" class="metabox-holder">
@@ -134,6 +137,45 @@
 
                         </div>
                     </div>
+
+                    <?php if (!empty($memberships)) { ?>
+                    <div id="postbox-container-1" class="postbox-container">
+                        <div id="normal-sortables" class="meta-box-sortables ui-sortable">
+                            <div id="dashboard_site_health" class="postbox ">
+                                <div class="postbox-header">
+                                    <h2 class="hndle ui-sortable-handle">Membership Transactions</h2>
+                                </div>
+                                <div class="inside">
+
+                                    <table class="form-table" style="width:100%">
+                                        <!-- <table> -->
+                                            <tr>
+                                                <th>Membership Plan</th>
+                                                <th>Start Date</th>
+                                                <th>End Date</th>
+                                                <th>Fee</th>
+                                            </tr>
+                                            <?php foreach($memberships as $membership){ ?>
+                                            <tr>
+                                                <td><?php echo $membership->membership; ?></td>
+                                                <td><?php echo $membership->start_date; ?></td>
+                                                <td><?php echo $membership->end_date; ?></td>
+                                                <td><?php echo $membership->payment_info; ?></td>
+                                            </tr>
+                                            <?php }?>
+                                            
+                                           
+                                        </table>
+                                    <!-- </table> -->
+
+                                </div>
+
+
+                            </div>
+
+                        </div>
+                    </div>
+                    <?php }?>
 
 
                 </div>

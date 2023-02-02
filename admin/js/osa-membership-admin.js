@@ -326,6 +326,7 @@
 
 						mafs.find("#filter_input_area_" + id).append(html);
 
+
 					}
 				},
 				error: function (e, response) {
@@ -462,6 +463,7 @@
 
 			$.ajax({
 				url: ajax_info.ajax_url,
+				// url: "/wp-admin\/admin-ajax.php",
 				data: data,
 				success: function (result) {
 
@@ -525,7 +527,7 @@
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership_expiry_date'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['primary_phone_no'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit"></a> </td> \
+											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a> </td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
