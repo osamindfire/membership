@@ -6,6 +6,8 @@
 <div class="et_pb_contact">
 <?php if (isset($_GET["forgot_password"])){  ?>
   <h4 style="text-align: center;"><span class="success_flash">New password has been sent on mail. Please login using new password !</span></h4>
+<?php }elseif(isset($_GET["password_updated"])){ ?>
+    <h4 style="text-align: center;"><span class="success_flash">Password has been updated. Please login using new password !</span></h4> 
 <?php } ?>
 <?php if(!empty($errors)) { foreach($errors as $error) { ?>
     <span class="error_messages"><?php if(!empty($error[0])) { echo $error[0]; } ?></span><br>
@@ -35,6 +37,7 @@
 		</p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last" data-type="checkbox">
         <a href="<?php echo home_url() . '/forgot-password';?>">Forgot password ?</a>
+        <a href="<?php echo home_url() . '/become-a-member';?>" style="float:right">Become a member</a>
 		</p>
 		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Login</button>
     </form>
