@@ -159,11 +159,10 @@ $emailBody='<!doctype html>
 		
 					  <!-- START MAIN CONTENT AREA -->
 					  <tr><td><a href="'.HOME_URL.'" target="_blank"><img src="'.DIR_URL.'/OSA-logo-small.png" style="float:left;"/></a>
-					  <a href="#" target="_blank"><img src="'.DIR_URL.'/facebook.png" alt="" style="float:right;padding-right:4px;"/></a>
-						<a href="#" target="_blank"><img src="'.DIR_URL.'/twitter.png" alt="" style="float:right;padding-right:4px;"/></a>
-						<a href="#" target="_blank"><img src="'.DIR_URL.'/linkedin.png" alt="" style="float:right;padding-right:4px;"/></a>
-						<a href="#" target="_blank"><img src="'.DIR_URL.'/googleplus.png" alt="" style="float:right;padding-right:4px;"/></a></td>
-					  </tr>
+					  <a href="'.FACEBOOK.'" target="_blank"><img src="'.DIR_URL.'/facebook.png" alt="" style="float:right;padding-right:4px;"/></a>
+						<a href="'.TWITTER.'" target="_blank"><img src="'.DIR_URL.'/twitter.png" alt="" style="float:right;padding-right:4px;"/></a>
+						<a href='.LINKEDIN.'" target="_blank"><img src="'.DIR_URL.'/linkedin.png" alt="" style="float:right;padding-right:4px;"/></a>
+						</tr>
 					  <tr>
 					  <th><img src="'.DIR_URL.'/Banner.png"></th></tr>	
 

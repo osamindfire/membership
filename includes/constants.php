@@ -25,7 +25,7 @@ if( home_url() == 'http://osa.dev.local')
         define('GOOGLE_CAPTCHA_SITE_KEY','6Ld-lS4kAAAAAAqEROukn-IsDdBkGwNDumjGX2Rr');
         define('GOOGLE_CAPTCHA_SECRET_KEY','6Ld-lS4kAAAAAG8-KwWxMMWMcr5C_YLx9DUXQFnj');
 }
-
-
-//define('DIR_URL','https://newsite.odishasociety.org/wp-content/uploads/2023/01');
+define('FACEBOOK','https://www.facebook.com/groups/1902803256640735');
+define('TWITTER','https://twitter.com/OdishaSocietyNA');
+define('LINKEDIN','https://www.linkedin.com/company/the-odisha-society-of-the-americas');
 
