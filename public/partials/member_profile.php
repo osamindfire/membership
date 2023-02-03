@@ -33,27 +33,27 @@
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="">Primary Mobile No.</label>
-            <input type="text" name="primary_phone_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Primary Mobile No." value="<?php if(isset($_REQUEST['primary_phone_no'])) { echo $_REQUEST['primary_phone_no']; }else{ echo $userInfo[0]->primary_phone_no; }  ?>">
+            <input type="number" name="primary_phone_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Primary Mobile No." value="<?php if(isset($_REQUEST['primary_phone_no'])) { echo $_REQUEST['primary_phone_no']; }else{ echo $userInfo[0]->primary_phone_no; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['primaryMobileNo'])) { echo $errors['primaryMobileNo']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="">Secondary Mobile No.</label>
-            <input type="text" name="secondary_phone_no"  class="input" data-required_mark="required" placeholder="Secondary Mobile No." value="<?php if(isset($_REQUEST['secondary_phone_no'])) { echo $_REQUEST['secondary_phone_no']; }else{ echo $userInfo[0]->secondary_phone_no; }  ?>">
+            <input type="number" name="secondary_phone_no"  class="input" data-required_mark="required" placeholder="Secondary Mobile No." value="<?php if(isset($_REQUEST['secondary_phone_no'])) { echo $_REQUEST['secondary_phone_no']; }else{ echo $userInfo[0]->secondary_phone_no; }  ?>">
         </p>
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">Spouse First Name</label>
+            <label for="" class="">Partner First Name</label>
             <input type="text" name="spouse_first_name"  class="input <?php if(!empty($errors['spouseFirstName'])) { echo $errors['spouseFirstName']; } ?>" data-required_mark="required" placeholder="Spouse First Name" value="<?php if(isset($_REQUEST['spouse_first_name'])) { echo $_REQUEST['spouse_first_name']; }else{ echo $userInfo['oth_member_info'][0]->first_name; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseFirstName'])) { echo $errors['spouseFirstName']; } ?></span>
         </p>
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Spouse Last Name</label>
+            <label for="" class="">Partner Last Name</label>
             <input type="text" name="spouse_last_name"  class="input <?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?>" data-required_mark="required" placeholder="Spouse Last Name" value="<?php if(isset($_REQUEST['spouse_last_name'])) { echo $_REQUEST['spouse_last_name']; }else{ echo $userInfo['oth_member_info'][0]->last_name; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Spouse Email</label>
+            <label for="" class="">Partner Email</label>
             <input type="text" name="spouse_last_name"  class="input <?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?>" data-required_mark="required" placeholder="Spouse Email" value="<?php if(isset($_REQUEST['email'])) { echo $_REQUEST['email']; }else{ echo $userInfo['oth_member_info'][0]->user_email; } ?>" disabled>
             <span class="error_messages"><?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?></span>
         </p>
@@ -76,7 +76,7 @@
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="">Postal Code</label>
-            <input type="text" name="postal_code" class="input <?php if(!empty($errors['postalCode'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Postal Code" value="<?php if(isset($_REQUEST['postal_code'])) { echo $_REQUEST['postal_code']; } else{ echo $userInfo[0]->postal_code; }?>">
+            <input type="number" name="postal_code" class="input <?php if(!empty($errors['postalCode'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Postal Code" value="<?php if(isset($_REQUEST['postal_code'])) { echo $_REQUEST['postal_code']; } else{ echo $userInfo[0]->postal_code; }?>">
             <span class="error_messages"><?php if(!empty($errors['postalCode'])) { echo $errors['postalCode']; } ?></span>
         </p>
 
