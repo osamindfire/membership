@@ -74,7 +74,7 @@
 
             <!-- CSV Download -->
             <div class="tablenav-pages">
-                <button><a href="http://osa-membership-local.com/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
+                <button><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
             </div>
 
             <!-- pagination section -->
