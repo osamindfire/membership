@@ -13,8 +13,6 @@
  */
 ?>
 
-
-
 <div class="wrap" id="member_edit">
     <!-- <?php echo $data; ?> -->
 
@@ -22,12 +20,21 @@
     <?php if (!empty($data)) {
         foreach ($data as $key => $val) { ?>
 
+            <?php if (isset($_GET['success'])) { ?>
+                <div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible">
+                    <p><strong>Details updated.</strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
+                </div>
+            <?php } ?>
+
 
             <div class="postbox" id="heading">
                 <h1><strong>Member Details - </strong><?php echo $val->first_name . ' ' . $val->last_name; ?> <a class="vers dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid=<?php echo $_GET['mid']; ?>&id=<?php echo $_GET['id']; ?>"></a></h1>
             </div>
 
-
+            <div id="member_info">
+                <input type="text" hidden name="" id="id" value="<?php echo $_GET['id'] ?>">
+                <input type="text" hidden name="" id="mid" value="<?php echo $_GET['mid'] ?>">
+            </div>
 
             <form method="post" action="" novalidate="novalidate">
 
@@ -44,12 +51,6 @@
                                             <h2 class="hndle ui-sortable-handle">Spouse</h2>
                                         </div> -->
                                         <div class="inside">
-
-                                        <?php if (isset($_GET['success'])) { ?>
-    <div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible">
-        <p><strong>Details updated.</strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
-    </div>
-<?php } ?>
 
                                             <table class="form-table" role="presentation">
                                                 <tbody>

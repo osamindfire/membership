@@ -142,90 +142,110 @@ class Osa_Membership_Admin
 	 */
 	public function render_member_menu_page()
 	{
-		$this->member_ajax_filter_search_scripts();
+		//$this->member_ajax_filter_search_scripts();
 
-		// $this->member_csv_download();
+		$this->member_csv_download();
 		include_once(plugin_dir_path(__FILE__) . 'partials/member_listing.php');
 	}
 
-	public function member_csv_download(){
+	public function member_csv_download()
+	{
+
 		global $wpdb;
-		if ( isset($_GET['action'] ) && $_GET['action'] == 'download_csv_file' )
-		{
-			// Query
-			// $statement = $wpdb->get_results("SELECT * FROM `wp_chapters` ORDER BY `chapter_type_id` DESC");
-			// echo json_encode($statement);
-			// // file creation
-			// $wp_filename = "osacsvtest_".date("d-m-y").".csv";
-			
-			// // Clean object
-			// // ob_end_clean ();
-			
-			// // // Open file
-			// $wp_file = fopen($wp_filename,"w");
-			
-			// // loop for insert data into CSV file
-			// foreach ($statement as $statementFet)
-			// {
-			// 	$wp_array = array(
-			// 		"name"=>$statementFet->name,
-			// 		"chapter_id"=>$statementFet->chapter_type_id
-			// 	);
-			// 	fputcsv($wp_file,$wp_array);
-			// }
-			
-			// // Close file
-			// fclose($wp_file);
-			
-			// // download csv file
-			// header("Content-Description: File Transfer");
-			// header("Content-Disposition: attachment; filename=".$wp_filename);
-			// header("Content-Type: application/csv;");
-			// readfile($wp_filename);
-			// // exit;
+		if (isset($_GET['action']) && $_GET['action'] == 'download_csv_file') {
+
 			$header_row = array(
-				'chapter_id',
-				'Name'
+				'MEMBER ID',
+				'FIRST NAME',
+				'LAST NAME',
+				'EMAIL',
+				'JOIN DATE',
+				'EXPIRY DATE',
+				'PRIMARY PHONE',
+				'SECONDARY PHONE',
+				'STATUS'
+
 			);
+
 			$data_rows = array();
 			global $wpdb;
-			
-			$sql = 'SELECT * FROM `wp_chapters` ;';
-			$users = $wpdb->get_results( $sql, 'ARRAY_A' );
-			foreach ( $users as $user ) {
+
+			$sql = "SELECT
+			DATE_FORMAT(
+				wp_users.user_registered,
+				'%d-%m-%Y'
+			) AS user_registered,
+			wp_users.user_email,
+			t1.id,
+			t1.first_name,
+			t1.last_name,
+			t1.member_id,
+			t1.parent_id,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+			DATE_FORMAT(
+				wp_member_other_info.membership_expiry_date,
+				'%d-%m-%Y'
+			) AS membership_expiry_date,
+			wp_membership_type.membership 
+			FROM
+			`wp_users`
+			INNER JOIN wp_member_user t1 ON
+			t1.user_id = wp_users.ID
+			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
+			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
+			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+		
+			WHERE
+			t1.type != 'child' ORDER BY t1.member_id ; ";
+
+			$members = $wpdb->get_results($sql, 'ARRAY_A');
+			foreach ($members as $member) {
 				$row = array(
-					$user['chapter_type_id'],
-					$user['name']
+					$member['member_id'],
+					$member['first_name'],
+					$member['last_name'],
+					$member['user_email'],
+					$member['user_registered'],
+					$member['membership_expiry_date'],
+					$member['primary_phone_no'],
+					$member['secondary_phone_no'],
+					$member['membership'],
 				);
 				$data_rows[] = $row;
 			}
 
-			ob_start();
+
+
+			// ob_start();
 
 			$domain = $_SERVER['SERVER_NAME'];
 			//echo $domain;
-			
-			$filename = 'users.csv';
-			
-			
-			$fh = @fopen( 'php://output', 'w' );
-			fprintf( $fh, chr(0xEF) . chr(0xBB) . chr(0xBF) );
-			header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
-			header( 'Content-Description: File Transfer' );
-			header( 'Content-type: text/csv' );
-			header( "Content-Disposition: attachment; filename={$filename}" );
-			header( 'Expires: 0' );
-			header( 'Pragma: public' );
-			fputcsv( $fh, $header_row );
-			foreach ( $data_rows as $data_row ) {
-				fputcsv( $fh, $data_row );
+
+			$filename = 'OSA-members-list.csv';
+		//$filename = 'users-' . $domain . '-' . time() . '.csv';
+
+			ob_end_clean();
+
+			$fh = @fopen('php://output', 'w');
+			fprintf($fh, chr(0xEF) . chr(0xBB) . chr(0xBF));
+			header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+			header('Content-Description: File Transfer');
+			header('Content-type: text/csv');
+			header("Content-Disposition: attachment; filename={$filename}");
+			header('Expires: 0');
+			header('Pragma: public');
+			fputcsv($fh, $header_row);
+			foreach ($data_rows as $data_row) {
+				fputcsv($fh, $data_row);
 			}
-			fclose( $fh );
-			
+
+			fclose($fh);
+
 			ob_end_flush();
-			
-			//die();
-			return;
+
+			die();
+			// return;
 		}
 	}
 
@@ -291,11 +311,11 @@ class Osa_Membership_Admin
 			) AS start_date, DATE_FORMAT(
 				t1.end_date,
 				'%d-%m-%Y'
-			) AS end_date, t1.payment_info, t2.membership FROM wp_member_membership t1
+			) AS end_date, t2.membership, t2.fee FROM wp_member_membership t1
 			INNER JOIN wp_membership_type t2 ON t1.membership_type_id = t2.membership_type_id
 			 where t1.member_id = $member_id ;");
 
-			
+
 
 			//$test = json_encode($parents);
 
@@ -427,14 +447,14 @@ class Osa_Membership_Admin
 					//echo json_encode($othInfo);
 
 
-					$url = home_url('/wp-admin/admin.php?page=member-edit&mid='.$_GET['mid'].'&id='.$_GET['id'].'&success');
+					$url = home_url('/wp-admin/admin.php?page=member-edit&mid=' . $_GET['mid'] . '&id=' . $_GET['id'] . '&success');
 					//echo $url;
 					// $redirectTo = home_url() . '/wp-admin/admin.php?page=member-edit&mid=16950&id=8661';
 					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
 
-					
-					
-					
+
+
+
 
 					// echo '<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> 
 					// 		<p><strong>Details updated.</strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>';
@@ -450,7 +470,7 @@ class Osa_Membership_Admin
 	/**
 	 *  Member edit form validations
 	 */
-	public function validateForm($childCount = 0 )
+	public function validateForm($childCount = 0)
 	{
 		$errors = array();
 
@@ -484,15 +504,15 @@ class Osa_Membership_Admin
 
 			if ($childCount !== 0) {
 				for ($i = 0; $i < $childCount; $i++) {
-					if (!empty($_POST['child_id_'.$i])) {
+					if (!empty($_POST['child_id_' . $i])) {
 						// Validate child  
-						$childFirstName = esc_sql($_POST['child_first_'.$i]);
+						$childFirstName = esc_sql($_POST['child_first_' . $i]);
 						if (empty($childFirstName)) {
-							$errors['child_first_'.$i] = "Please enter a child First Name";
+							$errors['child_first_' . $i] = "Please enter a child First Name";
 						}
-						$childLastName = esc_sql($_POST['child_last_'.$i]);
+						$childLastName = esc_sql($_POST['child_last_' . $i]);
 						if (empty($childLastName)) {
-							$errors['child_last_'.$i] = "Please enter a child Last Name";
+							$errors['child_last_' . $i] = "Please enter a child Last Name";
 						}
 					}
 				}
@@ -530,13 +550,13 @@ class Osa_Membership_Admin
 	/**
 	 * Register script and adds extra script to registered script
 	 */
-	public function member_ajax_filter_search_scripts()
-	{
-		wp_enqueue_script('member_ajax_filter_search', get_stylesheet_directory_uri() . plugin_dir_path(__FILE__) . 'js/osa-membership-admin.js', array(), '1.0', true);
-		wp_add_inline_script('member_ajax_filter_search', 'const ajax_info = ' . json_encode(array(
-			'ajax_url' => admin_url('admin-ajax.php')
-		)), 'before');
-	}
+	// public function member_ajax_filter_search_scripts()
+	// {
+	// 	wp_enqueue_script('member_ajax_filter_search', get_stylesheet_directory_uri() . plugin_dir_path(__FILE__) . 'js/osa-membership-admin.js', array(), '1.0', true);
+	// 	wp_add_inline_script('member_ajax_filter_search', 'const ajax_info = ' . json_encode(array(
+	// 		'ajax_url' => admin_url('admin-ajax.php')
+	// 	)), 'before');
+	// }
 
 	/**
 	 * Ajax callback function member listing
@@ -554,17 +574,6 @@ class Osa_Membership_Admin
 			$type = $_GET['type'];
 			$filter_option = $_GET['filter_option'];
 			$filter_input = $_GET['filter_input'];
-
-			//need to remove
-			// $queryx = "SELECT DATE_FORMAT(wp_users.user_registered, '%d-%m-%Y') as user_registered, wp_users.user_email, t1.first_name, t1.last_name, t1.member_id,
-			// wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
-			// t2.first_name as partner_first_name, t2.last_name as partner_last_name, wp_membership_type.membership FROM `wp_users` 
-			// INNER JOIN wp_member_user t1 ON t1.user_id = wp_users.ID
-			// LEFT JOIN wp_member_user t2 ON t2.member_id = t1.member_id and t2.type='parent'
-			// LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
-			// LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
-			// INNER JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_membership.membership_type_id 
-			// WHERE 1 ";
 
 			$query = "SELECT
 			DATE_FORMAT(

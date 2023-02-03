@@ -29,8 +29,11 @@
 	 * practising this, we should strive to set a better example in our own work.
 	 */
 
+	// 
+
 	$(window).load(function () {
 
+		// $('.loader').hide();
 		// Call member data when window loaded
 		filteredData();
 
@@ -133,7 +136,6 @@
 		let filterForm = mafs.find("#members-filter");
 
 		$("body").on('change', '.member_filter_option', function () {
-			console.log('filteronchange');
 			let el = $(this);
 			let filter_id = $(this).attr('data-filter-id');
 			let filter_input = $(this).parent().find('#filter_input_id_' + filter_id);
@@ -166,46 +168,45 @@
 			let el = $(this);
 			//alert('addmore');
 			let filter_opt_dict = {
-				"Country" : "country",
-				"State" : "state",
-				"City" : "city",
-				"Chapter" : "chapter",
-				"Membership" : "membership"
+				"Country": "country",
+				"State": "state",
+				"City": "city",
+				"Chapter": "chapter",
+				"Membership": "membership"
 			}
 
 			//let form_el_count = $("#members-filter").children().length;
 			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
-			
+
 
 			for (let i = 0; i <= form_el_count; i++) {
-				if ($("#members-filter").find("#category_filter_"+i).length) {
+				if ($("#members-filter").find("#category_filter_" + i).length) {
 					let option = $("#category_filter_" + i).find(":selected").text();
 					//console.log(option);
 					delete filter_opt_dict[option];
 				}
 			}
 
-			console.log(filter_opt_dict);
-            
-			if( Object.keys(filter_opt_dict).length !== 0){
-			let html = '<div class="tablenav top"> \
+
+			if (Object.keys(filter_opt_dict).length !== 0) {
+				let html = '<div class="tablenav top"> \
 						<div class="alignleft actions"> \
 							<span id="filter_input_area_'+ add_index + '"> \
 								<select name="filter_option" id="category_filter_'+ add_index + '" data-filter-id="' + add_index + '" class="postform member_filter_option"> \
 									<option value="0" disabled selected>Select</option> ' ;
 
-									for (let key in filter_opt_dict)	{
-										html += '<option class="level-0" value="'+filter_opt_dict[key]+'">'+key+'</option>' ;
-									}				
+				for (let key in filter_opt_dict) {
+					html += '<option class="level-0" value="' + filter_opt_dict[key] + '">' + key + '</option>';
+				}
 
-            html += '           </select> \
+				html += '           </select> \
 							</span> \ \
 							<input type="button" name="" id="removeBtn" class="button removeBtn" value="Remove"> \
 						</div> \
 						<br class="clear"> \
 					</div>' ;
 
-			$('#members-filter').append(html);
+				$('#members-filter').append(html);
 			}
 
 			add_index++;
@@ -215,22 +216,22 @@
 			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
 
 			for (let i = 0; i <= form_el_count; i++) {
-				if ($("#members-filter").find("#category_filter_"+i).length) {
-					if($("#members-filter").find("#category_filter_" + i).val() == 'state'){
+				if ($("#members-filter").find("#category_filter_" + i).length) {
+					if ($("#members-filter").find("#category_filter_" + i).val() == 'state') {
 						$("#members-filter").find('#filter_input_id_' + i).remove();
 						populateState(i);
 					}
-			    }
+				}
 			}
 		});
 
 		$("body").on('change', '.state_input', function () {
 			// alert('statein');
-			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id') ;
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
 
 			for (let i = 0; i <= form_el_count; i++) {
-				if ($("#members-filter").find("#category_filter_"+i).length) {
-					if($("#members-filter").find("#category_filter_" + i).val() == 'chapter'){
+				if ($("#members-filter").find("#category_filter_" + i).length) {
+					if ($("#members-filter").find("#category_filter_" + i).val() == 'chapter') {
 						$("#members-filter").find('#filter_input_id_' + i).remove();
 						populateChapter(i);
 					}
@@ -252,7 +253,6 @@
 		});
 
 		function populateCountry(id) {
-			console.log('hii country');
 
 			let data = {
 				action: "country_ajax_action",
@@ -260,7 +260,7 @@
 			}
 
 			$.ajax({
-				url: ajax_info.ajax_url,
+				url: "/wp-admin\/admin-ajax.php",
 				data: data,
 				success: function (response) {
 
@@ -279,22 +279,21 @@
 					}
 				},
 				error: function (e, response) {
-					console.log("error");
+					//console.log("error");
 				}
 			});
 
 		};
 
 		function populateState(id) {
-			console.log('hii state');
 
-			let country = '' ;
+			let country = '';
 
-			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id'); 
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
 
 			for (let i = 0; i <= form_el_count; i++) {
-				if ($("#members-filter").find("#category_filter_"+i).length) {
-					if($("#members-filter").find("#category_filter_" + i).val() == 'country'){
+				if ($("#members-filter").find("#category_filter_" + i).length) {
+					if ($("#members-filter").find("#category_filter_" + i).val() == 'country') {
 						country = $("#members-filter").find('#filter_input_id_' + i).val();
 					}
 				}
@@ -310,7 +309,7 @@
 			}
 
 			$.ajax({
-				url: ajax_info.ajax_url,
+				url: "/wp-admin\/admin-ajax.php",
 				data: data,
 				success: function (response) {
 
@@ -330,21 +329,20 @@
 					}
 				},
 				error: function (e, response) {
-					console.log("error");
+					// console.log("error");
 				}
 			});
 		};
 
 		function populateChapter(id) {
-			console.log('hii chapter');
 
-			let state = '' ;
+			let state = '';
 
 			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
 
 			for (let i = 0; i <= form_el_count; i++) {
-				if ($("#members-filter").find("#category_filter_"+i).length) {
-					if($("#members-filter").find("#category_filter_" + i).val() == 'state'){
+				if ($("#members-filter").find("#category_filter_" + i).length) {
+					if ($("#members-filter").find("#category_filter_" + i).val() == 'state') {
 						state = $("#members-filter").find('#filter_input_id_' + i).val();
 					}
 				}
@@ -357,7 +355,7 @@
 			}
 
 			$.ajax({
-				url: ajax_info.ajax_url,
+				url: "/wp-admin\/admin-ajax.php",
 				data: data,
 				success: function (response) {
 
@@ -376,14 +374,13 @@
 					}
 				},
 				error: function (e, response) {
-					console.log("error");
+					// console.log("error");
 				}
 			});
 
 		};
 
 		function populateMembership(id) {
-			console.log('hii membership');
 
 			let data = {
 				action: "membership_ajax_action",
@@ -391,7 +388,7 @@
 			}
 
 			$.ajax({
-				url: ajax_info.ajax_url,
+				url: "/wp-admin\/admin-ajax.php",
 				data: data,
 				success: function (response) {
 
@@ -410,7 +407,7 @@
 					}
 				},
 				error: function (e, response) {
-					console.log("error");
+					// console.log("error");
 				}
 			});
 
@@ -422,25 +419,25 @@
 		 * Ajax function to retrive member details
 		 */
 		function filteredData(e, activepage = 1, orderby = 'DESC', type = '') {
-			console.log("form submitted");
 
 			let mafs = $("#member-ajax-filter-search");
 
 			//for search
 			let search = '';
-			if (mafs.find("#member-search-input").val().length !== 0) {
-				search = mafs.find("#member-search-input").val();
+			if (mafs.length) {
+				if (mafs.find("#member-search-input").val().length !== 0) {
+					search = mafs.find("#member-search-input").val();
+				}
 			}
 
 			//for filter
-			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id') ;
-			console.log("l-" + form_el_count);
+			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
 
 			let filter_option = [];
 			let filter_input = [];
 
 			for (let i = 0; i <= form_el_count; i++) {
-				if (mafs.find("#category_filter_"+i).length) {
+				if (mafs.find("#category_filter_" + i).length) {
 					if (mafs.find("#category_filter_" + i).val() !== null) {
 						filter_option.push(mafs.find("#category_filter_" + i).val());
 					}
@@ -449,6 +446,8 @@
 					}
 				}
 			}
+
+			//$('.loader').show();
 
 			let data = {
 				action: "member_ajax_action",
@@ -462,8 +461,8 @@
 			}
 
 			$.ajax({
-				url: ajax_info.ajax_url,
-				// url: "/wp-admin\/admin-ajax.php",
+				//url: ajax_info.ajax_url,
+				url: "/wp-admin\/admin-ajax.php",
 				data: data,
 				success: function (result) {
 
@@ -475,7 +474,6 @@
 					mafs.find("#ajax_error_response").empty();
 
 					if (result.totalrows == 0) {
-						console.log('No data');
 						mafs.find("#ajax_error_response").append('No Records Found');
 					}
 					else if (response) {
@@ -487,7 +485,6 @@
 
 						//determine the total number of pages available  
 						let number_of_page = Math.ceil(number_of_result / results_per_page);
-						console.log("pages" + number_of_page);
 
 						//determine which page number visitor is currently on  
 						let pagen = activepage;
@@ -527,7 +524,7 @@
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership_expiry_date'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['primary_phone_no'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a> </td> \
+											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a> </td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
@@ -545,10 +542,12 @@
 														</div> \
 													');
 
+						//$('.loader').hide();
+
 					}
 				},
 				error: function (e, response) {
-					console.log("error");
+					// console.log("error");
 				}
 			});
 		}

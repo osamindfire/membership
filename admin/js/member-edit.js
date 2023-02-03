@@ -37,6 +37,9 @@
             e.preventDefault();
             //alert('close');
             $(this).parent().remove() ;
+            let id = $('#member_info').find('#id').val();
+            let mid = $('#member_info').find('#mid').val();
+            window.location = '/wp-admin/admin.php?page=member-edit&mid='+mid+'&id='+id+'';
         });
 
         $(document).on('change', '#editCountry', function (e) {

@@ -160,7 +160,7 @@
                                                 <td><?php echo $membership->membership; ?></td>
                                                 <td><?php echo $membership->start_date; ?></td>
                                                 <td><?php echo $membership->end_date; ?></td>
-                                                <td><?php echo $membership->payment_info; ?></td>
+                                                <td><?php echo $membership->fee; ?></td>
                                             </tr>
                                             <?php }?>
                                             

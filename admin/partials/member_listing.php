@@ -13,15 +13,16 @@
  */
 ?>
 
+<!-- <div class="loader"></div> -->
+
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
-<div class="wrap" id="member-ajax-filter-search">
+<div class="wrap member_list" id="member-ajax-filter-search">
     <h1 class="wp-heading-inline">
         Members</h1>
 
-        <!-- <h2><a href="http://osa-membership-local.com/wp-admin/admin.php?page=members&action=download_csv_file">Download Users</a></h2> -->
-
     <hr class="wp-header-end">
 
+    
 
     <h2 class="screen-reader-text">Filter members list</h2>
 
@@ -71,14 +72,20 @@
 
             </div>
 
+            <!-- CSV Download -->
+            <div class="tablenav-pages">
+                <button><a href="http://osa-membership-local.com/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
+            </div>
+
             <!-- pagination section -->
-            <div class="tablenav-pages one-page"><span class="displaying-num">1 item</span>
+            <!-- <div class="tablenav-pages one-page">
+                <span class="displaying-num">1 item</span>
                 <span class="pagination-links"><span class="tablenav-pages-navspan button disabled" aria-hidden="true">«</span>
                     <span class="tablenav-pages-navspan button disabled" aria-hidden="true">‹</span>
                     <span class="paging-input"><label for="current-page-selector" class="screen-reader-text">Current Page</label><input class="current-page" id="current-page-selector" type="text" name="paged" value="1" size="1" aria-describedby="table-paging"><span class="tablenav-paging-text"> of <span class="total-pages">1</span></span></span>
                     <span class="tablenav-pages-navspan button disabled" aria-hidden="true">›</span>
                     <span class="tablenav-pages-navspan button disabled" aria-hidden="true">»</span></span>
-            </div>
+            </div> -->
             <br class="clear">
         </div>
 
@@ -87,6 +94,7 @@
     <h2 class="screen-reader-text">Members list</h2>
     <!-- <br> -->
     <table class="wp-list-table widefat fixed striped table-view-list members">
+    
         <thead>
             <tr>
                 <td id="cb" class="manage-column column-cb check-column"><label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox"></td>
