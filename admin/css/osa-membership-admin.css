@@ -53,3 +53,7 @@ error{
 .form-table th {
     padding: 10px 13px 16px 11px;
 }
+
+.edit-postbox {
+    width: Auto !important;
+}
