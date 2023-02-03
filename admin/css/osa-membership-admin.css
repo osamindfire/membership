@@ -92,3 +92,6 @@ error{
   }
 
   /* #loading { display: none; } */
+.edit-postbox {
+    width: Auto !important;
+}

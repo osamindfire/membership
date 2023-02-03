@@ -11,10 +11,10 @@
     <tbody>
         <?php foreach($membershipInfo as $membership) { ?>
         <tr class="price">
-            <td class="vertical_line" style="text-align:left;"><strong><?= $membership->membership;?></strong></td>
-            <td class="vertical_line" style="text-align:left;"><?= $membership->fee;?></td>
-            <td class="vertical_line" style="text-align:left;"><?= date('d-m-Y',strtotime($membership->start_date));?></td>
-            <td class="vertical_line" style="text-align:left;"><?= date('d-m-Y',strtotime($membership->end_date));?></td>
+            <td class="vertical_line" style="text-align:center;"><strong><?= $membership->membership;?></strong></td>
+            <td class="vertical_line" style="text-align:center;"><?= $membership->fee;?></td>
+            <td class="vertical_line" style="text-align:center;"><?= date('d-m-Y',strtotime($membership->start_date));?></td>
+            <td class="vertical_line" style="text-align:center;"><?= date('d-m-Y',strtotime($membership->end_date));?></td>
         </tr>
         <?php } ?>
     </tbody>

@@ -165,11 +165,10 @@ $emailBody='<!doctype html>
 		
 					  <!-- START MAIN CONTENT AREA -->
 					  <tr><td><a href="'.HOME_URL.'" target="_blank"><img src="'.DIR_URL.'/OSA-logo-small.png" style="float:left;"/></a>
-					  <a href="#" target="_blank"><img src="'.DIR_URL.'/facebook.png" alt="" style="float:right;padding-right:4px;"/></a>
-						<a href="#" target="_blank"><img src="'.DIR_URL.'/twitter.png" alt="" style="float:right;padding-right:4px;"/></a>
-						<a href="#" target="_blank"><img src="'.DIR_URL.'/linkedin.png" alt="" style="float:right;padding-right:4px;"/></a>
-						<a href="#" target="_blank"><img src="'.DIR_URL.'/googleplus.png" alt="" style="float:right;padding-right:4px;"/></a></td>
-					  </tr>
+					  <a href="'.FACEBOOK.'" target="_blank"><img src="'.DIR_URL.'/facebook.png" alt="" style="float:right;padding-right:4px;"/></a>
+						<a href="'.TWITTER.'" target="_blank"><img src="'.DIR_URL.'/twitter.png" alt="" style="float:right;padding-right:4px;"/></a>
+						<a href="'.LINKEDIN.'" target="_blank"><img src="'.DIR_URL.'/linkedin.png" alt="" style="float:right;padding-right:4px;"/></a>
+						</tr>
 					  <tr>
 					  <th><img src="'.DIR_URL.'/Banner.png"></th></tr>	
 
@@ -183,8 +182,8 @@ $emailBody='<!doctype html>
 								<p>Your request for the new password has been processed. The new password for <strong>'.$memberEmail.' </strong> is <strong>'.$randomPassword .'</strong> </p>
                                 <p>The steps to change password are:<br>
 								1. Login to <a target="_blank" href="'.HOME_URL.'/login">'.HOME_URL.'/login</a><br>
-								2. Click on your name to go to the details.<br>
-								3. Click on Password edit icon.<br>
+								2. Click on Profile menu.<br>
+								3. Click on Change password icon.<br>
 								4. Enter your new password and the verify password.<br>
 								5. Click Update Password button.
 								</p>
