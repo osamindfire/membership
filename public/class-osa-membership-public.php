@@ -887,7 +887,7 @@ class Osa_Membership_Public
 			t1.user_id = wp_users.ID
 			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
-			WHERE $where order by t1.member_id ASC limit  $offset, $limit");
+			WHERE $where order by t1.member_id DESC limit  $offset, $limit");
 
 			$rowcount = $wpdb->num_rows;
 			ob_start();
