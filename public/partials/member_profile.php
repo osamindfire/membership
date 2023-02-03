@@ -33,12 +33,12 @@
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="">Primary Mobile No.</label>
-            <input type="number" name="primary_phone_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Primary Mobile No." value="<?php if(isset($_REQUEST['primary_phone_no'])) { echo $_REQUEST['primary_phone_no']; }else{ echo $userInfo[0]->primary_phone_no; }  ?>">
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="primary_phone_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Primary Mobile No." value="<?php if(isset($_REQUEST['primary_phone_no'])) { echo $_REQUEST['primary_phone_no']; }else{ echo $userInfo[0]->primary_phone_no; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['primaryMobileNo'])) { echo $errors['primaryMobileNo']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="">Secondary Mobile No.</label>
-            <input type="number" name="secondary_phone_no"  class="input" data-required_mark="required" placeholder="Secondary Mobile No." value="<?php if(isset($_REQUEST['secondary_phone_no'])) { echo $_REQUEST['secondary_phone_no']; }else{ echo $userInfo[0]->secondary_phone_no; }  ?>">
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="secondary_phone_no"  class="input" data-required_mark="required" placeholder="Secondary Mobile No." value="<?php if(isset($_REQUEST['secondary_phone_no'])) { echo $_REQUEST['secondary_phone_no']; }else{ echo $userInfo[0]->secondary_phone_no; }  ?>">
         </p>
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
@@ -76,7 +76,7 @@
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="">Postal Code</label>
-            <input type="number" name="postal_code" class="input <?php if(!empty($errors['postalCode'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Postal Code" value="<?php if(isset($_REQUEST['postal_code'])) { echo $_REQUEST['postal_code']; } else{ echo $userInfo[0]->postal_code; }?>">
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="postal_code" class="input <?php if(!empty($errors['postalCode'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Postal Code" value="<?php if(isset($_REQUEST['postal_code'])) { echo $_REQUEST['postal_code']; } else{ echo $userInfo[0]->postal_code; }?>">
             <span class="error_messages"><?php if(!empty($errors['postalCode'])) { echo $errors['postalCode']; } ?></span>
         </p>
 

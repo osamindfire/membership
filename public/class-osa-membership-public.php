@@ -366,9 +366,9 @@ class Osa_Membership_Public
 					$redirectTo = home_url() . '/member-dashboard';
 					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 					exit();
-				} else {
+				} elseif(empty($memberData[0]->membership_expiry_date)) {
 
-					$redirectTo = home_url() . '/membership-plan';
+					$redirectTo = home_url() . '/membership-plan?no_membership_plan=1';
 					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 					exit();
 				}

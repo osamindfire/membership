@@ -2,6 +2,8 @@
   <h4 style="text-align: center;"><span class="success_flash">User has been registered successfully. Please select the membership plan !</span></h4>
 <?php }elseif(isset($_GET["membership_expired"])){ ?>
   <h4 style="text-align: center;color:red !important;"><span class="success_flash">Your membership has expired. Please renew the membership plan !</span></h4>
+<?php }elseif(isset($_GET["no_membership_plan"])){ ?>
+  <h4 style="text-align: center;color:red !important;"><span class="success_flash">Please buy membership plan then you will be able to search other Odia members and manage several activities with this access !</span></h4>
 <?php } ?>
 <?php $sNo=1; foreach($membershipPlans as $plan) { ;?>
 <div class="columns">
