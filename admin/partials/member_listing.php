@@ -73,9 +73,9 @@
             </div>
 
             <!-- CSV Download -->
-            <div class="tablenav-pages">
-                <button><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
-            </div>
+            <!-- <div class="tablenav-pages">
+                <button type="submit"><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
+            </div> -->
 
             <!-- pagination section -->
             <!-- <div class="tablenav-pages one-page">
@@ -91,6 +91,24 @@
 
     </form>
 
+    <form id="members_list_csv" method="get">
+
+     
+        <input type="text" hidden name="search" value="aaa">
+        <input type="text" hidden name="orderby" value="DESC">
+        <input type="text" hidden name="filter_option" value="">
+        <input type="text" hidden name="filter_input" value="">
+        <input type="text" hidden name="type" value="member_id">
+
+
+    
+      <!-- CSV Download -->
+      <div class="tablenav-pages">
+                <button type="submit"><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
+                <!-- <input type="submit" name="csv" id="" class="button" value="csv"> -->
+
+        </div>
+    </form>
     <h2 class="screen-reader-text">Members list</h2>
     <!-- <br> -->
     <table class="wp-list-table widefat fixed striped table-view-list members">
@@ -146,7 +164,7 @@
         </div>
         <br class="clear">
     </div>
-
+   
     <!-- <div class="">
             <span><a class="dashicons-before dashicons-visibility"></a>  <a class="dashicons-before dashicons-edit"></a></span>
         </div> -->

@@ -528,6 +528,7 @@
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
+							// mafs.find("#members_list_csv").append('<?php $member_list_rec ='+response+' ?>');
 
 						}
 

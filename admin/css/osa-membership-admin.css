@@ -95,3 +95,8 @@ error{
 .edit-postbox {
     width: Auto !important;
 }
+
+.csvBtn{
+    transform: translate(940%, -120%);
+    position: absolute;
+}

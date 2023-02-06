@@ -154,6 +154,7 @@ class Osa_Membership_Admin
 		global $wpdb;
 		if (isset($_GET['action']) && $_GET['action'] == 'download_csv_file') {
 
+
 			$header_row = array(
 				'MEMBER ID',
 				'FIRST NAME',
@@ -197,7 +198,11 @@ class Osa_Membership_Admin
 			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
 		
 			WHERE
-			t1.type != 'child' ORDER BY t1.member_id ; ";
+			t1.type != 'child' ORDER BY t1.member_id LIMIT 10; ";
+
+		
+			
+			//die();
 
 			$members = $wpdb->get_results($sql, 'ARRAY_A');
 			foreach ($members as $member) {
@@ -216,6 +221,8 @@ class Osa_Membership_Admin
 			}
 
 
+			// print_r($data_rows);
+			// die;
 
 			// ob_start();
 
@@ -567,7 +574,7 @@ class Osa_Membership_Admin
 		header("Content-Type: application/json");
 		global $wpdb;
 
-		if (isset($_GET['page']) || isset($_GET['search'])) {
+		if (isset($_GET['page']) || isset($_GET['search']) || isset($_GET['action']) == 'download_csv_file') {
 
 			$search = $_GET['search'];
 			$orderby = $_GET['orderby'];
