@@ -5,9 +5,15 @@
 <div class="et_pb_row">
 <div class="et_pb_contact">
 <?php if (isset($_GET["forgot_password"])){  ?>
-  <h4 style="text-align: center;"><span class="success_flash">New password has been sent on mail. Please login using new password !</span></h4>
+<div class="alert">
+<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+<strong>Reset password link has been sent on your mail. Please reset and login using new password !</strong>
+</div><br>
 <?php }elseif(isset($_GET["password_updated"])){ ?>
-    <h4 style="text-align: center;"><span class="success_flash">Password has been updated. Please login using new password !</span></h4> 
+<div class="alert">
+<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+<strong>Password has been updated. Please login using new password !</strong>
+</div><br>
 <?php } ?>
 <?php if(!empty($errors)) { foreach($errors as $error) { ?>
     <span class="error_messages"><?php if(!empty($error[0])) { echo $error[0]; } ?></span><br>

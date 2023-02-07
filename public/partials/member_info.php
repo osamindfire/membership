@@ -56,6 +56,10 @@
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->chapter_name) ? $memberInfo[0]->chapter_name : 'N/A'; ?></td>
         </tr>
         <tr class="price">
+            <td class="vertical_line" style="text-align:left;"><strong>Souvenir</strong></td>
+            <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->souvenir) ? $memberInfo[0]->souvenir : 'N/A'; ?></td>
+        </tr>
+        <tr class="price">
             <td class="vertical_line" style="text-align:left;"><strong>City</strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->city) ? $memberInfo[0]->city : 'N/A'; ?></td>
         </tr>
