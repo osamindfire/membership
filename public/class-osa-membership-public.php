@@ -881,6 +881,7 @@ class Osa_Membership_Public
 				wp_users.user_registered,
 				'%d-%m-%Y'
 			) AS user_registered,
+			wp_users.ID as user_id,
 			wp_users.user_email,
 			t1.first_name,
 			t1.last_name,
@@ -1071,7 +1072,7 @@ class Osa_Membership_Public
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
 			global $wpdb;
 			global $current_user;
-			$logged_user = wp_get_current_user();
+			//$logged_user = wp_get_current_user();
 			$memberInfo = $wpdb->get_results("SELECT
 		wp_users.*,
 		wp_member_other_info.*,
@@ -1087,7 +1088,7 @@ class Osa_Membership_Public
 		LEFT JOIN wp_countries  ON wp_countries.country_type_id = wp_member_other_info.country_id 
 		LEFT JOIN wp_states  ON wp_states.state_type_id = wp_member_other_info.state_id 
 		LEFT JOIN wp_chapters  ON wp_chapters.chapter_type_id = wp_states.chapter_type_id 
-		WHERE wp_users.ID  = " . $logged_user->data->ID . " limit 1");
+		WHERE wp_users.ID  = " . $_GET['id'] . " limit 1");
 			$othMemberInfo = $wpdb->get_results("SELECT
 		wp_member_user.*,
 		wp_users.user_email

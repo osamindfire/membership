@@ -145,7 +145,7 @@
                 <td class="text-center vertical_line"><?= $member->address_line_1; ?></td>
                 <td class="text-center vertical_line"><?= $member->primary_phone_no; ?></td>
                 <!-- <td class="text-center vertical_line"><?= $member->membership; ?></td> -->
-                <td class="text-center vertical_line"><a href="<?php echo home_url('member-dashboard/member-info/'); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
+                <td class="text-center vertical_line"><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
               </tr>
             <?php }
           } else { ?>
