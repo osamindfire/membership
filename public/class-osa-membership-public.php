@@ -1245,6 +1245,16 @@ class Osa_Membership_Public
 						exit();
 					}
 				} else {
+					$recaptcha = $_POST['g-recaptcha-response'];
+					$secret_key = GOOGLE_CAPTCHA_SECRET_KEY;
+					$url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $recaptcha;
+
+					$response = file_get_contents($url);
+					$response = json_decode($response, true);
+					if (!empty($response['error-codes'])) {
+						$errors['googlecaptcha'] = 'CAPTCHA is invalid';
+					}else{
+					
 					$newPassword = esc_sql($_POST['new_password']);
 					if (empty($newPassword)) {
 						$errors['new_password'] = "Please enter a New Password";
@@ -1262,6 +1272,7 @@ class Osa_Membership_Public
 					if ($_POST['old_password'] == $newPassword) {
 						$errors['confirm_password'] = "Your new password cannot be the same as your current password";
 					}
+				}
 				}
 				if (empty($errors)) {
 
