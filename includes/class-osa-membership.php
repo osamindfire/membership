@@ -199,6 +199,8 @@ class Osa_Membership {
 		$this->loader->add_action('wp_ajax_state_ajax_action', $plugin_admin, 'state_ajax_action');
 		$this->loader->add_action('wp_ajax_chapter_ajax_action', $plugin_admin, 'chapter_ajax_action');
 		$this->loader->add_action('wp_ajax_membership_ajax_action', $plugin_admin, 'membership_ajax_action');
+		$this->loader->add_action('wp_ajax_member_deactivate', $plugin_admin, 'member_deactivate');
+
 
 	}
 

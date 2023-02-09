@@ -74,7 +74,11 @@
 
             <!-- CSV Download -->
             <div class="tablenav-pages">
-                <button><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
+                <!-- <button type="submit"><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button> -->
+                <button type="submit" id="csv_download" ><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
+
+                <!-- <input type="button" name="csv" id="csv_download" class="button" value="Download CSV"> -->
+
             </div>
 
             <!-- pagination section -->
@@ -93,11 +97,11 @@
 
     <h2 class="screen-reader-text">Members list</h2>
     <!-- <br> -->
-    <table class="wp-list-table widefat fixed striped table-view-list members">
+    <table id="members" class="wp-list-table widefat fixed striped table-view-list members">
     
         <thead>
             <tr>
-                <td id="cb" class="manage-column column-cb check-column"><label class="screen-reader-text" for="cb-select-all-1">Select All</label><input id="cb-select-all-1" type="checkbox"></td>
+                <td id="cb" class="manage-column column-cb check-column deactivate_checked"><label class="screen-reader-text" for="cb-select-all-1">Select All</label><input class="isChecked" type="checkbox"></td>
                 <th scope="col" id="member-title" data-type="t1.member_id" class="manage-column column-title column_sort column-primary sortable desc"><a href=""><span>Member ID</span><span class="sorting-indicator"></span></a></th>
                 <th scope="col" id="author" class="manage-column column-author">Name</th>
                 <th scope="col" id="tags" class="manage-column column-tags">Email</th>
@@ -146,7 +150,7 @@
         </div>
         <br class="clear">
     </div>
-
+   
     <!-- <div class="">
             <span><a class="dashicons-before dashicons-visibility"></a>  <a class="dashicons-before dashicons-edit"></a></span>
         </div> -->

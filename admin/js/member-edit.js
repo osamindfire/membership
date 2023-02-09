@@ -84,7 +84,12 @@
                 }
             });
         }
-        
+
+        $(document).on('change', '.idDeleted', function (e) {
+            e.preventDefault();
+                  
+        });
+
 
 
     });
