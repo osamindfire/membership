@@ -1,18 +1,33 @@
 <?php if (isset($_GET["register_success"])){  ?>
-  <h4 style="text-align: center;"><span class="success_flash">User has been registered successfully. Please select the membership plan !</span></h4>
+  <div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  <strong>Member has been registered successfully. Please select the membership plan !</strong>
+  </div>
 <?php }elseif(isset($_GET["membership_expired"])){ ?>
-  <h4 style="text-align: center;color:red !important;"><span class="success_flash">Your membership has expired. Please renew the membership plan !</span></h4>
+  <div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  <strong>Your membership has expired. Please renew the membership plan !</strong>
+  </div>
 <?php }elseif(isset($_GET["no_membership_plan"])){ ?>
-  <h4 style="text-align: center;color:red !important;"><span class="success_flash">Please buy membership plan then you will be able to search other Odia members and manage several activities with this access !</span></h4>
+  <div class="alert">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  <strong>Please buy membership plan then you will be able to search other Odia members and manage several activities with this access !</strong>
+  </div>
+
+<?php } ?>
+<?php if (is_user_logged_in()) { ?>
+<div style="float:unset;padding:30px;">
+<a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
+</div>
 <?php } ?>
 <?php $sNo=1; foreach($membershipPlans as $plan) { ;?>
 <div class="columns">
 <table class="et_pb_with_background et_pb_inner_shadow price">
       <thead>
         <tr class="et_pb_pricing_heading">
-        <td class="text-center header" style="background-color:#fff;color:black;">
+        <td class="text-center header" style="height:61px !important;background-color:#fff;color:black;">
           <?php if($plan->type == 1) { echo "Single"; }elseif($plan->type == 2){ echo "Family";} ?> 
-          <hr><?= $plan->membership;?> </strong>
+          <?= $plan->membership;?> </strong>
         </td>
         </tr>
       </thead>

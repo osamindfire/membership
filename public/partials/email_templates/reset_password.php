@@ -5,9 +5,10 @@
 }
 </style>
 <?php 
-$randomPassword = $data['random_password'];
 $memberName = isset($data['user_login']) ? $data['user_login'] : '';
 $memberEmail = isset($data['user_email']) ? $data['user_email'] : '';
+$activationKey = isset($data['user_activation_key']) ? $data['user_activation_key'] : '';
+$resetPassword = HOME_URL.'/reset-password?key='.$activationKey;
 
 $emailBody='<!doctype html>
 		<html>
@@ -179,14 +180,8 @@ $emailBody='<!doctype html>
 							<tr>
 							  <td>
 								<p>Hi <strong>'.$memberName.'</strong>,</p>
-								<p>Your request for the new password has been processed. The new password for <strong>'.$memberEmail.' </strong> is <strong>'.$randomPassword .'</strong> </p>
-                                <p>The steps to change password are:<br>
-								1. Login to <a target="_blank" href="'.HOME_URL.'/login">'.HOME_URL.'/login</a><br>
-								2. Click on Profile menu.<br>
-								3. Click on Change password icon.<br>
-								4. Enter your new password and the verify password.<br>
-								5. Click Update Password button.
-								</p>
+								<p>A request has been received to change the password for <strong>'.$memberEmail.' </strong> account. </p>
+                                <p><a href="'.$resetPassword.'" target="_blank">Reset Password</a></p>
 							  </td>
 							 
 							</tr>

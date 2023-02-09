@@ -115,7 +115,7 @@ class Osa_Membership_Public
 
 	public function initFunction()
 	{
-		ob_start();
+		//ob_start();
 		error_reporting(0);
 		if (!isset($_SESSION)) {
 			session_start();
@@ -138,6 +138,14 @@ class Osa_Membership_Public
 		flush_rewrite_rules();
 	}
 
+	private function getTotalParent($userId)
+	{
+		global $wpdb;
+		$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $userId . " AND type='parent' limit 1 ");
+		$totalMembers = $wpdb->get_results("SELECT count(wp_member_user.member_id) as total_parent FROM wp_member_user WHERE wp_member_user.member_id  = " . $userInfo[0]->member_id . " AND type='parent' limit 1 ");
+
+		return $totalMembers[0]->total_parent;
+	}
 	/* 
 	Function name: membershipPlan
 	Description : For displaying membership plan once the user is registered 
@@ -146,8 +154,13 @@ class Osa_Membership_Public
 	{
 		if (!empty($_SESSION['user_id'])) {
 			global $wpdb, $user_ID;
-			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 ");
-
+			$type='';
+			if($this->getTotalParent($_SESSION['user_id']) > 1)
+			{
+			$type=' and type > 1';
+			}
+			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 $type ");
+			
 			if ($_POST) {
 				global $wpdb;
 				//$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
@@ -328,30 +341,30 @@ class Osa_Membership_Public
 	*/
 	public function memberLogin()
 	{
-		if(!is_user_logged_in()){
-		global $wpdb, $user_ID;
-		if ($_POST) {
-			//We shall SQL escape all inputs  
-			$username = esc_sql($_REQUEST['username']);
-			$password = esc_sql($_REQUEST['password']);
-			$remember = isset($_REQUEST['rememberme']) ? true : false;
+		if (!is_user_logged_in()) {
+			global $wpdb, $user_ID;
+			if ($_POST) {
+				//We shall SQL escape all inputs  
+				$username = esc_sql($_REQUEST['username']);
+				$password = esc_sql($_REQUEST['password']);
+				$remember = isset($_REQUEST['rememberme']) ? true : false;
 
-			$login_data = array();
-			$login_data['user_login'] = $username;
-			$login_data['user_password'] = $password;
-			$login_data['remember'] = $remember;
+				$login_data = array();
+				$login_data['user_login'] = $username;
+				$login_data['user_password'] = $password;
+				$login_data['remember'] = $remember;
 
-			$user_verify = wp_signon($login_data, false);
+				$user_verify = wp_signon($login_data, false);
 
-			if (is_wp_error($user_verify)) {
-				$errors = $user_verify->errors;
-				$errors['incorrect_password'][0] = 'The password you entered for the email address ' . $username . ' is incorrect.';
-			} else {
-				wp_set_current_user($user_verify->ID);
-				$_SESSION['user_id'] = $user_verify->ID;
-				wp_set_auth_cookie($user_verify->ID);
-				$loggedUser = wp_get_current_user();
-				$memberData = $wpdb->get_results("SELECT
+				if (is_wp_error($user_verify)) {
+					$errors = $user_verify->errors;
+					$errors['incorrect_password'][0] = 'The password you entered for the email address ' . $username . ' is incorrect.';
+				} else {
+					wp_set_current_user($user_verify->ID);
+					$_SESSION['user_id'] = $user_verify->ID;
+					wp_set_auth_cookie($user_verify->ID);
+					$loggedUser = wp_get_current_user();
+					$memberData = $wpdb->get_results("SELECT
 				wp_member_other_info.membership_type,
 				wp_member_other_info.membership_expiry_date
 				FROM
@@ -360,35 +373,35 @@ class Osa_Membership_Public
 				t1.user_id = wp_users.ID
 				LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 				WHERE t1.user_id=" . $loggedUser->data->ID . " limit 1");
-				$currentDate = date('Y-m-d');
-				if (strtotime($memberData[0]->membership_expiry_date) >= strtotime($currentDate)) {
-					do_action('wp_login', $user_verify->user_login, $user_verify);
-					$redirectTo = home_url() . '/member-dashboard';
-					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-					exit();
-				} elseif(empty($memberData[0]->membership_expiry_date)) {
+					$currentDate = date('Y-m-d');
+					if (strtotime($memberData[0]->membership_expiry_date) >= strtotime($currentDate)) {
+						do_action('wp_login', $user_verify->user_login, $user_verify);
+						$redirectTo = home_url() . '/member-dashboard';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+					} elseif (empty($memberData[0]->membership_expiry_date)) {
 
-					$redirectTo = home_url() . '/membership-plan?no_membership_plan=1';
+						$redirectTo = home_url() . '/membership-plan?no_membership_plan=1';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+					}
+				}
+			} else {
+				$membershipExpireDate = $this->getMembershipExpireDate();
+				if (is_user_logged_in() && strtotime($membershipExpireDate) >= strtotime(date('Y-m-d'))) {
+					$redirectTo = home_url() . '/member-dashboard';
 					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 					exit();
 				}
 			}
+			ob_start();
+			include_once(plugin_dir_path(__FILE__) . 'partials/authentication/login.php');
+			return ob_get_clean();
 		} else {
-			$membershipExpireDate = $this->getMembershipExpireDate();
-			if (is_user_logged_in() && strtotime($membershipExpireDate) >= strtotime(date('Y-m-d'))) {
-				$redirectTo = home_url() . '/member-dashboard';
-				echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-				exit();
-			}
+			$redirectTo = home_url() . '/member-dashboard';
+			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+			exit();
 		}
-		ob_start();
-		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/login.php');
-		return ob_get_clean();
-	}else{
-		$redirectTo = home_url() . '/member-dashboard';
-		echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-		exit();
-	}
 	}
 
 	/* 
@@ -425,7 +438,7 @@ class Osa_Membership_Public
 			ob_start();
 			include_once(plugin_dir_path(__FILE__) . 'partials/authentication/register.php');
 			return ob_get_clean();
-		}else{
+		} else {
 			$redirectTo = home_url() . '/member-dashboard';
 			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 			exit();
@@ -460,15 +473,12 @@ class Osa_Membership_Public
 				}
 				if (empty($errors)) {
 					// lets generate our new password
-					$random_password = wp_generate_password(12, false);
+					$user_activation_key = wp_generate_password(20, false);
 					$user = get_user_by('email', $email);
 					$userInfo = $user->data;
-					$update_user = wp_update_user(array(
-						'ID' => $user->ID,
-						'user_pass' => $random_password
-					));
-
-					$userInfo->random_password = $random_password;
+					global $wpdb;
+					$update_user = $wpdb->update('wp_users', ['user_activation_key' => $user_activation_key], array('ID' => $user->ID), array('%s', '%s'), array('%d'));
+					$userInfo->user_activation_key = $user_activation_key;
 					if ($this->sendMail($userInfo->user_email, 'Reset Password', (array)$userInfo, 'forgot_password')) {
 						$redirectTo = home_url() . '/login?forgot_password=1';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
@@ -822,7 +832,7 @@ class Osa_Membership_Public
 		$membershipExpiryDate = $this->getMembershipExpireDate();
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
 			$pagenum = isset($_GET['pagenum']) ? absint($_GET['pagenum']) : 1;
-			$limit = 10; // number of rows in page
+			$limit = 20; // number of rows in page
 			$offset = ($pagenum - 1) * $limit;
 			$where = "";
 			$where .= "t1.type != 'child' and wp_member_other_info.membership_type IS NOT NULL";
@@ -841,6 +851,7 @@ class Osa_Membership_Public
 				$where .= " OR wp_member_other_info.primary_phone_no like '%$globalSearch%'";
 				$where .= " OR wp_member_other_info.secondary_phone_no like '%$globalSearch%'";
 				$where .= " OR wp_membership_type.membership like '%$globalSearch%'";
+				$where .= " OR wp_users.user_email like '%$globalSearch%'";
 				$where .= " ) ";
 			}
 			if (!empty($_GET['country'])) {
@@ -903,10 +914,11 @@ class Osa_Membership_Public
 	public function profile()
 	{
 		global $wpdb, $user_ID;
-		$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
+		$countries = $wpdb->get_results("SELECT * FROM wp_countries order by priority ASC");
 		global $current_user;
 		$logged_user = wp_get_current_user();
 		$membershipExpiryDate = $this->getMembershipExpireDate();
+		$totalParent=$this->getTotalParent($user_ID);
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
 			if ($_POST) {
 				$errors = $this->validateProfileForm();
@@ -935,9 +947,10 @@ class Osa_Membership_Public
 					$othInfo['postal_code'] = $_POST['postal_code'];
 					$othInfo['state_id'] = $_POST['state'];
 					$othInfo['country_id'] = $_POST['country'];
+					$othInfo['souvenir'] = $_POST['souvenir'];
 					$othInfoId = $_POST['member_id'];
 
-					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $othInfoId), array('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d'), array('%d'));
+					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $othInfoId), array('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d','%s'), array('%d'));
 
 					//child update
 					foreach ($_POST['child_id'] as $childKey => $childValues) {
@@ -1102,7 +1115,7 @@ class Osa_Membership_Public
 	{
 		$membershipExpiryDate = $this->getMembershipExpireDate();
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
-			if (isset($_POST) && wp_verify_nonce($_POST['update_password_form'], 'update_password')) {
+			if (isset($_POST['update_password_form']) && wp_verify_nonce($_POST['update_password_form'], 'update_password')) {
 				try {
 					global $current_user;
 					$logged_user = wp_get_current_user();
@@ -1213,5 +1226,68 @@ class Osa_Membership_Public
 
 		echo json_encode($data);
 		wp_die();
+	}
+
+	public function resetPassword()
+	{
+		global $wpdb;
+		if (isset($_POST['reset_password_form']) && wp_verify_nonce($_POST['reset_password_form'], 'reset_password')) {
+
+			try {
+				$errors = array();
+
+				if (!empty($_POST['reset_key'])) {
+					$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_POST['reset_key'] . "' ");
+
+					if (empty($userKey[0]->user_activation_key)) {
+						$redirectTo = home_url() . '/forgot-password?invalid_link=1';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+					}
+				} else {
+					$newPassword = esc_sql($_POST['new_password']);
+					if (empty($newPassword)) {
+						$errors['new_password'] = "Please enter a New Password";
+					} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
+						$errors['new_password'] = "Password must be at least six characters";
+					}
+
+					$cPassword = esc_sql($_POST['confirm_password']);
+					if (empty($cPassword)) {
+						$errors['confirm_password'] = "Please Confirm Password";
+					} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
+					{
+						$errors['confirm_password'] = "Passwords do not match";
+					}
+					if ($_POST['old_password'] == $newPassword) {
+						$errors['confirm_password'] = "Your new password cannot be the same as your current password";
+					}
+				}
+				if (empty($errors)) {
+
+					wp_set_password($newPassword, $userKey[0]->ID);
+					$blank = '';
+					$wpdb->query(
+						$wpdb->prepare("UPDATE wp_users
+						SET user_activation_key = %s 
+						WHERE ID = %d", $blank, $userKey[0]->ID)
+					);
+					$redirectTo = home_url() . '/login?password_updated=1';
+					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+					exit();
+				}
+			} catch (Exception $e) {
+				echo 'Error writing to database: ',  $e->getMessage(), "\n";
+			}
+		} else {
+			$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_GET['key'] . "' ");
+
+			if (empty($userKey[0]->user_activation_key)) {
+				$redirectTo = home_url() . '/forgot-password?invalid_link=1';
+				echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+				exit();
+			}
+		}
+		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/reset_password.php');
 	}
 }
