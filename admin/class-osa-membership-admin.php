@@ -100,6 +100,12 @@ class Osa_Membership_Admin
 		wp_enqueue_script($this->plugin_name, plugin_dir_url(__FILE__) . 'js/osa-membership-admin.js', array('jquery'), $this->version, false);
 
 		wp_enqueue_script("member-edit", plugin_dir_url(__FILE__) . 'js/member-edit.js', array('jquery'), $this->version, false);
+
+		wp_enqueue_script("csv-download", plugin_dir_url(__FILE__) . 'js/csv-download.js', array('jquery'), $this->version, false);
+
+		wp_enqueue_script("deactivate", plugin_dir_url(__FILE__) . 'js/member-delete.js', array('jquery'), $this->version, false);
+
+
 	}
 
 	/**
@@ -145,6 +151,7 @@ class Osa_Membership_Admin
 		//$this->member_ajax_filter_search_scripts();
 
 		$this->member_csv_download();
+		// $this->member_deactivate();
 		include_once(plugin_dir_path(__FILE__) . 'partials/member_listing.php');
 	}
 
@@ -256,6 +263,50 @@ class Osa_Membership_Admin
 		}
 	}
 
+	public function member_deactivate(){
+		global $wpdb;
+		if (isset($_GET['action'])) {
+ 
+			$isDeleted = $_GET['isDeleted'] ;
+			$memberId = $_GET['memberID'];
+
+			$memID = array_unique($memberId) ;
+			
+			
+			print_r($memID);
+
+			// $wpdb->update('wp_member_user', $Arr, array('id' => $memID), array('%d'), array('%d'));
+
+			$updateQuery = " UPDATE wp_member_user
+			SET is_deleted = $isDeleted
+			WHERE member_id IN( null " ;
+
+            foreach($memID as $id){
+				$updateQuery .= " , $id"; 
+			}
+
+			$updateQuery .= " );"; 
+
+            $wpdb->get_results($updateQuery);
+
+
+			// $deactivate = $wpdb->update('wp_member_user', $Arr, array('id' => $memberId), array('%d'), array('%d'));
+
+			// if(is_wp_error($deactivate)){
+
+			// 	echo 'error';
+			// }else{
+
+			wp_reset_query();
+
+			echo 'deleted mem';
+			// }
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
+
 	/**
 	 * Callback for members  submenu(View)
 	 */
@@ -353,6 +404,7 @@ class Osa_Membership_Admin
 			t1.first_name,
 			t1.last_name,
 			t1.member_id,
+			t1.is_deleted,
 			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
@@ -389,7 +441,7 @@ class Osa_Membership_Admin
 
 			$childs = $wpdb->get_results("SELECT  * FROM wp_member_user where member_id = $member_id AND parent_id !=0 AND type = 'child';");
 
-			$countries = $wpdb->get_results("SELECT  * FROM wp_countries ;");
+			$countries = $wpdb->get_results("SELECT  * FROM wp_countries ORDER BY priority ASC;");
 
 			$states = $wpdb->get_results("SELECT  * FROM wp_states ;");
 
@@ -413,8 +465,13 @@ class Osa_Membership_Admin
 					$mainArr = [];
 					$mainArr['first_name'] = $_POST['first_name'];
 					$mainArr['last_name'] = $_POST['last_name'];
+					// $mainArr['is_deleted'] = $_POST['is_deleted'];
 
 					$mainMember = $wpdb->update('wp_member_user', $mainArr, array('id' => $main_id), array('%s', '%s'), array('%d'));
+					
+					$del = $_POST['is_deleted'];
+					$wpdb->update('wp_member_user', array('is_deleted' => $del ), array('member_id' => $member_id), array('%d'), array('%d'));
+
 
 					//partner update
 					$othArr = [];
@@ -434,6 +491,8 @@ class Osa_Membership_Admin
 						}
 					}
 
+					// echo $_POST['is_deleted'];
+					// die;
 
 					//other information update
 					$othInfo = [];
@@ -449,7 +508,7 @@ class Osa_Membership_Admin
 
 					//$othInfoId=$_POST['member_id'];
 
-					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $member_id), array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d'), array('%d'));
+					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $member_id), array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d'), array('%d'));
 
 					//echo json_encode($othInfo);
 
@@ -593,7 +652,9 @@ class Osa_Membership_Admin
 			t1.last_name,
 			t1.member_id,
 			t1.parent_id,
-			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+			t1.is_deleted,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no, 
+			wp_member_other_info.city, wp_member_other_info.postal_code, wp_states.state, wp_chapters.name as chapter_name, wp_countries.country, 
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
 				'%d-%m-%Y'
@@ -610,6 +671,8 @@ class Osa_Membership_Admin
 			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
 			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
 			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			LEFT JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
+
 		
 			WHERE
 			t1.type != 'child'";
@@ -702,7 +765,7 @@ class Osa_Membership_Admin
 
 		if (isset($_GET['country'])) {
 
-			$query = "SELECT * from wp_countries ORDER BY country_type_id ASC";
+			$query = "SELECT * from wp_countries ORDER BY priority ASC";
 
 			// echo $query;
 			// die;

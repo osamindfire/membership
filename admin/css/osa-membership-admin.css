@@ -7,7 +7,7 @@
     text-decoration: none;
 }
 
-.member_list a{
+.member_list a, #member_edit a{
     text-decoration: none;
 
 }
@@ -99,4 +99,13 @@ error{
 .csvBtn{
     transform: translate(940%, -120%);
     position: absolute;
+}
+
+.min-h{
+    min-height: 1px !important;
+}
+
+.out-red td, .out-red td a{
+/* outline: thin solid red; */
+color : red !important;
 }
