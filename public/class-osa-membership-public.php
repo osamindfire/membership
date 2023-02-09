@@ -631,7 +631,7 @@ class Osa_Membership_Public
 	{
 		global $wpdb;
 		$success = 0;
-		$username = $_POST['first_name'];
+		$username = $_POST['email'];
 		$password = $_POST['password'];
 		$email = $_POST['email'];
 		$userId = wp_create_user($username, $password, $email);
@@ -695,7 +695,7 @@ class Osa_Membership_Public
 	private function addSubMember($memberId, $mainParentUserId, $mainMemberPK)
 	{
 		global $wpdb;
-		$username = $_POST['spouse_first_name'];
+		$username = $_POST['spouse_email'];
 		$password = $_POST['spouse_password'];
 		$email = $_POST['spouse_email'];
 		//add spouse
@@ -835,7 +835,7 @@ class Osa_Membership_Public
 			$limit = 20; // number of rows in page
 			$offset = ($pagenum - 1) * $limit;
 			$where = "";
-			$where .= "t1.type != 'child' and wp_member_other_info.membership_type IS NOT NULL";
+			$where .= "t1.type != 'child' and wp_member_other_info.membership_type IS NOT NULL and t1.is_deleted =0 ";
 			if (!empty($_GET['global_search'])) {
 				$globalSearch = $_GET['global_search'];
 				$where .= " AND ";
