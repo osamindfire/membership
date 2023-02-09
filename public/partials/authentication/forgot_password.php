@@ -1,6 +1,10 @@
-<?php  ?> 
-<?php 
-?> 
+<?php if(!empty($_GET['invalid_link'])) { ?>
+<div class="alert" style="background-color:#d91313">
+  <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+  <strong><?= 'Invalid password reset link. Please create link again !'; ?></strong>
+  </div>
+  <?php } ?>
+
 <div class="et_pb_inner_shadow form_background">
 <div class="et_pb_row et_pb_row_0">
 <div class="et_pb_contact">
