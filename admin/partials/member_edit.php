@@ -42,8 +42,6 @@
 
                 <div id="dashboard-widgets-wrap">
                     <div id="dashboard-widgets" class="metabox-holder">
-
-                        <?php if (!empty($parents)) { ?>
                             <div id="postbox-container-1" class="postbox-container edit-postbox">
                                 <div id="normal-sortables" class="meta-box-sortables ui-sortable">
                                     <div id="dashboard_site_health" class="postbox ">
@@ -197,7 +195,6 @@
 
                                 </div>
                             </div>
-                        <?php } ?>
 
                         <?php if (!empty($parents)) { ?>
                             <div id="postbox-container-1" class="postbox-container edit-postbox">
