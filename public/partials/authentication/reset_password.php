@@ -15,14 +15,14 @@
             <input type="text" name="confirm_password"  class="input <?php if(!empty($errors['confirm_password'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Confirm New Password" value="<?php if(!empty($_REQUEST['confirm_password'])) { echo $_REQUEST['confirm_password']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['confirm_password'])) { echo $errors['confirm_password']; } ?></span>
         </p>
-        <div  style="margin-left:30px;transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;" class="g-recaptcha" 
+        <div  style="margin-bottom:50px;margin-left:30px;transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;" class="g-recaptcha" 
                 data-sitekey="<?= GOOGLE_CAPTCHA_SITE_KEY ?>">
         </div>
         <span class="error_messages"><?php if(!empty($errors['googlecaptcha'])) { echo $errors['googlecaptcha']; } ?></span>
         
-        <div class="et_contact_bottom_container">
         <?php wp_nonce_field("reset_password","reset_password_form"); ?>
-		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Submit</button>
+        <div class="et_contact_bottom_container">
+		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Reset Password</button>
 		</div>
     </form>
 </div>
