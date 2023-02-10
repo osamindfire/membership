@@ -124,7 +124,7 @@
 				<span class="et_pb_contact_field_options_wrapper">
 						<span class="et_pb_contact_field_options_list"><span class="et_pb_contact_field_checkbox">
 							<input type="checkbox" id="et_pb_contact_field_7_6_0" name="agree"class="input" value="yes" <?php if(!empty($_REQUEST['agree']) && $_REQUEST['agree'] == 'yes') { echo 'checked'; } ?>>
-							<label for="et_pb_contact_field_7_6_0"><i></i><a href="#" target="_blank">I acknowledge the Statement of Rights</a></''/span>
+							<label for="et_pb_contact_field_7_6_0"><i></i><a href="<?= home_url('agreement-page')?>" target="_blank">I acknowledge the Statement of Rights</a></''/span>
 				</span>
                 <span class="error_messages"><?php if(!empty($errors['agree'])) { echo $errors['agree']; } ?></span>
 		</p>
