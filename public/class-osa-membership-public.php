@@ -154,13 +154,12 @@ class Osa_Membership_Public
 	{
 		if (!empty($_SESSION['user_id'])) {
 			global $wpdb, $user_ID;
-			$type='';
-			if($this->getTotalParent($_SESSION['user_id']) > 1)
-			{
-			$type=' and type > 1';
+			$type = '';
+			if ($this->getTotalParent($_SESSION['user_id']) > 1) {
+				$type = ' and type > 1';
 			}
 			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 $type ");
-			
+
 			if ($_POST) {
 				global $wpdb;
 				//$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
@@ -919,7 +918,7 @@ class Osa_Membership_Public
 		global $current_user;
 		$logged_user = wp_get_current_user();
 		$membershipExpiryDate = $this->getMembershipExpireDate();
-		$totalParent=$this->getTotalParent($user_ID);
+		$totalParent = $this->getTotalParent($user_ID);
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
 			if ($_POST) {
 				$errors = $this->validateProfileForm();
@@ -951,7 +950,7 @@ class Osa_Membership_Public
 					$othInfo['souvenir'] = $_POST['souvenir'];
 					$othInfoId = $_POST['member_id'];
 
-					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $othInfoId), array('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d','%s'), array('%d'));
+					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $othInfoId), array('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s'), array('%d'));
 
 					//child update
 					foreach ($_POST['child_id'] as $childKey => $childValues) {
@@ -1237,13 +1236,13 @@ class Osa_Membership_Public
 			try {
 				$errors = array();
 
-					$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_POST['reset_key'] . "' ");
+				$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_POST['reset_key'] . "' ");
 
-					if (empty($userKey[0]->user_activation_key)) {
-						$redirectTo = home_url() . '/forgot-password?invalid_link=1';
-						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-						exit();
-					}else{
+				if (empty($userKey[0]->user_activation_key)) {
+					$redirectTo = home_url() . '/forgot-password?invalid_link=1';
+					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+					exit();
+				} else {
 					$recaptcha = $_POST['g-recaptcha-response'];
 					$secret_key = GOOGLE_CAPTCHA_SECRET_KEY;
 					$url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $recaptcha;
@@ -1252,26 +1251,26 @@ class Osa_Membership_Public
 					$response = json_decode($response, true);
 					if (!empty($response['error-codes'])) {
 						$errors['googlecaptcha'] = 'CAPTCHA is invalid';
-					}else{
-					
-					$newPassword = esc_sql($_POST['new_password']);
-					if (empty($newPassword)) {
-						$errors['new_password'] = "Please enter a New Password";
-					} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
-						$errors['new_password'] = "Password must be at least six characters";
-					}
+					} else {
 
-					$cPassword = esc_sql($_POST['confirm_password']);
-					if (empty($cPassword)) {
-						$errors['confirm_password'] = "Please Confirm Password";
-					} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
-					{
-						$errors['confirm_password'] = "Passwords do not match";
+						$newPassword = esc_sql($_POST['new_password']);
+						if (empty($newPassword)) {
+							$errors['new_password'] = "Please enter a New Password";
+						} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
+							$errors['new_password'] = "Password must be at least six characters";
+						}
+
+						$cPassword = esc_sql($_POST['confirm_password']);
+						if (empty($cPassword)) {
+							$errors['confirm_password'] = "Please Confirm Password";
+						} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
+						{
+							$errors['confirm_password'] = "Passwords do not match";
+						}
+						if ($_POST['old_password'] == $newPassword) {
+							$errors['confirm_password'] = "Your new password cannot be the same as your current password";
+						}
 					}
-					if ($_POST['old_password'] == $newPassword) {
-						$errors['confirm_password'] = "Your new password cannot be the same as your current password";
-					}
-				}
 				}
 				if (empty($errors)) {
 
@@ -1301,5 +1300,105 @@ class Osa_Membership_Public
 		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/reset_password.php');
 		return ob_get_clean();
+	}
+
+
+	public function createGsuiteAccessToken()
+	{
+		$curl = curl_init();
+		$url='https://oauth2.googleapis.com/token?';
+		$url .= 'code=4/0AWtgzh6GPG_2A5abvx7v3Ma4WJyYVNe0sjMawUuTlkbR-GsiwrqJqwDFzTlcxGw9W8bPxQ';
+		$url .= '&client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com';
+		$url .= '&client_secret=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';
+		$url .= '&redirect_uri=http://newsite.odishasociety.org';
+		$url .= '&grant_type=authorization_code';
+
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_HTTPHEADER => array(
+				'Content-Type:  application/x-www-form-urlencoded'
+			),
+		));
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+		echo $response;
+	}
+
+	public function addMemberToGsuiteGroup()
+	{
+		$curl = curl_init();
+
+		$url='https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members?key=';
+		$url .= 'key=[AIzaSyAnVYjReID2Lx5jfpQPjB0p0smPuF5mug4] HTTP/1.1';
+
+		$accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163';
+
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_POSTFIELDS => '{
+			"email": "naveenb@mindfiresolutions.com",
+			"role": "MEMBER"
+			}
+			',
+			CURLOPT_HTTPHEADER => array(
+				'Accept:  application/json',
+				'Content-Type:  application/json',
+				'Authorization: Bearer '.$accessToken
+			),
+		));
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+		echo $response;
+	}
+
+	public function reFreshGsuiteAccessToken()
+	{
+		$curl = curl_init();
+		$url='https://oauth2.googleapis.com/token?';
+		$url .= 'client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com';
+		$url .= '&client_secret=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';
+		$url .= '&refresh_token=1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U';
+		$url .= '&grant_type=refresh_token';
+
+		$accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163';
+
+		curl_setopt_array($curl, array(
+			//CURLOPT_URL => 'https://oauth2.googleapis.com/token?client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com&client_secret=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&refresh_token=1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U&grant_type=refresh_token',
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_HTTPHEADER => array(
+				'Content-Type:  application/x-www-form-urlencoded',
+				'Authorization: Bearer '.$accessToken
+			),
+		));
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+		echo $response;
 	}
 }
