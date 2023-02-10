@@ -1300,80 +1300,8 @@ class Osa_Membership_Public
 				exit();
 			}
 		}
+		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/reset_password.php');
-	}
-
-	public function passwordRecovery()
-	{
-		global $wpdb;
-		if (isset($_POST['reset_password_form']) && wp_verify_nonce($_POST['reset_password_form'], 'reset_password')) {
-
-			try {
-				$errors = array();
-
-				if (!empty($_POST['reset_key'])) {
-					$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_POST['reset_key'] . "' ");
-
-					if (empty($userKey[0]->user_activation_key)) {
-						$redirectTo = home_url() . '/forgot-password?invalid_link=1';
-						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-						exit();
-					}
-				} else {
-					$recaptcha = $_POST['g-recaptcha-response'];
-					$secret_key = GOOGLE_CAPTCHA_SECRET_KEY;
-					$url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $recaptcha;
-
-					$response = file_get_contents($url);
-					$response = json_decode($response, true);
-					if (!empty($response['error-codes'])) {
-						$errors['googlecaptcha'] = 'CAPTCHA is invalid';
-					}else{
-					
-					$newPassword = esc_sql($_POST['new_password']);
-					if (empty($newPassword)) {
-						$errors['new_password'] = "Please enter a New Password";
-					} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
-						$errors['new_password'] = "Password must be at least six characters";
-					}
-
-					$cPassword = esc_sql($_POST['confirm_password']);
-					if (empty($cPassword)) {
-						$errors['confirm_password'] = "Please Confirm Password";
-					} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
-					{
-						$errors['confirm_password'] = "Passwords do not match";
-					}
-					if ($_POST['old_password'] == $newPassword) {
-						$errors['confirm_password'] = "Your new password cannot be the same as your current password";
-					}
-				}
-				}
-				if (empty($errors)) {
-
-					wp_set_password($newPassword, $userKey[0]->ID);
-					$blank = '';
-					$wpdb->query(
-						$wpdb->prepare("UPDATE wp_users
-						SET user_activation_key = %s 
-						WHERE ID = %d", $blank, $userKey[0]->ID)
-					);
-					$redirectTo = home_url() . '/login?password_updated=1';
-					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-					exit();
-				}
-			} catch (Exception $e) {
-				echo 'Error writing to database: ',  $e->getMessage(), "\n";
-			}
-		} /* else {
-			$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_GET['key'] . "' ");
-
-			if (empty($userKey[0]->user_activation_key)) {
-				$redirectTo = home_url() . '/forgot-password?invalid_link=1';
-				echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-				exit();
-			}
-		} */
-		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/password_recovery.php');
+		return ob_get_clean();
 	}
 }
