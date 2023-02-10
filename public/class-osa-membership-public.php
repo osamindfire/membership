@@ -477,7 +477,7 @@ class Osa_Membership_Public
 					$user = get_user_by('email', $email);
 					$userInfo = $user->data;
 					global $wpdb;
-					$update_user = $wpdb->update('wp_users', ['user_activation_key' => $user_activation_key], array('ID' => $user->ID), array('%s', '%s'), array('%d'));
+					$update_user = $wpdb->update('wp_users', ['user_activation_key' => $user_activation_key], array('ID' => $user->ID), array('%s'), array('%d'));
 					$userInfo->user_activation_key = $user_activation_key;
 					if ($this->sendMail($userInfo->user_email, 'Reset Password', (array)$userInfo, 'forgot_password')) {
 						$redirectTo = home_url() . '/login?forgot_password=1';
@@ -1238,7 +1238,7 @@ class Osa_Membership_Public
 				$errors = array();
 
 					$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_POST['reset_key'] . "' ");
-
+echo "<pre>";print_r($userKey);die;
 					if (empty($userKey[0]->user_activation_key)) {
 						$redirectTo = home_url() . '/forgot-password?invalid_link=1';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";

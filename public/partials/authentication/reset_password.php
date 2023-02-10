@@ -21,6 +21,7 @@
         </div>
         <span class="error_messages"><?php if(!empty($errors['googlecaptcha'])) { echo $errors['googlecaptcha']; } ?></span>
         </p>
+        <input type="hidden" name="reset_key" value="<?= $_GET['key'] ;?>"/>
         <?php wp_nonce_field("reset_password","reset_password_form"); ?>
         <p class="et_pb_contact_field ui-sortable">
 		<button type="submit" class="et_pb_button" data-quickaccess-id="button">Submit</button>
