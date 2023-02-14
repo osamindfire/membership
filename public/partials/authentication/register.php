@@ -129,7 +129,7 @@
                 <span class="error_messages"><?php if(!empty($errors['agree'])) { echo $errors['agree']; } ?></span>
 		</p>
         <?php wp_nonce_field("register","register_form"); ?>
-        <div style="margin-left:22px;" class="g-recaptcha" 
+        <div style="margin-left:22px;transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;" class="g-recaptcha" 
                 data-sitekey="<?= GOOGLE_CAPTCHA_SITE_KEY ?>">
             </div>
         <span class="error_messages"><?php if(!empty($errors['googlecaptcha'])) { echo $errors['googlecaptcha']; } ?></span>

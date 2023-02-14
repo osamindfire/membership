@@ -17,7 +17,7 @@
     <br>
     <?php if (home_url($wp->request) == home_url() . '/member-dashboard') { ?>
 
-    <div class="et_pb_inner_shadow form_background">
+    <!-- <div class="et_pb_inner_shadow form_background">
         <div class="et_pb_row et_pb_row_0">
           <div class="">
             <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
@@ -58,7 +58,7 @@
             </form>
           </div>
         </div>
-      </div>
+      </div> -->
       <?php } ?>
 
   </div>
@@ -73,15 +73,16 @@
     } elseif (home_url($wp->request) == home_url() . '/member-dashboard/transaction') {
       do_action('member_transaction');
     } else { ?>
-      <!-- <div class="et_pb_inner_shadow form_background">
+      <div class="et_pb_inner_shadow form_background" style="width: 108%;">
         <div class="et_pb_row et_pb_row_0">
           <div class="et_pb_contact">
             <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
-            <div style="float:right;margin-bottom:10px;">
-            <input type="text" style="font-size:21px;color:grey;" name="global_search" placeholder="Global Search..." value="<?= isset($_GET['global_search']) ? $_GET['global_search'] : '' ?>">
-            <button style="font-size:21px;background-color:#04AA6D;color:#fff;cursor: pointer;">Search <i class="fa fa-search"></i></button>
-            </div>  
-            <div id="hide_div">
+           
+            <button type="submit" class="" style="float: right;background-color: deepskyblue !important;height:30px;border:1px solid #fff;cursor: pointer;" data-quickaccess-id="button"><i class="fa fa-search"></i></button>
+            <div style="overflow: hidden; padding-right: .5em;">
+              <input type="text" name="global_search" class="input" placeholder="Global Search......" value="<?php if(!empty($_GET['global_search'])) { echo $_REQUEST['global_search']; } ?>" style="margin-left:20px;width: 98%;height:30px" />
+            </div>
+
             <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
                 <label for="" class="">Country</label>
                 <select name="country" id="country" onchange="getStates()" class="et_pb_contact_select input" placeholder="Country">
@@ -114,24 +115,22 @@
                 <button type="submit" class="et_pb_button" style="background-color: deepskyblue !important;" data-quickaccess-id="button">Search <i class="fa fa-search"></i></button>
                 <a class="et_pb_button" href="<?php echo home_url('member-dashboard'); ?>">Reset <i class="fa fa-refresh"></i></a>
               </div>
-              </div>
 
             </form>
           </div>
         </div>
-      </div><br> -->
+      </div><br>
 
-      <table class="table et_pb_with_background et_pb_inner_shadow price" style="width: auto">
+      <table class="table et_pb_with_background et_pb_inner_shadow price" style="width: 100%">
         <thead class="thead">
           <tr class="et_pb_pricing_heading">
-            <th class="text-center vertical_line" width="10%">Member ID</th>
+            <th class="text-center vertical_line">Member ID</th>
             <th class="text-center vertical_line">Name</th>
             <th class="text-center vertical_line">Email</th>
             <th class="text-center vertical_line">Join Date</th>
             <th class="text-center vertical_line">Address</th>
             <th class="text-center vertical_line">Phone</th>
-           <!--  <th class="text-center vertical_line">Status</th> -->
-            <th class="text-center vertical_line">View Details</th>
+            <th class="text-center vertical_line">Details</th>
           </tr>
         </thead>
         <tbody>
@@ -144,7 +143,6 @@
                 <td class="text-center vertical_line"><?= $member->user_registered; ?></td>
                 <td class="text-center vertical_line"><?= $member->address_line_1; ?></td>
                 <td class="text-center vertical_line"><?= $member->primary_phone_no; ?></td>
-                <!-- <td class="text-center vertical_line"><?= $member->membership; ?></td> -->
                 <td class="text-center vertical_line"><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
               </tr>
             <?php }

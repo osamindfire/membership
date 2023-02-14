@@ -154,11 +154,12 @@ class Osa_Membership_Public
 	{
 		if (!empty($_SESSION['user_id'])) {
 			global $wpdb, $user_ID;
-			$type = '';
+			/* $type = '';
 			if ($this->getTotalParent($_SESSION['user_id']) > 1) {
 				$type = ' and type > 1';
 			}
-			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 $type ");
+			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 $type "); */
+			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 ");
 
 			if ($_POST) {
 				global $wpdb;
@@ -269,6 +270,23 @@ class Osa_Membership_Public
 				$userInfo[0]->user_membership = $membershipPackage[0];
 				$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0], 'payment_success_member');
 				$this->sendMail(ADMIN_EMAIL, $adminPaymentSubject, (array)$userInfo[0], 'payment_success_admin');
+				
+				$membersInfo = $wpdb->get_results("SELECT wp_users.user_email,wp_member_user.id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = ".$userInfo[0]->member_id." and wp_member_user.type != 'child' ");
+						
+				$gsuite = new Osa_Membership_G_Suite();
+				$accessToken=$gsuite->reFreshGsuiteAccessToken();
+				foreach($membersInfo as $membersInfoValue)
+				{
+					if(!empty($membersInfoValue->user_email))
+					{
+						$response = $gsuite->addMemberToGsuiteGroup($accessToken,$membersInfoValue->user_email);
+						
+						$addedToGsuite = $response['status'];
+						$gsuiteResponse = serialize($response);
+						$wpdb->update('wp_member_user', ['added_to_gsuite'=>$addedToGsuite,'gsuite_response'=>$gsuiteResponse], array('id' => $membersInfoValue->id), array('%d', '%s'), array('%d'));
+
+					}
+				}
 				unset($_SESSION['user_id']);
 				unset($_SESSION['membership_type_id']);
 				$paymentInfoSaved = 1;
@@ -411,7 +429,7 @@ class Osa_Membership_Public
 	{
 		if (!is_user_logged_in()) {
 			global $wpdb, $user_ID;
-			$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
+			$countries = $wpdb->get_results("SELECT * FROM wp_countries order by priority ASC");
 
 			if (isset($_POST['register_form']) && wp_verify_nonce($_POST['register_form'], 'register')) {
 				try {
@@ -826,7 +844,7 @@ class Osa_Membership_Public
 		global $wpdb;
 		global $wp;
 		global $current_user;
-		$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
+		$countries = $wpdb->get_results("SELECT * FROM wp_countries order By priority ASC");
 		$logged_user = wp_get_current_user();
 		$membershipExpiryDate = $this->getMembershipExpireDate();
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {

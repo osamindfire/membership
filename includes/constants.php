@@ -29,3 +29,12 @@ define('FACEBOOK','https://www.facebook.com/groups/1902803256640735');
 define('TWITTER','https://twitter.com/OdishaSocietyNA');
 define('LINKEDIN','https://www.linkedin.com/company/the-odisha-society-of-the-americas');
 
+define('AUTH_TOKEN_URL','https://oauth2.googleapis.com/token?');
+define('AUTH_CLIENT_ID','635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com');
+define('AUTH_CLIENT_SECRET','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');
+define('REFRESH_TOEKN','1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U');
+define('ACCESS_TOKEN','ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163');
+
+define('ADD_MEMBER_URL','https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members?');
+define('APP_KEY','AIzaSyAnVYjReID2Lx5jfpQPjB0p0smPuF5mug4');
+
