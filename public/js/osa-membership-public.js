@@ -46,7 +46,7 @@ function getStates() {
 
 			if (response) {
 
-				let html = '<select class="filter_box" name="state" id="state_id" onchange="getChapters()">'
+				let html = '<select class="et_pb_contact_select input" name="state" id="state_id" onchange="getChapters()">'
 
 					html += '<option value="0">Select State</option>';
 				for (let i = 0; i < response.length; i++) {
@@ -87,7 +87,7 @@ function getChapters() {
 		success: function (response) {
 			if (response) {
 
-				let html = '<select class="filter_box" name="chapter" id="chapter_id">'
+				let html = '<select class="et_pb_contact_select input" name="chapter" id="chapter_id">'
 						html += '<option value="0">Select Chapter</option>';
 				for (let i = 0; i < response.length; i++) {
 					if(selected_chapter_id == response[i]['chapter_type_id'])

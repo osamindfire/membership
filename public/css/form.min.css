@@ -24,11 +24,11 @@ a,abbr,acronym,address,applet,b,big,blockquote,body,center,cite,code,dd,del,dfn,
   color:#ffffff;
   cursor: pointer;
 }
-.filter_box{
+/* .filter_box{
 width: 170px;
     height: 25px;
     margin: 2px;
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-}
+} */

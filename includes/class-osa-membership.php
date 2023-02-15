@@ -130,6 +130,8 @@ class Osa_Membership {
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-osa-membership-public.php';
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/constants.php';
+		
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-osa-membership-g-suite.php';
 
 		$this->loader = new Osa_Membership_Loader();
 

@@ -154,16 +154,15 @@ class Osa_Membership_Public
 	{
 		if (!empty($_SESSION['user_id'])) {
 			global $wpdb, $user_ID;
-			$type='';
-			if($this->getTotalParent($_SESSION['user_id']) > 1)
-			{
-			$type=' and type > 1';
+			/* $type = '';
+			if ($this->getTotalParent($_SESSION['user_id']) > 1) {
+				$type = ' and type > 1';
 			}
-			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 $type ");
-			
+			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 $type "); */
+			$membershipPlans = $wpdb->get_results("SELECT * FROM wp_membership_type where status=1 ");
+
 			if ($_POST) {
 				global $wpdb;
-				//$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
 				$membershipTypeInfo = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = " . $_POST['membershhip_type_id'] . " limit 1");
 				// PayPal settings. Change these to your account details and the relevant URLs
 				// for your site.
@@ -204,10 +203,6 @@ class Osa_Membership_Public
 					$finalUrl = $paypalUrl . '?' . $queryString;
 					echo "<script type='text/javascript'>window.location.href='" . $finalUrl . "'</script>";
 					exit();
-					// Redirect to paypal IPN
-					//header('location:' . $paypalUrl . '?' . $queryString);
-					//exit();
-
 				}
 			}
 
@@ -270,6 +265,23 @@ class Osa_Membership_Public
 				$userInfo[0]->user_membership = $membershipPackage[0];
 				$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0], 'payment_success_member');
 				$this->sendMail(ADMIN_EMAIL, $adminPaymentSubject, (array)$userInfo[0], 'payment_success_admin');
+				
+				$membersInfo = $wpdb->get_results("SELECT wp_users.user_email,wp_member_user.id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = ".$userInfo[0]->member_id." and wp_member_user.type != 'child' ");
+						
+				$gsuite = new Osa_Membership_G_Suite();
+				$accessToken=$gsuite->reFreshGsuiteAccessToken();
+				foreach($membersInfo as $membersInfoValue)
+				{
+					if(!empty($membersInfoValue->user_email))
+					{
+						$response = $gsuite->addMemberToGsuiteGroup($accessToken,$membersInfoValue->user_email);
+						
+						$addedToGsuite = $response['status'];
+						$gsuiteResponse = serialize($response);
+						$wpdb->update('wp_member_user', ['added_to_gsuite'=>$addedToGsuite,'gsuite_response'=>$gsuiteResponse], array('id' => $membersInfoValue->id), array('%d', '%s'), array('%d'));
+
+					}
+				}
 				unset($_SESSION['user_id']);
 				unset($_SESSION['membership_type_id']);
 				$paymentInfoSaved = 1;
@@ -284,57 +296,6 @@ class Osa_Membership_Public
 			exit();
 		}
 	}
-
-	private function verifyTransaction($data)
-	{
-		$req = 'cmd=_notify-validate';
-		foreach ($data as $key => $value) {
-			$value = urlencode(stripslashes($value));
-			$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
-			$req .= "&$key=$value";
-		}
-
-		$ch = curl_init(PAYPAL_SANDBOX_URL);
-		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
-		curl_setopt($ch, CURLOPT_SSLVERSION, 6);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
-		$res = curl_exec($ch);
-
-		if (!$res) {
-			$errno = curl_errno($ch);
-			$errstr = curl_error($ch);
-			curl_close($ch);
-			throw new Exception("cURL error: [$errno] $errstr");
-		}
-
-		$info = curl_getinfo($ch);
-
-		// Check the http response
-		$httpCode = $info['http_code'];
-		if ($httpCode != 200) {
-			throw new Exception("PayPal responded with http code $httpCode");
-		}
-		curl_close($ch);
-
-		return $res === 'VERIFIED';
-	}
-	private function checkTxnid($txnid)
-	{
-		global $db;
-
-		$txnid = $db->real_escape_string($txnid);
-		$results = $db->query('SELECT * FROM `payments` WHERE txnid = \'' . $txnid . '\'');
-
-		return !$results->num_rows;
-	}
-
 	/* 
 	Function name: memberLogin
 	Description : For displaying login page and authenticate the user and logged it into the system 
@@ -363,7 +324,15 @@ class Osa_Membership_Public
 					wp_set_current_user($user_verify->ID);
 					$_SESSION['user_id'] = $user_verify->ID;
 					wp_set_auth_cookie($user_verify->ID);
-					$loggedUser = wp_get_current_user();
+					$loggedUser = wp_get_current_user();print_r($loggedUser->caps['administrator']);
+					if($loggedUser->caps['administrator'] == 1)
+					{
+						wp_logout();
+						unset($_SESSION['user_id']);
+						$redirectTo = home_url() . '/login';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+					}
 					$memberData = $wpdb->get_results("SELECT
 				wp_member_other_info.membership_type,
 				wp_member_other_info.membership_expiry_date
@@ -412,7 +381,7 @@ class Osa_Membership_Public
 	{
 		if (!is_user_logged_in()) {
 			global $wpdb, $user_ID;
-			$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
+			$countries = $wpdb->get_results("SELECT * FROM wp_countries order by priority ASC");
 
 			if (isset($_POST['register_form']) && wp_verify_nonce($_POST['register_form'], 'register')) {
 				try {
@@ -827,7 +796,7 @@ class Osa_Membership_Public
 		global $wpdb;
 		global $wp;
 		global $current_user;
-		$countries = $wpdb->get_results("SELECT * FROM wp_countries ");
+		$countries = $wpdb->get_results("SELECT * FROM wp_countries order By priority ASC");
 		$logged_user = wp_get_current_user();
 		$membershipExpiryDate = $this->getMembershipExpireDate();
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
@@ -919,7 +888,7 @@ class Osa_Membership_Public
 		global $current_user;
 		$logged_user = wp_get_current_user();
 		$membershipExpiryDate = $this->getMembershipExpireDate();
-		$totalParent=$this->getTotalParent($user_ID);
+		$totalParent = $this->getTotalParent($user_ID);
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
 			if ($_POST) {
 				$errors = $this->validateProfileForm();
@@ -951,7 +920,7 @@ class Osa_Membership_Public
 					$othInfo['souvenir'] = $_POST['souvenir'];
 					$othInfoId = $_POST['member_id'];
 
-					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $othInfoId), array('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d','%s'), array('%d'));
+					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $othInfoId), array('%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%s'), array('%d'));
 
 					//child update
 					foreach ($_POST['child_id'] as $childKey => $childValues) {
@@ -1237,13 +1206,13 @@ class Osa_Membership_Public
 			try {
 				$errors = array();
 
-					$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_POST['reset_key'] . "' ");
+				$userKey = $wpdb->get_results("SELECT user_activation_key,ID FROM wp_users WHERE user_activation_key  = '" . $_POST['reset_key'] . "' ");
 
-					if (empty($userKey[0]->user_activation_key)) {
-						$redirectTo = home_url() . '/forgot-password?invalid_link=1';
-						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-						exit();
-					}else{
+				if (empty($userKey[0]->user_activation_key)) {
+					$redirectTo = home_url() . '/forgot-password?invalid_link=1';
+					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+					exit();
+				} else {
 					$recaptcha = $_POST['g-recaptcha-response'];
 					$secret_key = GOOGLE_CAPTCHA_SECRET_KEY;
 					$url = 'https://www.google.com/recaptcha/api/siteverify?secret=' . $secret_key . '&response=' . $recaptcha;
@@ -1252,26 +1221,26 @@ class Osa_Membership_Public
 					$response = json_decode($response, true);
 					if (!empty($response['error-codes'])) {
 						$errors['googlecaptcha'] = 'CAPTCHA is invalid';
-					}else{
-					
-					$newPassword = esc_sql($_POST['new_password']);
-					if (empty($newPassword)) {
-						$errors['new_password'] = "Please enter a New Password";
-					} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
-						$errors['new_password'] = "Password must be at least six characters";
-					}
+					} else {
 
-					$cPassword = esc_sql($_POST['confirm_password']);
-					if (empty($cPassword)) {
-						$errors['confirm_password'] = "Please Confirm Password";
-					} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
-					{
-						$errors['confirm_password'] = "Passwords do not match";
+						$newPassword = esc_sql($_POST['new_password']);
+						if (empty($newPassword)) {
+							$errors['new_password'] = "Please enter a New Password";
+						} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
+							$errors['new_password'] = "Password must be at least six characters";
+						}
+
+						$cPassword = esc_sql($_POST['confirm_password']);
+						if (empty($cPassword)) {
+							$errors['confirm_password'] = "Please Confirm Password";
+						} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
+						{
+							$errors['confirm_password'] = "Passwords do not match";
+						}
+						if ($_POST['old_password'] == $newPassword) {
+							$errors['confirm_password'] = "Your new password cannot be the same as your current password";
+						}
 					}
-					if ($_POST['old_password'] == $newPassword) {
-						$errors['confirm_password'] = "Your new password cannot be the same as your current password";
-					}
-				}
 				}
 				if (empty($errors)) {
 
@@ -1301,5 +1270,105 @@ class Osa_Membership_Public
 		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/reset_password.php');
 		return ob_get_clean();
+	}
+
+
+	public function createGsuiteAccessToken()
+	{
+		$curl = curl_init();
+		$url='https://oauth2.googleapis.com/token?';
+		$url .= 'code=4/0AWtgzh6GPG_2A5abvx7v3Ma4WJyYVNe0sjMawUuTlkbR-GsiwrqJqwDFzTlcxGw9W8bPxQ';
+		$url .= '&client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com';
+		$url .= '&client_secret=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';
+		$url .= '&redirect_uri=http://newsite.odishasociety.org';
+		$url .= '&grant_type=authorization_code';
+
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_HTTPHEADER => array(
+				'Content-Type:  application/x-www-form-urlencoded'
+			),
+		));
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+		echo $response;
+	}
+
+	public function addMemberToGsuiteGroup()
+	{
+		$curl = curl_init();
+
+		$url='https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members?key=';
+		$url .= 'key=[AIzaSyAnVYjReID2Lx5jfpQPjB0p0smPuF5mug4] HTTP/1.1';
+
+		$accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163';
+
+		curl_setopt_array($curl, array(
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_POSTFIELDS => '{
+			"email": "naveenb@mindfiresolutions.com",
+			"role": "MEMBER"
+			}
+			',
+			CURLOPT_HTTPHEADER => array(
+				'Accept:  application/json',
+				'Content-Type:  application/json',
+				'Authorization: Bearer '.$accessToken
+			),
+		));
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+		echo $response;
+	}
+
+	public function reFreshGsuiteAccessToken()
+	{
+		$curl = curl_init();
+		$url='https://oauth2.googleapis.com/token?';
+		$url .= 'client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com';
+		$url .= '&client_secret=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';
+		$url .= '&refresh_token=1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U';
+		$url .= '&grant_type=refresh_token';
+
+		$accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163';
+
+		curl_setopt_array($curl, array(
+			//CURLOPT_URL => 'https://oauth2.googleapis.com/token?client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com&client_secret=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&refresh_token=1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U&grant_type=refresh_token',
+			CURLOPT_URL => $url,
+			CURLOPT_RETURNTRANSFER => true,
+			CURLOPT_ENCODING => '',
+			CURLOPT_MAXREDIRS => 10,
+			CURLOPT_TIMEOUT => 0,
+			CURLOPT_FOLLOWLOCATION => true,
+			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+			CURLOPT_CUSTOMREQUEST => 'POST',
+			CURLOPT_HTTPHEADER => array(
+				'Content-Type:  application/x-www-form-urlencoded',
+				'Authorization: Bearer '.$accessToken
+			),
+		));
+
+		$response = curl_exec($curl);
+
+		curl_close($curl);
+		echo $response;
 	}
 }
