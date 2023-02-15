@@ -741,4 +741,7 @@ class Osa_Membership_Admin
 		}
 		wp_die();
 	}
+
+	
+
 }

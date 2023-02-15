@@ -128,6 +128,8 @@ class Osa_Membership {
 		 * side of the site.
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-osa-membership-public.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-cron-public.php';
+
 
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/constants.php';
 		
@@ -239,6 +241,17 @@ class Osa_Membership {
 		} */
 		
 
+		/**
+		 * Cron job for sending membership expire notification mail 
+		 */
+		$plugin_public_cron = new Osa_Cron_Public($this->get_plugin_name(), $this->get_version());
+        
+		$this->loader->add_action('init', $plugin_public_cron , 'membership_expire_cron');
+		$this->loader->add_action('cron_job', $plugin_public_cron , 'cron_job_callback');
+
+		$this->loader->add_shortcode( 'cron-shortcode', $plugin_public_cron, 'membership_expired_cron_callback' );
+
+
 	}
 
 	  /**
@@ -256,7 +269,6 @@ class Osa_Membership {
 		$this->loader->add_shortcode('payment_failure',$this->plugin_public,'cancelPayment');
 		$this->loader->add_shortcode('forgot_password',$this->plugin_public,'forgotPassword');
 		$this->loader->add_shortcode('member_listing',$this->plugin_public,'membersListing');
-		$this->loader->add_shortcode('reset_password',$this->plugin_public,'resetPassword');
 		
     }
 	
