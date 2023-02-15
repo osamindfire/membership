@@ -14,7 +14,9 @@
 <a style="float:right;margin-bottom:50px;" href="<?php echo home_url('member-dashboard/change-password/'); ?>" class="active"><img src="<?= DIR_URL; ?>/change_password.png" style="width:36px;margin-bottom: -11px;"/> <strong>Change Password</strong></a></p>
 
 <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
-<h4 style="text-align: center;"><strong>Member ID:</strong> <?= $userInfo['oth_member_info'][0]->member_id;?></h4>
+        <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
+        <strong>Member ID:</strong> <?= $userInfo['oth_member_info'][0]->member_id;?>
+        </p>
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="">First Name</label>
             <input type="text" name="first_name"  class="input <?php if(!empty($errors['firstName'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="First Name" value="<?php if(isset($_REQUEST['first_name'])) { echo $_REQUEST['first_name']; }else{ echo $userInfo[0]->first_name; } ?>">

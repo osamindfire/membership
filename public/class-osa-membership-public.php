@@ -163,7 +163,6 @@ class Osa_Membership_Public
 
 			if ($_POST) {
 				global $wpdb;
-				//$userInfo = $wpdb->get_results("SELECT wp_member_user.member_id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_users.ID  = " . $_SESSION['user_id'] . " limit 1");
 				$membershipTypeInfo = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type WHERE membership_type_id  = " . $_POST['membershhip_type_id'] . " limit 1");
 				// PayPal settings. Change these to your account details and the relevant URLs
 				// for your site.
@@ -204,10 +203,6 @@ class Osa_Membership_Public
 					$finalUrl = $paypalUrl . '?' . $queryString;
 					echo "<script type='text/javascript'>window.location.href='" . $finalUrl . "'</script>";
 					exit();
-					// Redirect to paypal IPN
-					//header('location:' . $paypalUrl . '?' . $queryString);
-					//exit();
-
 				}
 			}
 
@@ -301,57 +296,6 @@ class Osa_Membership_Public
 			exit();
 		}
 	}
-
-	private function verifyTransaction($data)
-	{
-		$req = 'cmd=_notify-validate';
-		foreach ($data as $key => $value) {
-			$value = urlencode(stripslashes($value));
-			$value = preg_replace('/(.*[^%^0^D])(%0A)(.*)/i', '${1}%0D%0A${3}', $value); // IPN fix
-			$req .= "&$key=$value";
-		}
-
-		$ch = curl_init(PAYPAL_SANDBOX_URL);
-		curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $req);
-		curl_setopt($ch, CURLOPT_SSLVERSION, 6);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
-		curl_setopt($ch, CURLOPT_FORBID_REUSE, 1);
-		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 30);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array('Connection: Close'));
-		$res = curl_exec($ch);
-
-		if (!$res) {
-			$errno = curl_errno($ch);
-			$errstr = curl_error($ch);
-			curl_close($ch);
-			throw new Exception("cURL error: [$errno] $errstr");
-		}
-
-		$info = curl_getinfo($ch);
-
-		// Check the http response
-		$httpCode = $info['http_code'];
-		if ($httpCode != 200) {
-			throw new Exception("PayPal responded with http code $httpCode");
-		}
-		curl_close($ch);
-
-		return $res === 'VERIFIED';
-	}
-	private function checkTxnid($txnid)
-	{
-		global $db;
-
-		$txnid = $db->real_escape_string($txnid);
-		$results = $db->query('SELECT * FROM `payments` WHERE txnid = \'' . $txnid . '\'');
-
-		return !$results->num_rows;
-	}
-
 	/* 
 	Function name: memberLogin
 	Description : For displaying login page and authenticate the user and logged it into the system 
@@ -380,7 +324,15 @@ class Osa_Membership_Public
 					wp_set_current_user($user_verify->ID);
 					$_SESSION['user_id'] = $user_verify->ID;
 					wp_set_auth_cookie($user_verify->ID);
-					$loggedUser = wp_get_current_user();
+					$loggedUser = wp_get_current_user();print_r($loggedUser->caps['administrator']);
+					if($loggedUser->caps['administrator'] == 1)
+					{
+						wp_logout();
+						unset($_SESSION['user_id']);
+						$redirectTo = home_url() . '/login';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+					}
 					$memberData = $wpdb->get_results("SELECT
 				wp_member_other_info.membership_type,
 				wp_member_other_info.membership_expiry_date
