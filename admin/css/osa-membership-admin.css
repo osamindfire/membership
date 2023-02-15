@@ -59,24 +59,6 @@ error{
     padding: 10px 13px 16px 11px;
 }
 
-/* @media only screen and (min-width: 1500px) and (max-width: 1800px){
-#wpbody-content #dashboard-widgets #postbox-container-1 {
-    width: 50%;
-}
-}
-
-@media only screen and (min-width: 1280px) and (max-width: 1499px){
-    #wpbody-content #dashboard-widgets .postbox-container {
-        width: 49.5%;
-    }
-}
-
-@media only screen and (min-width: 800px) and (max-width: 1279px){
-    #wpbody-content #dashboard-widgets .postbox-container {
-        width: 49.5%;
-    }
-} */
-
 .loader {
     border: 16px solid #f3f3f3; /* Light grey */
     border-top: 16px solid #3498db; /* Blue */

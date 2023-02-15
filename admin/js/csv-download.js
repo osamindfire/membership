@@ -46,7 +46,7 @@
                 }
             });
 
-        //    console.log(TableArray);
+           console.log(TableArray);
 
 
             const rows = [
@@ -56,19 +56,23 @@
             ];
 
             let data_rows = rows.concat(TableArray);
-            // console.log(data_rows);
+            console.log(data_rows);
 
             let csvContent = "data:text/csv;charset=utf-8,";
 
-            data_rows.forEach(function (rowArray) {
-                let data_rows = rowArray.join(",");
-                csvContent += data_rows + "\r\n";
+            // let data = '';
+            data_rows.forEach(function (rowArray) {                        
+                let data = rowArray.join(",");              
+                csvContent += data + "\r\n";
             });
+
+            console.log(data_rows);
 
             // var encodedUri = encodeURI(csvContent);
             // window.open(encodedUri);
 
-            var encodedUri = encodeURI(csvContent);
+            var encodedUri = encodeURI(csvContent).replaceAll('#', '%23');
+            
             var link = document.createElement("a");
             link.setAttribute("href", encodedUri);
             link.setAttribute("download", "osa_members_list.csv");

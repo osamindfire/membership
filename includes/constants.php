@@ -12,7 +12,7 @@ define('SLUG_VALUE',$variable[0]);
 define('CONTACT_US_URL',HOME_URL.'/contact-us');
 define('ADMIN_EMAIL','mfsi.naveenb@gmail.com');
 define('COPYRIGHT_TEXT','Copyrights © 1969-'.date('Y').' The Odisha Society of the Americas. <br>All Rights Reserved');
-if( home_url() == 'http://osa.dev.local'){
+if( home_url() == 'http://osa.dev.local' || home_url() == 'http://osa-membership-local.com' ){
         define('DIR_URL',plugins_url('osa-membership/public/img'));
 }else{            
         define('DIR_URL',plugins_url('membership/public/img'));
