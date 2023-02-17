@@ -368,10 +368,9 @@ class Osa_Membership_Public
 			return ob_get_clean();
 		} else {
 			$user = new WP_User( $user_id );
-
 			//$loggedUser = wp_get_current_user();
-			echo "<pre>";print_r($user);die;
-		if (is_admin()) {die('hi');
+			//echo "<pre>";print_r($user);die;
+		if (is_admin()) {
 			$redirectTo = home_url();
 			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 			exit();
