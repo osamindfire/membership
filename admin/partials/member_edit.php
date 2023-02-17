@@ -194,11 +194,8 @@
                                 </div>
 
                             </div>
-<<<<<<< HEAD
-=======
                         </div>
 
->>>>>>> cron_setup
 
                         <?php if (!empty($parents)) { ?>
                             <div id="postbox-container-1" class="postbox-container edit-postbox">

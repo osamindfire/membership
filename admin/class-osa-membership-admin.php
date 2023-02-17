@@ -104,8 +104,6 @@ class Osa_Membership_Admin
 		wp_enqueue_script("csv-download", plugin_dir_url(__FILE__) . 'js/csv-download.js', array('jquery'), $this->version, false);
 
 		wp_enqueue_script("deactivate", plugin_dir_url(__FILE__) . 'js/member-delete.js', array('jquery'), $this->version, false);
-
-
 	}
 
 	/**
@@ -129,7 +127,39 @@ class Osa_Membership_Admin
 			'member-view',
 			array($this, 'render_member_view_page')
 		);
-
+		/**
+		 * Add MemberShip Plans
+		 */
+		add_submenu_page(
+			'members',
+			'Membership Plans',
+			'Membership Plans',
+			'administrator',
+			'membershipplan-listing',
+			array($this, 'render_membershipplan_listing_page')
+		);
+		/**
+		 * Add MemberShip edit submenu
+		 */
+		add_submenu_page(
+			'members',
+			'Membership Add',
+			null,
+			'administrator',
+			'membershipplan-add',
+			array($this, 'render_membershipplan_add_page')
+		);
+		/**
+		 * Add MemberShip edit submenu
+		 */
+		add_submenu_page(
+			'members',
+			'Membership Edit',
+			null,
+			'administrator',
+			'membershipplan-edit',
+			array($this, 'render_membershipplan_edit_page')
+		);
 		/**
 		 * Add Members edit submenu
 		 */
@@ -142,6 +172,126 @@ class Osa_Membership_Admin
 			array($this, 'render_member_edit_page')
 		);
 	}
+	/**
+	 * Callback for members  submenu(View)
+	 */
+	public function render_membershipplan_listing_page()
+	{
+		global $wpdb;
+		$membershipPlans = $wpdb->get_results("SELECT  * FROM wp_membership_type ;");
+		include_once(plugin_dir_path(__FILE__) . 'partials/membership_plans/membershiplan_listing.php');
+	}
+	/**
+	 * Callback for members  submenu(Edit)
+	 */
+	public function render_membershipplan_edit_page()
+	{
+		global $wpdb;
+
+		if (isset($_POST['membershiplan_form']) && wp_verify_nonce($_POST['membershiplan_form'], 'membershiplan')) {
+			try {
+				$errors=[];
+				$membership = esc_sql($_POST['membership']);
+				if (empty($membership)) {
+					$errors['membership'] = "Membership cannot be blank";
+				}
+
+				$fee = esc_sql($_POST['fee']);
+				if (empty($fee)) {
+					$errors['fee'] = "Please enter fee";
+				}
+				$type = esc_sql($_POST['type']);
+				if (empty($type)) {
+					$errors['type'] = "Please enter Type";
+				}
+				/* $total_days = esc_sql($_POST['total_days']);
+				if (empty($total_days)) {
+					$errors['total_days'] = "Please enter duration";
+				} */
+				if (0 === count($errors)) {
+
+					//main member update
+					$mainArr = [];
+					$mainArr['membership'] = $_POST['membership'];
+					$mainArr['type'] = $_POST['type'];
+					$mainArr['fee'] = $_POST['fee'];
+					$mainArr['total_days'] = !empty(esc_sql($_POST['total_days'])) ? $_POST['total_days'] : 0;
+					$mainArr['status'] = $_POST['status'];
+					$result = $wpdb->update('wp_membership_type', $mainArr, array('membership_type_id' => $_GET['id']), array('%s','%d','%d','%d','%d'), array('%d'));
+					$url = home_url('/wp-admin/admin.php?page=membershipplan-edit&id='. $_GET['id'] . '&success');
+					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
+				}
+			} catch (Exception $e) {
+				echo 'Error writing to database: ',  $e->getMessage(), "\n";
+			}
+		}
+		if (isset($_GET['id'])) {
+
+			$id = $_GET['id'];
+			$query = "SELECT wp_membership_type.* FROM `wp_membership_type` ";
+			$query .= " WHERE membership_type_id = $id ";
+			$data = $wpdb->get_results($query);
+			$membershipPlan = $data[0];
+			wp_reset_query();
+		}
+
+		include_once(plugin_dir_path(__FILE__) . 'partials/membership_plans/membership_plan_edit.php');
+	}
+
+	/**
+	 * Callback for members  submenu(Edit)
+	 */
+	public function render_membershipplan_add_page()
+	{
+		global $wpdb;
+		if (isset($_POST['membershiplan_form']) && wp_verify_nonce($_POST['membershiplan_form'], 'membershiplan')) {
+			try {
+				$errors=[];
+				$membership = esc_sql($_POST['membership']);
+				if (empty($membership)) {
+					$errors['membership'] = "Membership cannot be blank";
+				}
+
+				$fee = esc_sql($_POST['fee']);
+				if (empty($fee)) {
+					$errors['fee'] = "Please enter fee";
+				}
+				$type = esc_sql($_POST['type']);
+				if (empty($type)) {
+					$errors['type'] = "Please enter Type";
+				}
+
+				//$total_days = !empty(esc_sql($_POST['total_days'])) ? $_POST['total_days'] : 0;
+				/* if (isset($total_days)) {
+					$errors['total_days'] = "Please enter duration";
+				} */
+				if (0 === count($errors)) {
+					$mainArr = [];
+					$mainArr['membership'] = $_POST['membership'];
+					$mainArr['type'] = $_POST['type'];
+					$mainArr['fee'] = $_POST['fee'];
+					$mainArr['total_days'] = !empty(esc_sql($_POST['total_days'])) ? $_POST['total_days'] : 0;
+					$mainArr['status'] = $_POST['status'];
+					$wpdb->query($wpdb->prepare(
+						"INSERT INTO wp_membership_type (membership, type, fee, total_days, status) VALUES ( %s, %d, %d, %d, %d)",
+						array(
+							'membership' => $_POST['membership'],
+							'type' => $_POST['type'],
+							'fee' => $_POST['fee'],
+							'total_days' => $_POST['total_days'],
+							'status' => $_POST['status']
+						)
+					));
+					//$result = $wpdb->update('wp_membership_type', $mainArr, array('membership_type_id' => $_GET['id']), array('%s','%d','%d','%d','%d'), array('%d'));
+					$url = home_url('/wp-admin/admin.php?page=membershipplan-listing&success=1');
+					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
+				}
+			} catch (Exception $e) {
+				echo 'Error writing to database: ',  $e->getMessage(), "\n";
+			}
+		}
+		include_once(plugin_dir_path(__FILE__) . 'partials/membership_plans/membership_plan_add.php');
+	}
 
 	/**
 	 * Callback for admin menu
@@ -150,7 +300,6 @@ class Osa_Membership_Admin
 	{
 
 		include_once(plugin_dir_path(__FILE__) . 'partials/member_listing.php');
-
 	}
 
 	public function member_deactivate()
@@ -158,28 +307,28 @@ class Osa_Membership_Admin
 
 		global $wpdb;
 		if (isset($_GET['action'])) {
- 
-			$isDeleted = $_GET['isDeleted'] ;
+
+			$isDeleted = $_GET['isDeleted'];
 			$memberId = $_GET['memberID'];
 
-			$memID = array_unique($memberId) ;
-			
-			
+			$memID = array_unique($memberId);
+
+
 			print_r($memID);
 
 			// $wpdb->update('wp_member_user', $Arr, array('id' => $memID), array('%d'), array('%d'));
 
 			$updateQuery = " UPDATE wp_member_user
 			SET is_deleted = $isDeleted
-			WHERE member_id IN( null " ;
+			WHERE member_id IN( null ";
 
-            foreach($memID as $id){
-				$updateQuery .= " , $id"; 
+			foreach ($memID as $id) {
+				$updateQuery .= " , $id";
 			}
 
-			$updateQuery .= " );"; 
+			$updateQuery .= " );";
 
-            $wpdb->get_results($updateQuery);
+			$wpdb->get_results($updateQuery);
 
 
 			// $deactivate = $wpdb->update('wp_member_user', $Arr, array('id' => $memberId), array('%d'), array('%d'));
@@ -360,9 +509,9 @@ class Osa_Membership_Admin
 					// $mainArr['is_deleted'] = $_POST['is_deleted'];
 
 					$mainMember = $wpdb->update('wp_member_user', $mainArr, array('id' => $main_id), array('%s', '%s'), array('%d'));
-					
+
 					$del = $_POST['is_deleted'];
-					$wpdb->update('wp_member_user', array('is_deleted' => $del ), array('member_id' => $member_id), array('%d'), array('%d'));
+					$wpdb->update('wp_member_user', array('is_deleted' => $del), array('member_id' => $member_id), array('%d'), array('%d'));
 
 
 					//partner update
@@ -741,7 +890,4 @@ class Osa_Membership_Admin
 		}
 		wp_die();
 	}
-
-	
-
 }
