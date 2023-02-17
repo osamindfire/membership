@@ -34,11 +34,13 @@
         <div class="et_pb_row et_pb_row_0">
           <div class="et_pb_contact">
             <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
-           
-            <button type="submit" class="" style="color:#fff;float: right;background-color: deepskyblue !important;height:30px;border:1px solid #fff;cursor: pointer;" data-quickaccess-id="button"><i class="fa fa-search"></i></button>
+            <p class="et_pb_contact_field ui-sortable">
+              <input type="text" name="global_search" style="width:100%" class="input" placeholder="Global Search..." value="<?php if(!empty($_GET['global_search'])) { echo $_REQUEST['global_search']; } ?>">
+             </p>
+            <!-- <button type="submit" class="" style="color:#fff;float: right;background-color: deepskyblue !important;height:30px;border:1px solid #fff;cursor: pointer;" data-quickaccess-id="button"><i class="fa fa-search"></i></button>
             <div style="overflow: hidden; padding-right: .5em;">
-              <input type="text" name="global_search" class="input" placeholder="Global Search......" value="<?php if(!empty($_GET['global_search'])) { echo $_REQUEST['global_search']; } ?>" style="margin-bottom:10px;margin-left:30px;width: 97%;height:30px" />
-            </div>
+              <input type="text" name="global_search" class="et_pb_contact_field ui-sortable input" placeholder="Global Search......" value="<?php if(!empty($_GET['global_search'])) { echo $_REQUEST['global_search']; } ?>" style="margin-bottom:10px;margin-left:30px;width: 97%;height:30px" />
+            </div> -->
 
             <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half search_member_listing">
                 <label for="" class="">Country</label>
