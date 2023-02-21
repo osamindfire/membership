@@ -251,6 +251,9 @@ class Osa_Membership {
 
 		$this->loader->add_shortcode( 'cron-shortcode', $plugin_public_cron, 'membership_expired_cron_callback' );
 
+		$this->loader->add_action('init', $plugin_public_cron , 'add_member_to_gsuite_cron');
+		$this->loader->add_shortcode( 'add_member_to_gsuite_cron', $plugin_public_cron, 'add_member_to_gsuite' );
+
 
 	}
 
