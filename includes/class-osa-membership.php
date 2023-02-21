@@ -247,9 +247,9 @@ class Osa_Membership {
 		$plugin_public_cron = new Osa_Cron_Public($this->get_plugin_name(), $this->get_version());
         
 		$this->loader->add_action('init', $plugin_public_cron , 'membership_expire_cron');
-		$this->loader->add_action('cron_job', $plugin_public_cron , 'cron_job_callback');
+		// $this->loader->add_action('cron_job', $plugin_public_cron , 'cron_job_callback');
 
-		$this->loader->add_shortcode( 'cron-shortcode', $plugin_public_cron, 'membership_expired_cron_callback' );
+		$this->loader->add_shortcode( 'cron-shortcode', $plugin_public_cron, 'cron_job_callback' );
 
 
 	}

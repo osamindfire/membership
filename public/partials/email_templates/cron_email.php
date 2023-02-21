@@ -177,7 +177,7 @@ $emailBody='<!doctype html>
 						  <table role="presentation" border="0" cellpadding="0" cellspacing="0">
 							<tr>
 							  <td>
-							  <p>Dear <strong>'.$memberName.'</strong>, Your membership '.$type.'! Please renew your membership to search other Odia members and manage several activities with this access.<br>Good luck!</p>
+							  <p>Dear <strong>'.$memberName.'</strong>, Your membership '.$type.' Please renew your membership to search other Odia members and manage several activities with this access.<br>Good luck!</p>
 							  </td>
 							</tr>
 							<tr>

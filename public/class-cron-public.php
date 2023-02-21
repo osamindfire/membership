@@ -45,11 +45,11 @@ class Osa_Cron_Public
 
     }
 
-    public function membership_expired_cron_callback(  ) {
-        // ob_start();
-        do_action('cron_job');      
-        // return ob_get_clean();   
-    }
+    // public function membership_expired_cron_callback(  ) {
+    //     // ob_start();
+    //     do_action('cron_job');      
+    //     // return ob_get_clean();   
+    // }
 
     public function cron_job_callback(){
 
@@ -86,24 +86,29 @@ class Osa_Cron_Public
                 // $to = $info->user_email;  
                 $user_info = [];
                 $user_info['user_display'] = $info->display_name;
-                $res = $this->sendMail($to , 'Membership Expired', $user_info , 'expiring today');
+                $res = $this->sendMail($to , 'Membership Expired', $user_info , 'expiring today!');
                 if($res == 1){
                     $wpdb->update('wp_member_other_info', array('expiry_email_sent' => 2 ), array('id' => $info->id), array('%d'), array('%d'));
                 }
                 echo $res;
             }
             else{
-                $to = 'naveenb@mindfiresolutions.com';
+                // $to = 'naveenb@mindfiresolutions.com';
+                $to = 'mfsi.pooja.patle@mindfiresolutions.com';
+
                 // $to = $info->user_email;
                 $user_info = [];
                 $user_info['user_display'] = $info->display_name; 
-                $res = $this->sendMail($to , 'Membership Expiring soon', $user_info , 'will be expire on '.$dayAfterFive.'');
+                $res = $this->sendMail($to , 'Membership expiring soon', $user_info , 'will be expire on '.$dayAfterFive.'.');
                 if($res == 1){
                     $wpdb->update('wp_member_other_info', array('expiry_email_sent' => 1 ), array('id' => $info->id), array('%d'), array('%d'));
                 }
                 echo $res;
             }
         }
+        }
+        else{
+            echo "No Expired Member";
         }
     
 	}

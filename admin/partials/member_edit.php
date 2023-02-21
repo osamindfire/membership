@@ -42,10 +42,10 @@
 
                 <div id="dashboard-widgets-wrap">
                     <div id="dashboard-widgets" class="metabox-holder">
-                            <div id="postbox-container-1" class="postbox-container edit-postbox">
-                                <div id="normal-sortables" class="meta-box-sortables ui-sortable">
-                                    <div id="dashboard_site_health" class="postbox ">
-                                        <!-- <div class="postbox-header">
+                        <div id="postbox-container-1" class="postbox-container edit-postbox">
+                            <div id="normal-sortables" class="meta-box-sortables ui-sortable">
+                                <div id="dashboard_site_health" class="postbox ">
+                                    <!-- <div class="postbox-header">
                                             <h2 class="hndle ui-sortable-handle">Spouse</h2>
                                         </div> -->
                                     <div class="inside">
@@ -194,11 +194,8 @@
                                 </div>
 
                             </div>
-<<<<<<< HEAD
-=======
                         </div>
 
->>>>>>> cron_setup
 
                         <?php if (!empty($parents)) { ?>
                             <div id="postbox-container-1" class="postbox-container edit-postbox">
