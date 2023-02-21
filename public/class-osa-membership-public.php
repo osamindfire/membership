@@ -324,7 +324,7 @@ class Osa_Membership_Public
 					wp_set_current_user($user_verify->ID);
 					$_SESSION['user_id'] = $user_verify->ID;
 					wp_set_auth_cookie($user_verify->ID);
-					$loggedUser = wp_get_current_user();print_r($loggedUser->caps['administrator']);
+					$loggedUser = wp_get_current_user();
 					if($loggedUser->caps['administrator'] == 1)
 					{
 						wp_logout();
@@ -367,6 +367,14 @@ class Osa_Membership_Public
 			include_once(plugin_dir_path(__FILE__) . 'partials/authentication/login.php');
 			return ob_get_clean();
 		} else {
+			$user = new WP_User( $user_id );
+			//$loggedUser = wp_get_current_user();
+			//echo "<pre>";print_r($user);die;
+		if (is_admin()) {
+			$redirectTo = home_url();
+			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+			exit();
+		}
 			$redirectTo = home_url() . '/member-dashboard';
 			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 			exit();
