@@ -127,7 +127,15 @@ class Osa_Cron_Public
 
     public function add_member_to_gsuite()
     {
-        global $wpdb;
+        $headers = array('Content-Type: text/html; charset=UTF-8');
+        try {
+            $response = 0;
+            $response =  wp_mail('naveenb@mindfiresolutions.com', 'Cron run', 'Hi testing body', $headers);
+            return $response;
+        } catch (Exception $e) {
+            echo 'Error while sendnig mail: ',  $e->getMessage(), "\n";
+        }
+       /*  global $wpdb;
         $query = $wpdb->prepare("SELECT wp_users.user_email,  wp_users.display_name 
 		FROM wp_users
 		INNER JOIN wp_member_user ON wp_users.ID = wp_member_user.user_id
@@ -147,6 +155,6 @@ class Osa_Cron_Public
                 $gsuiteResponse = serialize($response);
                 $wpdb->update('wp_member_user', ['added_to_gsuite' => $addedToGsuite, 'gsuite_response' => $gsuiteResponse], array('id' => $membersInfoValue->id), array('%d', '%s'), array('%d'));
             }
-        }
+        } */
     }
 }
