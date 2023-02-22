@@ -134,7 +134,7 @@ class Osa_Cron_Public
 		INNER JOIN wp_member_user ON wp_users.ID = wp_member_user.user_id
 		WHERE wp_member_user.added_to_gsuite = 0
         AND wp_member_user.is_deleted = 0
-        AND wp_member_user.type != 'child' order by wp_member_user.member_id  DESC limit 5; ");
+        AND wp_member_user.type != 'child' order by wp_member_user.member_id  DESC; ");
         $data = $wpdb->get_results($query);
 
         $gsuite = new Osa_Membership_G_Suite();
