@@ -128,7 +128,7 @@ class Osa_Cron_Public
     public function add_member_to_gsuite()
     {
         global $wpdb;
-        $query = $wpdb->prepare("SELECT wp_users.user_email,  wp_users.display_name 
+        $query = $wpdb->prepare("SELECT wp_member_user.id,wp_users.user_email,  wp_users.display_name 
 		FROM wp_users
 		INNER JOIN wp_member_user ON wp_users.ID = wp_member_user.user_id
 		WHERE wp_member_user.added_to_gsuite = 0
