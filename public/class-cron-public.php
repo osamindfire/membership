@@ -44,6 +44,7 @@ class Osa_Cron_Public
             wp_insert_post($page);
         }
     }
+    
     public function cron_job_callback()
     {
 
