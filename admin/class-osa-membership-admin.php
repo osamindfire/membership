@@ -117,63 +117,112 @@ class Osa_Membership_Admin
 		add_menu_page('Members', 'Members', 'manage_options', 'members', array($this, 'render_member_menu_page'), 'dashicons-groups');
 
 		/**
-		 * Add Members view submenu
-		 */
-		add_submenu_page(
-			'members',
-			'Member View',
-			null,
-			'administrator',
-			'member-view',
-			array($this, 'render_member_view_page')
-		);
-		/**
 		 * Add MemberShip Plans
 		 */
-		add_submenu_page(
-			'members',
-			'Membership Plans',
-			'Membership Plans',
-			'administrator',
-			'membershipplan-listing',
-			array($this, 'render_membershipplan_listing_page')
-		);
+		add_submenu_page('members', 'Membership Plans', 'Membership Plans', 'administrator', 'membershipplan-listing', array($this, 'render_membershipplan_listing_page'));
+
 		/**
-		 * Add MemberShip edit submenu
+		 * Add Members setting submenu
 		 */
-		add_submenu_page(
-			'members',
-			'Membership Add',
-			null,
-			'administrator',
-			'membershipplan-add',
-			array($this, 'render_membershipplan_add_page')
-		);
+		add_submenu_page('members', 'Settings', 'Settings', 'administrator', 'member-settings', array($this, 'render_members_seting_page'));
+
 		/**
-		 * Add MemberShip edit submenu
+		 * Add Members view submenu
 		 */
-		add_submenu_page(
-			'members',
-			'Membership Edit',
-			null,
-			'administrator',
-			'membershipplan-edit',
-			array($this, 'render_membershipplan_edit_page')
-		);
+		if ((isset($_GET['page'])) && ($_GET['page'] === 'member-view')) {
+			add_submenu_page('members', 'Member View', null, 'manage_options', 'member-view', array($this, 'render_member_view_page'));
+		}
+
 		/**
 		 * Add Members edit submenu
 		 */
-		add_submenu_page(
-			'members',
-			'Member Edit',
-			null,
-			'administrator',
-			'member-edit',
-			array($this, 'render_member_edit_page')
-		);
+		if ((isset($_GET['page'])) && ($_GET['page'] === 'member-edit')) {
+			add_submenu_page('members', 'Member Edit', null, 'administrator', 'member-edit', array($this, 'render_member_edit_page'));
+		}
+		
+		/**
+		 * Add MemberShip add submenu
+		 */
+		if ((isset($_GET['page'])) && ($_GET['page'] === 'membershipplan-add')) {
+			add_submenu_page('members', 'Membership Add', null, 'administrator', 'membershipplan-add', array($this, 'render_membershipplan_add_page'));
+		}
+		/**
+		 * Add MemberShip edit submenu
+		 */
+		if ((isset($_GET['page'])) && ($_GET['page'] === 'membershipplan-edit')) {
+			add_submenu_page('members', 'Membership Edit', null, 'administrator', 'membershipplan-edit', array($this, 'render_membershipplan_edit_page'));
+		}
 	}
+
 	/**
-	 * Callback for members  submenu(View)
+	 * Callback for members submenu(settings)
+	 */
+	public function render_members_seting_page()
+	{
+
+		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+			try {
+				$errors = [];
+				// $authTokenUrl = esc_sql($_POST['auth_token_url']);
+				// if (empty($authTokenUrl)) {
+				// 	$errors['auth_token_url'] = "Auth Token Url cannot be blank";
+				// }
+
+				$authClientId = esc_sql($_POST['auth_client_id']);
+				if (empty($authClientId)) {
+					$errors['auth_client_id'] = "Auth Client Id cannot be blank";
+				}
+				$authClientSecret = esc_sql($_POST['auth_client_secret']);
+				if (empty($authClientSecret)) {
+					$errors['auth_client_secret'] = "Auth Client Secret cannot be blank";
+				}
+				$refreshToken = esc_sql($_POST['refresh_token']);
+				if (empty($refreshToken)) {
+					$errors['refresh_token'] = "Refresh Token cannot be blank";
+				}
+				$accessToken = esc_sql($_POST['access_token']);
+				if (empty($accessToken)) {
+					$errors['access_token'] = "Access Token cannot be blank";
+				}
+				// $addMemberUrl = esc_sql($_POST['add_member_url']);
+				// if (empty($addMemberUrl)) {
+				// 	$errors['add_member_url'] = "Add Member URL cannot be blank";
+				// }
+				$appKey = esc_sql($_POST['app_key']);
+				if (empty($appKey)) {
+					$errors['app_key'] = "App Key cannot be blank";
+				}
+
+				// echo trim($authClientId);
+				// echo str_replace(' ', '', $authClientId);
+				// die;
+
+				if (0 === count($errors)) {
+					$options = [];
+					// $options['auth_token_url'] = $authTokenUrl;
+					$options['auth_client_id'] = str_replace(' ', '', $authClientId);
+					$options['auth_client_secret'] = str_replace(' ', '', $authClientSecret);
+					$options['refresh_token'] = str_replace(' ', '', $refreshToken);
+					$options['access_token'] = str_replace(' ', '', $accessToken);
+					// $options['add_member_url'] = $addMemberUrl ;
+					$options['app_key'] = str_replace(' ', '', $appKey);
+
+					foreach ($options as $key => $value) {
+						update_option($key, $value);
+					}
+
+					echo '<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> 
+					<p><strong>Settings saved.</strong></p><button type="button" class="notice-dismiss success-notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>';
+				}
+			} catch (Exception $e) {
+				echo 'Error writing to database: ',  $e->getMessage(), "\n";
+			}
+		}
+		include_once(plugin_dir_path(__FILE__) . 'partials/settings.php');
+	}
+
+	/**
+	 * Callback for members submenu (Membership View)
 	 */
 	public function render_membershipplan_listing_page()
 	{
@@ -181,8 +230,9 @@ class Osa_Membership_Admin
 		$membershipPlans = $wpdb->get_results("SELECT  * FROM wp_membership_type ;");
 		include_once(plugin_dir_path(__FILE__) . 'partials/membership_plans/membershiplan_listing.php');
 	}
+
 	/**
-	 * Callback for members  submenu(Edit)
+	 * Callback for members  submenu( Membership Edit)
 	 */
 	public function render_membershipplan_edit_page()
 	{
@@ -190,7 +240,7 @@ class Osa_Membership_Admin
 
 		if (isset($_POST['membershiplan_form']) && wp_verify_nonce($_POST['membershiplan_form'], 'membershiplan')) {
 			try {
-				$errors=[];
+				$errors = [];
 				$membership = esc_sql($_POST['membership']);
 				if (empty($membership)) {
 					$errors['membership'] = "Membership cannot be blank";
@@ -217,8 +267,8 @@ class Osa_Membership_Admin
 					$mainArr['fee'] = $_POST['fee'];
 					$mainArr['total_days'] = !empty(esc_sql($_POST['total_days'])) ? $_POST['total_days'] : 0;
 					$mainArr['status'] = $_POST['status'];
-					$result = $wpdb->update('wp_membership_type', $mainArr, array('membership_type_id' => $_GET['id']), array('%s','%d','%d','%d','%d'), array('%d'));
-					$url = home_url('/wp-admin/admin.php?page=membershipplan-edit&id='. $_GET['id'] . '&success');
+					$result = $wpdb->update('wp_membership_type', $mainArr, array('membership_type_id' => $_GET['id']), array('%s', '%d', '%d', '%d', '%d'), array('%d'));
+					$url = home_url('/wp-admin/admin.php?page=membershipplan-edit&id=' . $_GET['id'] . '&success');
 					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
 				}
 			} catch (Exception $e) {
@@ -239,14 +289,14 @@ class Osa_Membership_Admin
 	}
 
 	/**
-	 * Callback for members  submenu(Edit)
+	 * Callback for members submenu (Membership Add)
 	 */
 	public function render_membershipplan_add_page()
 	{
 		global $wpdb;
 		if (isset($_POST['membershiplan_form']) && wp_verify_nonce($_POST['membershiplan_form'], 'membershiplan')) {
 			try {
-				$errors=[];
+				$errors = [];
 				$membership = esc_sql($_POST['membership']);
 				if (empty($membership)) {
 					$errors['membership'] = "Membership cannot be blank";
@@ -558,10 +608,6 @@ class Osa_Membership_Admin
 					//echo $url;
 					// $redirectTo = home_url() . '/wp-admin/admin.php?page=member-edit&mid=16950&id=8661';
 					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
-
-
-
-
 
 					// echo '<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> 
 					// 		<p><strong>Details updated.</strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>';
