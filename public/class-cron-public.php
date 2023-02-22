@@ -110,7 +110,7 @@ class Osa_Cron_Public
         else{
             echo "No Expired Member";
         }
-    
+
 	}
 
 	public function sendMail($to, $subject, $data = array(), $type = '')

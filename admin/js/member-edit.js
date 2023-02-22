@@ -86,11 +86,14 @@
         }
 
         $(document).on('change', '.idDeleted', function (e) {
-            e.preventDefault();
-                  
+            e.preventDefault();                 
         });
 
-
+        $(document).on('click', '.success-notice-dismiss', function (e) {
+            e.preventDefault();
+            //alert('close');
+            $(this).parent().remove() ;
+           });
 
     });
 
