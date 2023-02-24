@@ -450,6 +450,7 @@
 
 			// $('.loader').show();
 			// loader
+			mafs.find("#the-member-list").empty();
 			if (!mafs.find("#the-member-list .loader").length) {
 				mafs.find("#the-member-list").append('<tr></tr><tr><td></td><td></td><td></td><td></td><td><div class="lds-dual-ring loader"></div></td></tr>');
 			}
