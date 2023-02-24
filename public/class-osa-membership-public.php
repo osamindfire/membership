@@ -116,7 +116,7 @@ class Osa_Membership_Public
 	public function initFunction()
 	{
 		//ob_start();
-		error_reporting(0);
+		//error_reporting(0);
 		if (!isset($_SESSION)) {
 			session_start();
 		}
@@ -511,9 +511,10 @@ class Osa_Membership_Public
 				$errors['email'] = "Please enter a Email";
 			} elseif (!is_email($email)) {
 				$errors['email'] = "Please enter a valid Email";
-			} elseif (email_exists($email)) {
+			} elseif (email_exists($email) || username_exists($email)) {
 				$errors['email'] = "This email address is already in use";
 			}
+			
 
 			$mobileNo = esc_sql($_REQUEST['primary_mobile_no']);
 			if (empty($mobileNo)) {
@@ -553,7 +554,7 @@ class Osa_Membership_Public
 					$errors['spouseEmail'] = "Please enter a Spouse Email";
 				} elseif (!is_email($spouseEmail)) {
 					$errors['spouseEmail'] = "Please enter a valid Email";
-				} elseif (email_exists($spouseEmail)) {
+				} elseif (email_exists($spouseEmail) || username_exists($spouseEmail)) {
 					$errors['spouseEmail'] = "This email address is already in use";
 				}
 
@@ -614,6 +615,7 @@ class Osa_Membership_Public
 		$userId = wp_create_user($username, $password, $email);
 		$_SESSION['user_id'] = $userId;
 		if ($userId) {
+			$wpdb->update('wp_users', ['display_name'=>$_POST['first_name'],'user_nicename'=>$_POST['first_name']], array('ID' => $userId), array('%s', '%s'), array('%d'));
 			add_user_meta($userId, 'wp_capabilities', 'a:1:{s:10:"subscriber";b:1;}', true);
 			$newMemberId = $this->getNewmemberId();
 			$wpdb->query($wpdb->prepare(
@@ -680,6 +682,7 @@ class Osa_Membership_Public
 			$userId = wp_create_user($username, $password, $email);
 
 			if ($userId) {
+				$wpdb->update('wp_users', ['display_name'=>$_POST['spouse_first_name'],'user_nicename'=>$_POST['spouse_first_name']], array('ID' => $userId), array('%s', '%s'), array('%d'));
 				add_user_meta($userId, 'wp_capabilities', 'a:1:{s:10:"subscriber";b:1;}', true);
 				$wpdb->query($wpdb->prepare(
 					"INSERT INTO wp_member_user (user_id, member_id, parent_id, first_name, last_name, type , modified_date, alive, email_valid, is_deleted) VALUES ( %d, %d, %d, %s, %s, %s, %s, %d, %d, %d)",
