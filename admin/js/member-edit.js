@@ -93,7 +93,24 @@
             e.preventDefault();
             //alert('close');
             $(this).parent().remove() ;
-           });
+        });
+
+        //highlight hidden sub menu's parent menu 
+        let hiddenMenu = [];
+        hiddenMenu['member-view'] = 'members' ;
+        hiddenMenu['member-edit'] = 'members' ;
+        hiddenMenu['membershipplan-edit'] = 'membershipplan-listing' ;
+        hiddenMenu['membershipplan-add'] = 'membershipplan-listing' ;
+
+        let url = window.location.href;
+        
+        Object.keys(hiddenMenu).forEach(function (key) {
+            if(url.indexOf('?page='+key+'') > 0){
+                $('.wp-submenu').find('li a[href="admin.php?page='+hiddenMenu[key]+'"]').parent().addClass('current');
+    
+            } 
+        });
+        //
 
     });
 
