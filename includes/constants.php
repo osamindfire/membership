@@ -10,7 +10,8 @@ define('PAYPAL_LIVE_URL', 'https://www.paypal.com/cgi-bin/webscr');
 $variable = explode('?', basename($GLOBALS['_SERVER']['REQUEST_URI']));
 define('SLUG_VALUE',$variable[0]);
 define('CONTACT_US_URL',HOME_URL.'/contact-us');
-define('ADMIN_EMAIL','mfsi.naveenb@gmail.com');
+//define('ADMIN_EMAIL','mfsi.naveenb@gmail.com');
+define('ADMIN_EMAIL','vicepresident@odishasociety.org');
 define('COPYRIGHT_TEXT','Copyrights © 1969-'.date('Y').' The Odisha Society of the Americas. <br>All Rights Reserved');
 if( home_url() == 'http://osa.dev.local' || home_url() == 'http://osa-membership-local.com' ){
         define('DIR_URL',plugins_url('osa-membership/public/img'));
