@@ -846,7 +846,14 @@ class Osa_Membership_Public
 				$city_name = $_GET['city'];
 				$where .= " AND wp_member_other_info.city like '%$city_name%' ";
 			}
-
+			if (!empty($_GET['chapter'])) {
+				$chapterId = $_GET['chapter'];
+				$getStateId = $wpdb->get_results("SELECT state_type_id FROM wp_states WHERE chapter_type_id =" . $chapterId . " ");
+				$stateId=$getStateId[0]->state_type_id;
+				$where .= " AND wp_member_other_info.state_id = $stateId ";
+				
+			}
+			
 			$total = $wpdb->get_var("select count(*) FROM
 			`wp_users`
 			INNER JOIN wp_member_user t1 ON
