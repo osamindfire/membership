@@ -44,7 +44,7 @@ class Osa_Cron_Public
             wp_insert_post($page);
         }
     }
-    
+
     public function cron_job_callback()
     {
 
@@ -62,7 +62,7 @@ class Osa_Cron_Public
         AND t2.expiry_email_sent IN (0,1)  
         ORDER BY t2.member_id ASC ;");
         $data = $wpdb->get_results($query);
-        
+
         if (!empty($data)) {
             foreach ($data as $info) {
                 if (strtotime($info->membership_expiry_date) == strtotime($dayCurrent)) {
@@ -88,6 +88,44 @@ class Osa_Cron_Public
                 }
             }
         }
+
+        // Uncomment below line of code for sending membership expired notification to all expired members
+        // $this->membersExpired();
+    }
+
+    public function membersExpired()
+    {
+
+        global $wpdb;
+        $dayCurrent  =  date("Y-m-d");
+
+        $query = $wpdb->prepare("SELECT  t2.id, t2.membership_expiry_date, wp_users.user_email,  wp_users.display_name 
+		FROM wp_users
+		INNER JOIN wp_member_user t1 ON wp_users.ID = t1.user_id
+		INNER JOIN wp_member_other_info t2 ON t1.member_id = t2.member_id
+		WHERE t2.membership_expiry_date < '$dayCurrent'
+		AND t1.parent_id = 0 
+        AND t1.is_deleted = 0
+        AND t2.expiry_email_sent IN (0,1)  
+        ORDER BY t2.member_id ASC ;");
+        $data = $wpdb->get_results($query);
+
+        // print_r($data);
+        // die;
+        if (!empty($data)) {
+            foreach ($data as $info) {
+                $to = 'pooja.patle@mindfiresolutions.com';
+                // $to = $info->user_email;  
+                $user_info = [];
+                $user_info['user_display'] = $info->display_name;
+                $res = $this->sendMail($to, 'Membership Expired', $user_info, 'expired on '.$info->membership_expiry_date.'. ');
+                if ($res == 1) {
+                    $wpdb->update('wp_member_other_info', array('expiry_email_sent' => 2), array('id' => $info->id), array('%d'), array('%d'));
+                }
+                echo $res;
+            }
+        }
+
     }
 
     public function sendMail($to, $subject, $data = array(), $type = '')
@@ -108,21 +146,21 @@ class Osa_Cron_Public
     {
 
         global $wpdb;
-        if ( null === $wpdb->get_row( "SELECT post_name FROM {$wpdb->prefix}posts WHERE post_name = 'add-member-to-gsuite'", 'ARRAY_A' ) ) {
-            
+        if (null === $wpdb->get_row("SELECT post_name FROM {$wpdb->prefix}posts WHERE post_name = 'add-member-to-gsuite'", 'ARRAY_A')) {
+
             $current_user = wp_get_current_user();
-            
+
             // create post object
             $page = array(
-            'post_title'  => __( 'Add Member To Gsuite' ),
-            'post_status' => 'publish',
-            'post_content'   => '[add_member_to_gsuite_cron]',
-            'post_author' => $current_user->ID,
-            'post_type'   => 'page',
+                'post_title'  => __('Add Member To Gsuite'),
+                'post_status' => 'publish',
+                'post_content'   => '[add_member_to_gsuite_cron]',
+                'post_author' => $current_user->ID,
+                'post_type'   => 'page',
             );
-            
+
             // insert the post into the database
-            wp_insert_post( $page );
+            wp_insert_post($page);
         }
     }
 
