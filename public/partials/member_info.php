@@ -68,7 +68,7 @@
          <td class="vertical_line" style="text-align:left;"><strong>Child <?=$count;?></strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($childValues->first_name) ? $childValues->first_name.' '.$childValues->last_name : 'N/A'; ?></td>
         </tr>
-        <?php } }?>
+        <?php $count++;} }?>
     </tbody>
 
 </table>
