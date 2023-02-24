@@ -70,8 +70,7 @@
               <input type="text" name="city"  class="input" placeholder="City" value="<?php if(!empty($_GET['city'])) { echo $_REQUEST['city']; } ?>">
              </p>
              <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last search_member_listing">
-             <label>Total Members</label>
-             <input type="text" readonly style="color: #fff;background-color: #04AA6D;font-weight: bold;" value="<?= $total ;?>">
+             <label><strong>Total Members : <?= $total ;?></strong></label>
                 
             </p>
               <div class="et_contact_bottom_container">
