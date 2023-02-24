@@ -116,7 +116,7 @@ class Osa_Membership_Public
 	public function initFunction()
 	{
 		//ob_start();
-		//error_reporting(0);
+		error_reporting(0);
 		if (!isset($_SESSION)) {
 			session_start();
 		}
