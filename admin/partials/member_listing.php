@@ -14,15 +14,15 @@
 ?>
 
 <!-- <div class="loader"></div> -->
+<!-- <div class="lds-dual-ring loader"></div> -->
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div class="wrap member_list" id="member-ajax-filter-search">
-    <h1 class="wp-heading-inline">
-        Members</h1>
+    
+    <h1 class="wp-heading-inline">Members</h1>
+    <!-- <div class="lds-dual-ring loader"></div> -->
 
     <hr class="wp-header-end">
-
-    
 
     <h2 class="screen-reader-text">Filter members list</h2>
 
@@ -64,11 +64,10 @@
 
 
                 </span>
-                <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">
                 <input type="button" name="" id="add_more_criteria" class="button" value="Add More Criteria">
+                <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">
 
                 <a class="dashicons-before dashicons-update vers" title="Reload this page" href=""></a>
-
 
             </div>
 
@@ -115,7 +114,7 @@
         </thead>
 
         <tbody id="the-member-list">
-
+            <tr></tr><tr><td></td><td></td><td></td><td></td><td><div class="lds-dual-ring loader"></div></td></tr>
         </tbody>
 
         <tfoot>
