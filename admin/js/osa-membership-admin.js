@@ -448,7 +448,12 @@
 				}
 			}
 
-			//$('.loader').show();
+			// $('.loader').show();
+			// loader
+			mafs.find("#the-member-list").empty();
+			if (!mafs.find("#the-member-list .loader").length) {
+				mafs.find("#the-member-list").append('<tr></tr><tr><td></td><td></td><td></td><td></td><td><div class="lds-dual-ring loader"></div></td></tr>');
+			}
 
 			let data = {
 				action: "member_ajax_action",
@@ -510,21 +515,21 @@
 
 							let dActivateClass = '';
 							let disabled = '';
-							if(response[i]['is_deleted'] == 1){
+							if (response[i]['is_deleted'] == 1) {
 								dActivateClass = 'out-red';
 								disabled = "disabled";
 							}
 
-							
 
-							let html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized '+dActivateClass+'"> \
+
+							let html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized ' + dActivateClass + '"> \
 											<th scope="row" class="check-column"> <label class="screen-reader-text" for="cb-select-1"> \
 													Select Hello world! </label> \
-												<input '+disabled+' class="isChecked" name="member_id" value="'+ response[i]['member_id'] + '" type="checkbox"> \
+												<input '+ disabled + ' class="isChecked" name="member_id" value="' + response[i]['member_id'] + '" type="checkbox"> \
 											</th> \
-											<td class="title column-title has-row-actions column-primary page-title" data-colname="Title"><a class="row-title" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '">'+ response[i]['member_id'] + '</a></td> \
+											<td class="title column-title has-row-actions column-primary page-title" data-colname="Title"><a class="row-title" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '">' + response[i]['member_id'] + '</a></td> \
 											<td class="author column-author" data-colname="Author">'+ response[i]['first_name'] + ' ' + response[i]['last_name'] + ' </td>  \
-											<td class="categories column-categories" data-colname="Categories"><a class="" href="mailto: '+response[i]['user_email']+'">'+ response[i]['user_email'] + ' </a></td> \
+											<td class="categories column-categories" data-colname="Categories"><a class="" href="mailto: '+ response[i]['user_email'] + '">' + response[i]['user_email'] + ' </a></td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['user_registered'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership_expiry_date'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['primary_phone_no'] + ' </td> \
@@ -541,7 +546,6 @@
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
-							// mafs.find("#members_list_csv").append('<?php $member_list_rec ='+response+' ?>');
 
 						}
 
@@ -556,9 +560,8 @@
 														</div> \
 													');
 
-						//$('.loader').hide();
-
 					}
+					// $('.loader').hide();
 				},
 				error: function (e, response) {
 					// console.log("error");
@@ -567,9 +570,6 @@
 		}
 
 	});
-
-
-
 
 
 })(jQuery);
