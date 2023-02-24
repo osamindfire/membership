@@ -69,7 +69,10 @@
               <label>City</label>
               <input type="text" name="city"  class="input" placeholder="City" value="<?php if(!empty($_GET['city'])) { echo $_REQUEST['city']; } ?>">
              </p>
-
+             <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last search_member_listing">
+             <input type="text" readonly style="color: #fff;background-color: #04AA6D;font-weight: bold;" value="Total Members :  <?= $total ;?>">
+                
+            </p>
               <div class="et_contact_bottom_container">
                 <button type="submit" class="et_pb_button" style="background-color: deepskyblue !important;" data-quickaccess-id="button"> <i class="fa fa-search"></i></button>
                 <a class="et_pb_button" href="<?php echo home_url('member-dashboard'); ?>"> <i class="fa fa-refresh"></i></a>
@@ -125,8 +128,9 @@
       ));
 
       if ($links) {
-        echo '<div class="" style="width: 99%;">
-                                              <div class="" style="margin: 1em 0">' . $links . '</div></div>';
+        echo '<div class="" style="width: 99%;"><div class="" style="float:right;margin: 1em 0">'.$total.' Records found ' . $links . '</div></div>';
+      }else{
+        echo '<div class="" style="width: 99%;"><div class="" style="float:right;margin: 1em 0">'.$total.' Records found ' . $links . '</div></div>';
       }
 
       ?>
