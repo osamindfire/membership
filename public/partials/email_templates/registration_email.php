@@ -5,7 +5,7 @@
 }
 </style>
 <?php 
-$memberName = isset($data['user_login']) ? $data['user_login'] : '';
+$memberName = isset($data['user_nicename']) ? $data['user_nicename'] : $data['user_login'];
 $emailBody='<!doctype html>
 		<html>
 		  <head>

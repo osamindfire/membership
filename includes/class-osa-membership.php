@@ -272,6 +272,8 @@ class Osa_Membership {
 		$this->loader->add_shortcode('payment_failure',$this->plugin_public,'cancelPayment');
 		$this->loader->add_shortcode('forgot_password',$this->plugin_public,'forgotPassword');
 		$this->loader->add_shortcode('member_listing',$this->plugin_public,'membersListing');
+		$this->loader->add_shortcode('reset_password',$this->plugin_public,'resetPassword');
+		
 		
     }
 	

@@ -1,5 +1,5 @@
 <?php 
-$memberName = isset($data['user_login']) ? $data['user_login'] : '';
+$memberName = isset($data['user_nicename']) ? $data['user_nicename'] : $data['user_login'];
 $memberEmail = isset($data['user_email']) ? $data['user_email'] : '';
 $memberPlan = isset($data['user_membership']->membership) ? $data['user_membership']->membership : '';
 $memberFee = isset($data['user_membership']->fee) ? $data['user_membership']->fee : '';
