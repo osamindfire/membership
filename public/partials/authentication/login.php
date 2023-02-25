@@ -14,6 +14,11 @@
 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 <strong>Password has been updated. Please login using new password !</strong>
 </div><br>
+<?php }elseif(isset($_GET["member_deactivated"])){ ?>
+<div class="alert">
+<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+<strong>Your account is deactivated !</strong>
+</div><br>
 <?php } ?>
 <?php if(!empty($errors)) { foreach($errors as $error) { ?>
     <span class="error_messages"><?php if(!empty($error[0])) { echo $error[0]; } ?></span><br>

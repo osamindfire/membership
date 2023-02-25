@@ -335,15 +335,23 @@ class Osa_Membership_Public
 					}
 					$memberData = $wpdb->get_results("SELECT
 				wp_member_other_info.membership_type,
-				wp_member_other_info.membership_expiry_date
+				wp_member_other_info.membership_expiry_date,
+				t1.is_deleted
 				FROM
 				`wp_users`
 				INNER JOIN wp_member_user t1 ON
 				t1.user_id = wp_users.ID
 				LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 				WHERE t1.user_id=" . $loggedUser->data->ID . " limit 1");
+
 					$currentDate = date('Y-m-d');
-					if (strtotime($memberData[0]->membership_expiry_date) >= strtotime($currentDate)) {
+					if ($memberData[0]->is_deleted == 1) {
+						wp_logout();
+						unset($_SESSION['user_id']);
+						$redirectTo = home_url() . '/login?member_deactivated=1';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+					}elseif (strtotime($memberData[0]->membership_expiry_date) >= strtotime($currentDate)) {
 						do_action('wp_login', $user_verify->user_login, $user_verify);
 						$redirectTo = home_url() . '/member-dashboard';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
