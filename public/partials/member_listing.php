@@ -86,26 +86,26 @@
       <table class="table et_pb_with_background et_pb_inner_shadow price responsive-table" style="width: 100%;table-layout:fixed;">
         <thead class="thead">
           <tr class="et_pb_pricing_heading">
-            <th class="text-center vertical_line" style="width:10%;word-wrap: break-word;">Member ID</th>
+            <th class="text-center vertical_line" style="width:11%;word-wrap: break-word;">Member ID</th>
             <th class="text-center vertical_line" style="width:12%;word-wrap: break-word;">Name</th>
             <th class="text-center vertical_line" style="width:20%;word-wrap: break-word;">Email</th>
             <th class="text-center vertical_line" style="width:15%;word-wrap: break-word;">Join Date</th>
-            <th class="text-center vertical_line" style="width:20%;word-wrap: break-word;">Address</th>
+            <th class="text-center vertical_line" style="width:12%;word-wrap: break-word;">Address</th>
             <th class="text-center vertical_line" style="width:15%;word-wrap: break-word;">Phone</th>
-            <th class="text-center vertical_line" style="width:8%;word-wrap: break-word;">Details</th>
+            <th class="text-center vertical_line" style="width:10%;word-wrap: break-word;">Details</th>
           </tr>
         </thead>
         <tbody>
           <?php if ($rowcount > 0) {
             foreach ($rows as $member) { ?>
               <tr class="price">
-                <td class="text-center vertical_line" style="width:10%;word-wrap: break-word;"><?= $member->member_id; ?></td>
+                <td class="text-center vertical_line" style="width:11%;word-wrap: break-word;"><?= $member->member_id; ?></td>
                 <td class="text-center vertical_line" style="width:12%;word-wrap: break-word;"><?= $member->first_name . ' ' . $member->last_name; ?></td>
                 <td class="text-center vertical_line" style="width:20%;word-wrap: break-word;"><?= $member->user_email; ?></td>
                 <td class="text-center vertical_line" style="width:15%;word-wrap: break-word;"><?= $member->user_registered; ?></td>
-                <td class="text-center vertical_line" style="width:20%;word-wrap: break-word;"><?= $member->address_line_1; ?></td>
+                <td class="text-center vertical_line" style="width:12%;word-wrap: break-word;"><?= $member->address_line_1; ?></td>
                 <td class="text-center vertical_line" style="width:15%;word-wrap: break-word;"><?= $member->primary_phone_no; ?></td>
-                <td class="text-center vertical_line" style="width:8%;word-wrap: break-word;"><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
+                <td class="text-center vertical_line" style="width:10%;word-wrap: break-word;"><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
               </tr>
             <?php }
           } else { ?>
