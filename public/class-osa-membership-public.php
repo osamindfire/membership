@@ -268,7 +268,7 @@ class Osa_Membership_Public
 				
 				$membersInfo = $wpdb->get_results("SELECT wp_users.user_email,wp_member_user.id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = ".$userInfo[0]->member_id." and wp_member_user.type != 'child' ");
 						
-				$gsuite = new Osa_Membership_G_Suite();
+				/* $gsuite = new Osa_Membership_G_Suite();
 				$accessToken=$gsuite->reFreshGsuiteAccessToken();
 				foreach($membersInfo as $membersInfoValue)
 				{
@@ -281,7 +281,7 @@ class Osa_Membership_Public
 						$wpdb->update('wp_member_user', ['added_to_gsuite'=>$addedToGsuite,'gsuite_response'=>$gsuiteResponse], array('id' => $membersInfoValue->id), array('%d', '%s'), array('%d'));
 
 					}
-				}
+				} */
 				unset($_SESSION['user_id']);
 				unset($_SESSION['membership_type_id']);
 				$paymentInfoSaved = 1;
