@@ -19,6 +19,11 @@
 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 <strong>Your account is deactivated !</strong>
 </div><br>
+<?php }elseif(isset($_GET["member_deceased"])){ ?>
+<div class="alert">
+<span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
+<strong>Your account is marked as Deceased !</strong>
+</div><br>
 <?php } ?>
 <?php if(!empty($errors)) { foreach($errors as $error) { ?>
     <span class="error_messages"><?php if(!empty($error[0])) { echo $error[0]; } ?></span><br>
