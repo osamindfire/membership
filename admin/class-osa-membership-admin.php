@@ -815,8 +815,18 @@ class Osa_Membership_Admin
 
 				foreach($search_keywords as $search)
 				{
-					$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
-				           OR wp_users.user_email LIKE '%$search%' 
+					$query .= " AND ( ";
+					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
+						$date = date('Y-m-d', strtotime($search));
+						$query .= " wp_users.user_registered LIKE '%$date%' " ;
+					}
+
+					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
+						$date = date('Y-m-d', strtotime($search));
+						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR" ;
+					}
+					
+				    $query .= " wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
 						   OR t1.first_name LIKE '%$search%' 
 						   OR t1.last_name LIKE '%$search%'
