@@ -501,7 +501,7 @@ class Osa_Membership_Admin
 			t1.alive,
 			t1.first_name,
 			t1.last_name,
-			t1.member_id,
+			t1.member_id, t1.parent_id, 
 			t1.is_deleted,t1.phone_no,
 			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, 
 			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
@@ -684,14 +684,16 @@ class Osa_Membership_Admin
 				$errors['last_name'] = "Please enter a Last Name";
 			}
 
-			$phone = esc_sql($_POST['phone_no']);
-			if (empty($phone)) {
-				$errors['phone_no'] = "Please enter a Phone";
-			}
-
-			$spousePhone = esc_sql($_POST['spouse_phone_no']);
-			if (empty($spousePhone)) {
-				$errors['spouse_phone_no'] = "Please enter a Phone";
+			if($_POST['parent_id'] == 0){
+				$phone = esc_sql($_POST['phone_no']);
+				if (empty($phone)) {
+					$errors['phone_no'] = "Please enter a Phone";
+				}
+		    }else{
+				$spousePhone = esc_sql($_POST['spouse_phone_no']);
+				if (empty($spousePhone)) {
+					$errors['spouse_phone_no'] = "Please enter a Phone";
+				}
 			}
 
 			if (!empty($_POST['spouse_email'])) {

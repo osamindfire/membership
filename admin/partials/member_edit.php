@@ -80,11 +80,20 @@
                                                 </tr>
 
                                                 <tr>
-                                                    <td><strong><label for="phone_no" class="required">Phone</label></strong><br>
+                                                    <?php
+                                                    $required = '';
+                                                    if ($val->parent_id == 0) {
+                                                        $required = 'required';
+                                                    }
+                                                    ?>
+                                                    <td><strong><label for="phone_no" class="<?= $required ?>">Phone</label></strong><br>
                                                         <input type="text" name="phone_no" value="<?php echo $val->phone_no; ?>" required><br>
                                                         <error><?php if (!empty($errors['phone_no'])) {
                                                                     echo $errors['phone_no'];
                                                                 } ?></error>
+
+                                                        <input type="text" name="parent_id" hidden value="<?php echo $val->parent_id; ?>">
+
                                                     </td>
 
 
@@ -203,14 +212,14 @@
                                                     <td><strong><label for="status">Status</label></strong><br>
                                                         <select name="status" id="" class="postform ">
 
-                                                            <?php $status = array("Deceased" => 0, "Alive" => 1);
+                                                            <?php $status = array("Alive" => 1, "Deceased" => 0);
                                                             foreach ($status as $key => $value) {
                                                                 $selected = '';
-                                                                if ($val->alive == 1) {
+                                                                if ($val->alive == $value) {
                                                                     $selected = 'selected';
                                                                 }
                                                             ?>
-                                                                <option class="level-0" <?php echo $selected ?> value="<?php echo $value ?>"><?php echo $key ?></option>
+                                                                <option class="level-0" <?php echo $selected; ?> value="<?php echo $value; ?>"><?php echo $key; ?></option>
                                                             <?php } ?>
 
                                                         </select>
@@ -295,6 +304,7 @@
                                                             </td>
 
                                                             <input type="text" name="spouse_id" hidden value="<?php echo $parent->id; ?>">
+                                                            <input type="text" name="spouse_parent_id" hidden value="<?php echo $parent->parent_id; ?>">
 
                                                         </tr>
 
@@ -303,7 +313,13 @@
                                                                 <input type="text" name="spouse_email" readonly value="<?php echo $parent->user_email; ?>">
                                                             </td>
 
-                                                            <td><strong><label for="spouse_phone_no" class="required">Phone</label></strong><br>
+                                                            <?php
+                                                            $requiredParent = '';
+                                                            if ($parent->parent_id == 0) {
+                                                                $requiredParent = 'required';
+                                                            }
+                                                            ?>
+                                                            <td><strong><label for="spouse_phone_no" class="<?= $requiredParent ?>">Phone</label></strong><br>
                                                                 <input type="text" name="spouse_phone_no" value="<?php echo $parent->phone_no; ?>" required><br>
                                                                 <error><?php if (!empty($errors['spouse_phone_no'])) {
                                                                             echo $errors['spouse_phone_no'];
@@ -315,10 +331,10 @@
                                                             <td><strong><label for="spouse_status">Status</label></strong><br>
                                                                 <select name="spouse_status" id="" class="postform ">
 
-                                                                    <?php $status = array("Deceased" => 0, "Alive" => 1);
+                                                                    <?php $status = array("Alive" => 1, "Deceased" => 0);
                                                                     foreach ($status as $key => $value) {
                                                                         $selected = '';
-                                                                        if ($parent->alive == 1) {
+                                                                        if ($parent->alive == $value) {
                                                                             $selected = 'selected';
                                                                         }
                                                                     ?>
@@ -373,7 +389,7 @@
                                         </div>
                                     </div>
                                 <?php } ?>
-                                
+
                                 <div id="dashboard_site_health" class="postbox ">
                                     <div class="postbox-header">
                                         <h2 class="hndle ui-sortable-handle">Member Status</h2>
