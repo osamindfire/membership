@@ -14,9 +14,6 @@
     <p><a href="<?php echo home_url('member-dashboard/profile/'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard/profile') {
                                                                                 echo "active";
                                                                               } ?>"><img src="<?= DIR_URL; ?>/profile_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Profile</strong></a></p>
-    <p><a href="<?php echo home_url('member-dashboard/transaction/'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard/transaction') {
-                                                                                    echo "active";
-                                                                                  } ?>"><img src="<?= DIR_URL; ?>/transaction_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Transaction</strong></a></p>
     <p><a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
   </div>
   <div class="column col-2">
@@ -37,11 +34,6 @@
             <p class="et_pb_contact_field ui-sortable">
               <input type="text" name="global_search" style="width:100%" class="input" placeholder="Global Search..." value="<?php if(!empty($_GET['global_search'])) { echo $_REQUEST['global_search']; } ?>">
              </p>
-            <!-- <button type="submit" class="" style="color:#fff;float: right;background-color: deepskyblue !important;height:30px;border:1px solid #fff;cursor: pointer;" data-quickaccess-id="button"><i class="fa fa-search"></i></button>
-            <div style="overflow: hidden; padding-right: .5em;">
-              <input type="text" name="global_search" class="et_pb_contact_field ui-sortable input" placeholder="Global Search......" value="<?php if(!empty($_GET['global_search'])) { echo $_REQUEST['global_search']; } ?>" style="margin-bottom:10px;margin-left:30px;width: 97%;height:30px" />
-            </div> -->
-
             <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half search_member_listing">
                 <label for="" class="">Country</label>
                 <select name="country" id="country" onchange="getStates()" class="et_pb_contact_select input" placeholder="Country">
@@ -90,7 +82,8 @@
             <th class="text-center vertical_line" style="width:12%;word-wrap: break-word;">Name</th>
             <th class="text-center vertical_line" style="width:20%;word-wrap: break-word;">Email</th>
             <th class="text-center vertical_line" style="width:15%;word-wrap: break-word;">Join Date</th>
-            <th class="text-center vertical_line" style="width:12%;word-wrap: break-word;">Address</th>
+            <th class="text-center vertical_line" style="word-wrap: break-word;">State</th>
+            <th class="text-center vertical_line" style="word-wrap: break-word;">City</th>
             <th class="text-center vertical_line" style="width:15%;word-wrap: break-word;">Phone</th>
             <th class="text-center vertical_line" style="width:10%;word-wrap: break-word;">Details</th>
           </tr>
@@ -103,8 +96,9 @@
                 <td class="text-center vertical_line" style="width:12%;word-wrap: break-word;"><?= $member->first_name . ' ' . $member->last_name; ?></td>
                 <td class="text-center vertical_line" style="width:20%;word-wrap: break-word;"><?= $member->user_email; ?></td>
                 <td class="text-center vertical_line" style="width:15%;word-wrap: break-word;"><?= $member->user_registered; ?></td>
-                <td class="text-center vertical_line" style="width:12%;word-wrap: break-word;"><?= $member->address_line_1; ?></td>
-                <td class="text-center vertical_line" style="width:15%;word-wrap: break-word;"><?= $member->primary_phone_no; ?></td>
+                <td class="text-center vertical_line" style="word-wrap: break-word;"><?= $member->state; ?></td>
+                <td class="text-center vertical_line" style="word-wrap: break-word;"><?= $member->city; ?></td>
+                <td class="text-center vertical_line" style="width:15%;word-wrap: break-word;"><?= $member->phone_no; ?></td>
                 <td class="text-center vertical_line" style="width:10%;word-wrap: break-word;"><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
               </tr>
             <?php }

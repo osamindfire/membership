@@ -20,6 +20,10 @@
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->user_email) ? $memberInfo[0]->user_email : 'N/A'; ?></td>
         </tr>
         <tr class="price">
+            <td class="vertical_line" style="text-align:left;"><strong>Member Phone No.</strong></td>
+            <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->main_member_phone) ? $memberInfo[0]->main_member_phone : 'N/A'; ?></td>
+        </tr>
+        <tr class="price">
             <td class="vertical_line" style="text-align:left;"><strong>Partner Name</strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo['oth_member_info'][0]->first_name) ? $memberInfo['oth_member_info'][0]->first_name.' '.$memberInfo['oth_member_info'][0]->last_name : 'N/A'; ?></td>
         </tr>
@@ -27,13 +31,14 @@
             <td class="vertical_line" style="text-align:left;"><strong>Partner Email</strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo['oth_member_info'][0]->user_email) ? $memberInfo['oth_member_info'][0]->user_email : 'N/A'; ?></td>
         </tr>
+        
         <tr class="price">
-            <td class="vertical_line" style="text-align:left;"><strong>Primary Phone No.</strong></td>
-            <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->primary_phone_no) ? $memberInfo[0]->primary_phone_no : 'N/A'; ?></td>
+            <td class="vertical_line" style="text-align:left;"><strong>Partner Phone No.</strong></td>
+            <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo['oth_member_info'][0]->partner_member_phone) ? $memberInfo['oth_member_info'][0]->partner_member_phone : 'N/A'; ?></td>
         </tr>
         <tr class="price">
-            <td class="vertical_line" style="text-align:left;"><strong>Secondary Phone No.</strong></td>
-            <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->secondary_phone_no) ? $memberInfo[0]->secondary_phone_no : 'N/A'; ?></td>
+            <td class="vertical_line" style="text-align:left;"><strong>Partner Status</strong></td>
+            <td class="vertical_line" style="text-align:left;"><?= ($memberInfo['oth_member_info'][0]->alive == 1) ? 'Alive' : 'Deceased'; ?></td>
         </tr>
         <tr class="price">
             <td class="vertical_line" style="text-align:left;"><strong>Address Line 1</strong></td>
@@ -51,6 +56,10 @@
             <td class="vertical_line" style="text-align:left;"><strong>State</strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->state) ? $memberInfo[0]->state : 'N/A'; ?></td>
         </tr>
+         <tr class="price">
+            <td class="vertical_line" style="text-align:left;"><strong>City</strong></td>
+            <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->city) ? $memberInfo[0]->city : 'N/A'; ?></td>
+        </tr>
         <tr class="price">
             <td class="vertical_line" style="text-align:left;"><strong>Chapter</strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->chapter_name) ? $memberInfo[0]->chapter_name : 'N/A'; ?></td>
@@ -59,10 +68,7 @@
             <td class="vertical_line" style="text-align:left;"><strong>Souvenir</strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->souvenir) ? $memberInfo[0]->souvenir : 'N/A'; ?></td>
         </tr>
-        <tr class="price">
-            <td class="vertical_line" style="text-align:left;"><strong>City</strong></td>
-            <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->city) ? $memberInfo[0]->city : 'N/A'; ?></td>
-        </tr>
+
         <?php $count=1;foreach($memberInfo['oth_member_info'] as $childValues){ if($childValues->type !=='parent'){?>
         <tr class="price">
          <td class="vertical_line" style="text-align:left;"><strong>Child <?=$count;?></strong></td>

@@ -14,9 +14,10 @@
                         <div class="order-number"><?php if (isset($_REQUEST['PayerID'])) {
                             echo $_REQUEST['PayerID'];
                         } ?></div>
+                        <div class="order-number-label">Transaction ID: <?php echo isset($_REQUEST['txn_id']) ? $_REQUEST['txn_id'] : ''; ?></div>
                          <div class="order-number-label">Plan: <?php echo isset($membershipPackage[0]->membership) ? $membershipPackage[0]->membership : ''; ?></div>
                          <div class="order-number-label">Amount: $ <?php echo isset($membershipPackage[0]->fee) ? $membershipPackage[0]->fee : ''; ?></div>
-                        <div class="complement order-number">Thank You!</div>
+                        <div class="complement order-number">Thank You! Please login to continue <a class="et_pb_button" href="<?= home_url() . '/login';?>">Login</a></div>
                     </div>
                 <div class="jagged-edge"></div>
         </div>
