@@ -17,6 +17,8 @@ $(document).ready(function () {
 		e.preventDefault(); $(this).parent('p').parent('div').remove(); x--;
 	});
 	$('.agreement_error').hide();
+	$('#register_submit_button').attr('disabled', 'disabled');
+	checkAgreement();
 	$('#register_submit_button').click(function () {
 		if ($(this).is(':checked')) {
 			checkAgreement();
