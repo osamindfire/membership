@@ -336,7 +336,7 @@ class Osa_Membership_Public
 					$memberData = $wpdb->get_results("SELECT
 				wp_member_other_info.membership_type,
 				wp_member_other_info.membership_expiry_date,
-				t1.is_deleted
+				t1.is_deleted,t1.alive
 				FROM
 				`wp_users`
 				INNER JOIN wp_member_user t1 ON
@@ -349,6 +349,12 @@ class Osa_Membership_Public
 						wp_logout();
 						unset($_SESSION['user_id']);
 						$redirectTo = home_url() . '/login?member_deactivated=1';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
+					}elseif ($memberData[0]->alive == 0) {
+						wp_logout();
+						unset($_SESSION['user_id']);
+						$redirectTo = home_url() . '/login?member_deceased=1';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 						exit();
 					}elseif (strtotime($memberData[0]->membership_expiry_date) >= strtotime($currentDate)) {
