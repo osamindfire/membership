@@ -126,6 +126,11 @@ class Osa_Membership_Public
 			wp_redirect('login');
 			exit;
 		}
+		if (current_user_can('administrator') && SLUG_VALUE == 'member-dashboard/') {
+			$redirectTo = home_url().'/wp-admin';
+			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+			exit();
+		}
 		if (isset($_SESSION['user_id'])) {
 			wp_set_current_user($_SESSION['user_id']);
 		}
