@@ -28,8 +28,12 @@ border-top: 1px solid #dcdcde;
     background: none;
 } */
 
-#member_edit .postbox, #member_view .postbox {
-     margin-bottom: 0;
+/* #member_edit .postbox, #member_view .postbox {
+     margin-bottom: 1px;
+} */
+
+#member_edit #dashboard-widgets .meta-box-sortables {
+  margin: 0 8px 3px;
 }
 
 /* .welcome-panel .welcome-panel-column-container {
@@ -116,5 +120,10 @@ color : red !important;
     100% {
       transform: rotate(360deg);
     }
+  }
+
+  .required:after {
+    content:" *";
+    color: red;
   }
   

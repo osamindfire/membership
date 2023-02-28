@@ -225,19 +225,19 @@
 			}
 		});
 
-		$("body").on('change', '.state_input', function () {
-			// alert('statein');
-			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
+		// $("body").on('change', '.state_input', function () {
+		// 	// alert('statein');
+		// 	let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
 
-			for (let i = 0; i <= form_el_count; i++) {
-				if ($("#members-filter").find("#category_filter_" + i).length) {
-					if ($("#members-filter").find("#category_filter_" + i).val() == 'chapter') {
-						$("#members-filter").find('#filter_input_id_' + i).remove();
-						populateChapter(i);
-					}
-				}
-			}
-		});
+		// 	for (let i = 0; i <= form_el_count; i++) {
+		// 		if ($("#members-filter").find("#category_filter_" + i).length) {
+		// 			if ($("#members-filter").find("#category_filter_" + i).val() == 'chapter') {
+		// 				$("#members-filter").find('#filter_input_id_' + i).remove();
+		// 				populateChapter(i);
+		// 			}
+		// 		}
+		// 	}
+		// });
 
 		// Remove row from multiple filter
 		$("body").on('click', '.removeBtn', function () {
@@ -337,22 +337,22 @@
 
 		function populateChapter(id) {
 
-			let state = '';
+			// let state = '';
 
-			let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
+			// let form_el_count = $("#members-filter").children().last().find('.member_filter_option').attr('data-filter-id');
 
-			for (let i = 0; i <= form_el_count; i++) {
-				if ($("#members-filter").find("#category_filter_" + i).length) {
-					if ($("#members-filter").find("#category_filter_" + i).val() == 'state') {
-						state = $("#members-filter").find('#filter_input_id_' + i).val();
-					}
-				}
-			}
+			// for (let i = 0; i <= form_el_count; i++) {
+			// 	if ($("#members-filter").find("#category_filter_" + i).length) {
+			// 		if ($("#members-filter").find("#category_filter_" + i).val() == 'state') {
+			// 			state = $("#members-filter").find('#filter_input_id_' + i).val();
+			// 		}
+			// 	}
+			// }
 
 			let data = {
 				action: "chapter_ajax_action",
 				chapter: 'yes',
-				state: state,
+				// state: state,
 			}
 
 			$.ajax({
@@ -532,8 +532,7 @@
 											<td class="categories column-categories" data-colname="Categories"><a class="" href="mailto: '+ response[i]['user_email'] + '">' + response[i]['user_email'] + ' </a></td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['user_registered'] + ' </td> \ \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership_expiry_date'] + ' </td> \ \
-											<td class="categories column-categories" data-colname="Categories">'+ response[i]['primary_phone_no'] + ' </td> \
-											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['secondary_phone_no'] + ' </td> \
+											<td class="categories column-categories" data-colname="Categories">'+ response[i]['phone_no'] + ' </td> \
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['address_line_1'] + ' </td> \
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['address_line_2'] + ' </td> \
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['country'] + ' </td> \

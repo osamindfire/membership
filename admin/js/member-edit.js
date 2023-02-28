@@ -42,6 +42,13 @@
             window.location = '/wp-admin/admin.php?page=member-edit&mid='+mid+'&id='+id+'';
         });
 
+    //     setTimeout(function(){
+    //         $('#member_edit .notice-dismiss').parent().remove();
+    //         let id = $('#member_info').find('#id').val();
+    //         let mid = $('#member_info').find('#mid').val();
+    //         window.location = '/wp-admin/admin.php?page=member-edit&mid='+mid+'&id='+id+'';
+    //    },3000);
+
         $(document).on('change', '#editCountry', function (e) {
             e.preventDefault();
             let country_id = $(this).val();
