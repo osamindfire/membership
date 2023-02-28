@@ -124,7 +124,7 @@ class Osa_Membership_Admin
 		/**
 		 * Add Members setting submenu
 		 */
-		add_submenu_page('members', 'Settings', 'Settings', 'administrator', 'member-settings', array($this, 'render_members_seting_page'));
+		add_submenu_page('members', 'Settings', 'Settings', 'administrator', 'member-settings', array($this, 'render_members_setting_page'));
 
 		/**
 		 * Add Members view submenu
@@ -139,7 +139,7 @@ class Osa_Membership_Admin
 		if ((isset($_GET['page'])) && ($_GET['page'] === 'member-edit')) {
 			add_submenu_page('members', 'Member Edit', null, 'administrator', 'member-edit', array($this, 'render_member_edit_page'));
 		}
-		
+
 		/**
 		 * Add MemberShip add submenu
 		 */
@@ -157,7 +157,7 @@ class Osa_Membership_Admin
 	/**
 	 * Callback for members submenu(settings)
 	 */
-	public function render_members_seting_page()
+	public function render_members_setting_page()
 	{
 
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -417,13 +417,16 @@ class Osa_Membership_Admin
 			wp_users.user_email,
 			t1.first_name,
 			t1.last_name,
-			t1.member_id,
-			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+			t1.member_id,t1.phone_no,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, 
+			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
 				'%d-%m-%Y'
 			) AS membership_expiry_date,
-			wp_membership_type.membership, wp_member_other_info.souvenir, wp_member_other_info.city, wp_countries.country, wp_states.state, wp_chapters.name as chapter_name
+			wp_membership_type.membership, wp_member_other_info.souvenir,
+			 wp_member_other_info.city, wp_member_other_info.chapter_type_id as chapter_id,
+			  wp_countries.country, wp_states.state, wp_chapters.name as chapter_name
 			FROM
 			`wp_users`
 			INNER JOIN wp_member_user t1 ON
@@ -431,7 +434,8 @@ class Osa_Membership_Admin
 			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
 			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
-			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			-- LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			LEFT JOIN wp_chapters ON wp_member_other_info.chapter_type_id = wp_chapters.chapter_type_id
 			LEFT JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
 			
 			";
@@ -446,7 +450,7 @@ class Osa_Membership_Admin
 			$data = $wpdb->get_results($query);
 
 			$parents = $wpdb->get_results(
-				"SELECT  t1.first_name, t1.last_name, t1.parent_id, t2.user_email FROM wp_member_user t1
+				"SELECT  t1.first_name, t1.last_name, t1.parent_id,t1.phone_no, t2.user_email FROM wp_member_user t1
 				LEFT JOIN wp_users t2 ON  t1.user_id = t2.ID
 				where t1.member_id = $member_id 
 				AND t1.type = 'parent' AND t1.id != '$id';"
@@ -492,17 +496,21 @@ class Osa_Membership_Admin
 				'%d-%m-%Y'
 			) AS user_registered,
 			wp_users.user_email,
+			t1.user_id,
+			t1.alive,
 			t1.first_name,
 			t1.last_name,
 			t1.member_id,
-			t1.is_deleted,
-			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
+			t1.is_deleted,t1.phone_no,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, 
+			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
 				'%d-%m-%Y'
 			) AS membership_expiry_date,
 			wp_membership_type.membership, wp_member_other_info.souvenir, 
-			wp_member_other_info.city, wp_member_other_info.state_id, wp_member_other_info.country_id, wp_member_other_info.postal_code,
+			wp_member_other_info.city, wp_member_other_info.state_id, wp_member_other_info.country_id, wp_member_other_info.chapter_type_id as chapter_id,
+			wp_member_other_info.postal_code,
 			wp_countries.country, wp_states.state, wp_states.chapter_type_id, wp_chapters.name as chapter_name
 			FROM
 			`wp_users`
@@ -511,7 +519,8 @@ class Osa_Membership_Admin
 			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
 			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
 			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
-			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			-- LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			LEFT JOIN wp_chapters ON wp_member_other_info.chapter_type_id = wp_chapters.chapter_type_id
 			LEFT JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
 			
 			";
@@ -524,7 +533,7 @@ class Osa_Membership_Admin
 			$data = $wpdb->get_results($query);
 
 			$parents = $wpdb->get_results(
-				"SELECT t1.id , t1.first_name, t1.last_name, t1.parent_id, t2.user_email FROM wp_member_user t1
+				"SELECT t1.id , t1.alive, t1.first_name, t1.last_name, t1.parent_id,t1.phone_no, t2.user_email FROM wp_member_user t1
 				LEFT JOIN wp_users t2 ON  t1.user_id = t2.ID
 				where t1.member_id = $member_id 
 				AND t1.type = 'parent' AND t1.id != '$main_id';"
@@ -535,6 +544,9 @@ class Osa_Membership_Admin
 			$countries = $wpdb->get_results("SELECT  * FROM wp_countries ORDER BY priority ASC;");
 
 			$states = $wpdb->get_results("SELECT  * FROM wp_states ;");
+
+			$chapters = $wpdb->get_results("SELECT  * FROM wp_chapters ;");
+
 
 			$childCount = count($childs);
 
@@ -550,15 +562,44 @@ class Osa_Membership_Admin
 
 			try {
 				$errors = $this->validateForm($childCount);
+
+				/* Update user password. */
+				$user_id = $_POST['user_id'];
+				
+				if (!empty($_POST['password']) && strlen($_POST['password']) < '6') {
+					$errors['password'] = "Password must be at least six characters";
+				}
+				else if (!empty($_POST['password']) && empty($_POST['confirm_password'])) {
+					$errors['confirmPassword'] = 'Please confirm your password';
+				} 
+				else if(!empty($_POST['password']) && !empty($_POST['confirm_password'] && strlen($_POST['password']) >= '6')) {
+					
+					if ($_POST['password'] == $_POST['confirm_password']){
+						$update_pass = wp_set_password(esc_sql($_POST['password']), $user_id);
+						// $update_pass=wp_update_user( array( 'ID' => $current_user->ID, 'user_pass' => esc_attr( $_POST['password_1'] ) ) );
+						if (is_wp_error($update_pass)) {
+							// There was an error; possibly this user doesn't exist.
+							$errors['password'] = 'Error in updating password';
+						}
+					}  
+					else
+						$errors['confirmPassword'] = 'The passwords you entered do not match';
+				} 
+				/* End update user password. */
+
 				if (0 === count($errors)) {
 
 					//main member update
 					$mainArr = [];
 					$mainArr['first_name'] = $_POST['first_name'];
 					$mainArr['last_name'] = $_POST['last_name'];
-					// $mainArr['is_deleted'] = $_POST['is_deleted'];
+					$mainArr['alive'] = $_POST['status'];
+					$mainArr['phone_no'] = $_POST['phone_no'];
 
-					$mainMember = $wpdb->update('wp_member_user', $mainArr, array('id' => $main_id), array('%s', '%s'), array('%d'));
+					$mainMember = $wpdb->update('wp_member_user', $mainArr, array('id' => $main_id), array('%s', '%s', '%d', '%s'), array('%d'));
+
+					// echo $mainMember;
+					// die;
 
 					$del = $_POST['is_deleted'];
 					$wpdb->update('wp_member_user', array('is_deleted' => $del), array('member_id' => $member_id), array('%d'), array('%d'));
@@ -568,8 +609,11 @@ class Osa_Membership_Admin
 					$othArr = [];
 					$othArr['first_name'] = $_POST['spouse_first_name'];
 					$othArr['last_name'] = $_POST['spouse_last_name'];
+					$othArr['alive'] = $_POST['spouse_status'];
+					$othArr['phone_no'] = $_POST['spouse_phone_no'];
+
 					$othId = $_POST['spouse_id'];
-					$othMember = $wpdb->update('wp_member_user', $othArr, array('id' => $othId), array('%s', '%s'), array('%d'));
+					$othMember = $wpdb->update('wp_member_user', $othArr, array('id' => $othId), array('%s', '%s', '%d', '%s'), array('%d'));
 
 					//child update
 					if ($childCount !== 0) {
@@ -589,17 +633,18 @@ class Osa_Membership_Admin
 					$othInfo = [];
 					$othInfo['address_line_1'] = $_POST['address_line_1'];
 					$othInfo['address_line_2'] = $_POST['address_line_2'];
-					$othInfo['primary_phone_no'] = $_POST['primary_phone_no'];
-					$othInfo['secondary_phone_no'] = $_POST['secondary_phone_no'];
+					// $othInfo['primary_phone_no'] = $_POST['primary_phone_no'];
+					// $othInfo['secondary_phone_no'] = $_POST['secondary_phone_no'];
 					$othInfo['city'] = $_POST['city'];
 					$othInfo['souvenir'] = $_POST['souvenir'];
 					$othInfo['postal_code'] = $_POST['postal_code'];
 					$othInfo['state_id'] = $_POST['state_id'];
 					$othInfo['country_id'] = $_POST['country_id'];
+					$othInfo['chapter_type_id'] = $_POST['chapter_id'];
 
 					//$othInfoId=$_POST['member_id'];
 
-					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $member_id), array('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d'), array('%d'));
+					$othinfos = $wpdb->update('wp_member_other_info', $othInfo, array('member_id' => $member_id), array('%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d'), array('%d'));
 
 					//echo json_encode($othInfo);
 
@@ -638,9 +683,14 @@ class Osa_Membership_Admin
 				$errors['last_name'] = "Please enter a Last Name";
 			}
 
-			$phone = esc_sql($_POST['primary_phone_no']);
+			$phone = esc_sql($_POST['phone_no']);
 			if (empty($phone)) {
-				$errors['primary_phone_no'] = "Please enter a Phone";
+				$errors['phone_no'] = "Please enter a Phone";
+			}
+
+			$spousePhone = esc_sql($_POST['spouse_phone_no']);
+			if (empty($spousePhone)) {
+				$errors['spouse_phone_no'] = "Please enter a Phone";
 			}
 
 			if (!empty($_POST['spouse_email'])) {
@@ -670,7 +720,6 @@ class Osa_Membership_Admin
 					}
 				}
 			}
-
 
 			$addressLine1 = esc_sql($_POST['address_line_1']);
 			if (empty($addressLine1)) {
@@ -728,8 +777,9 @@ class Osa_Membership_Admin
 			t1.last_name,
 			t1.member_id,
 			t1.parent_id,
-			t1.is_deleted,
-			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no, 
+			t1.is_deleted, t1.phone_no,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, 
+			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no, 
 			wp_member_other_info.city, wp_member_other_info.postal_code, wp_states.state, wp_chapters.name as chapter_name, wp_countries.country, 
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
@@ -746,7 +796,8 @@ class Osa_Membership_Admin
 			-- LEFT JOIN wp_member_membership  ON wp_member_membership.member_id = t1.member_id 
 			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
 			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
-			LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			-- LEFT JOIN wp_chapters ON wp_states.chapter_type_id = wp_chapters.chapter_type_id
+			LEFT JOIN wp_chapters ON wp_member_other_info.chapter_type_id = wp_chapters.chapter_type_id
 			LEFT JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
 
 		
@@ -757,14 +808,20 @@ class Osa_Membership_Admin
 			 * Proceed for search
 			 */
 			if (!empty($search)) {
-				$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
+				$search_keywords = explode(" ",$search);
+
+				foreach($search_keywords as $search)
+				{
+					$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
 				           OR wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
 						   OR t1.first_name LIKE '%$search%' 
 						   OR t1.last_name LIKE '%$search%'
-						   OR wp_member_other_info.primary_phone_no LIKE '%$search%' 
+						   OR t1.phone_no LIKE '%$search%' 
 						   OR wp_membership_type.membership LIKE '%$search%' )
 						   ";
+				}
+
 			}
 			/**
 			 * Proceed for filters
@@ -780,7 +837,7 @@ class Osa_Membership_Admin
 					} else if ($filter_option[$i] == "city") {
 						$query .= " AND wp_member_other_info.city LIKE '%$filter_input[$i]%' ";
 					} else if ($filter_option[$i] == "chapter") {
-						$query .= " AND wp_chapters.chapter_type_id = $filter_input[$i] ";
+						$query .= " AND wp_member_other_info.chapter_type_id = $filter_input[$i] ";
 					} else if ($filter_option[$i] == "membership") {
 						$query .= " AND wp_member_other_info.membership_type = $filter_input[$i] ";
 					}
@@ -891,14 +948,14 @@ class Osa_Membership_Admin
 
 		if (isset($_GET['chapter'])) {
 
-			$state = $_GET['state'];
+			// $state = $_GET['state'];
 
 			$query = "SELECT t1.* from wp_chapters t1
 			          INNER JOIN wp_states t2 ON t1.chapter_type_id = t2.chapter_type_id ";
 
-			if (!empty($state)) {
-				$query .= " WHERE t2.state_type_id = " . $state . " ";
-			}
+			// if (!empty($state)) {
+			// 	$query .= " WHERE t2.state_type_id = " . $state . " ";
+			// }
 
 			$query .= " GROUP BY t1.chapter_type_id ORDER BY chapter_type_id ASC ";
 
