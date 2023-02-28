@@ -18,7 +18,7 @@
         <strong>Member ID:</strong> <?= $userInfo['oth_member_info'][0]->member_id;?>
         </p>
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">First Name</label>
+            <label for="" class="required_field">First Name</label>
             <input type="text" name="first_name"  class="input <?php if(!empty($errors['firstName'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="First Name" value="<?php if(isset($_REQUEST['first_name'])) { echo $_REQUEST['first_name']; }else{ echo $userInfo[0]->first_name; } ?>">
             <span class="error_messages"><?php if(!empty($errors['firstName'])) { echo $errors['firstName']; } ?></span>
         </p>
@@ -28,48 +28,48 @@
         <input type='hidden' name="member_id" value="<?= $userInfo[0]->member_id;?>">
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Last Name</label>
+            <label for="" class="required_field">Last Name</label>
             <input type="text" name="last_name"  class="input <?php if(!empty($errors['lastName'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Last Name" value="<?php if(isset($_REQUEST['last_name'])) { echo $_REQUEST['last_name']; }else{ echo $userInfo[0]->last_name; } ?>">
             <span class="error_messages"><?php if(!empty($errors['lastName'])) { echo $errors['lastName']; } ?></span>
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">Email</label>
+            <label for="" class="required_field">Email</label>
             <input type="text" name="email"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Last Name" value="<?php if(isset($_REQUEST['email'])) { echo $_REQUEST['email']; }else{ echo $userInfo[0]->user_email; } ?>" disabled>
             <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
         </p>
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Mobile No.</label>
+            <label for="" class="<?php if(empty($userInfo[0]->parent_id)) { echo "required_field"; } ?>">Mobile No.</label>
             <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="main_member_phone_no"  class="input <?php if(!empty($errors['mainMemberMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Mobile No." value="<?php if(isset($_REQUEST['main_member_phone_no'])) { echo $_REQUEST['main_member_phone_no']; }else{ echo $userInfo[0]->main_member_phone; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['mainMemberMobileNo'])) { echo $errors['mainMemberMobileNo']; } ?></span>
         </p>
         <?php if(!empty($totalParent) && $totalParent > 1) { ?>
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">Partner First Name</label>
+            <label for="" class="required_field">Partner First Name</label>
             <input type="text" name="spouse_first_name"  class="input <?php if(!empty($errors['spouseFirstName'])) { echo $errors['spouseFirstName']; } ?>" data-required_mark="required" placeholder="Partner First Name" value="<?php if(isset($_REQUEST['spouse_first_name'])) { echo $_REQUEST['spouse_first_name']; }else{ echo $userInfo['oth_member_info'][0]->first_name; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseFirstName'])) { echo $errors['spouseFirstName']; } ?></span>
         </p>
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Partner Last Name</label>
+            <label for="" class="required_field">Partner Last Name</label>
             <input type="text" name="spouse_last_name"  class="input <?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?>" data-required_mark="required" placeholder="Partner Last Name" value="<?php if(isset($_REQUEST['spouse_last_name'])) { echo $_REQUEST['spouse_last_name']; }else{ echo $userInfo['oth_member_info'][0]->last_name; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">Partner Email</label>
+            <label for="" class="required_field">Partner Email</label>
             <input type="text" name="spouse_last_name"  class="input <?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?>" data-required_mark="required" placeholder="Spouse Email" value="<?php if(isset($_REQUEST['email'])) { echo $_REQUEST['email']; }else{ echo $userInfo['oth_member_info'][0]->user_email; } ?>" disabled>
             <span class="error_messages"><?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?></span>
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Partner Mobile No.</label>
+            <label for="" class="<?php if(empty($userInfo['oth_member_info'][0]->parent_id)) { echo "required_field"; } ?>">Partner Mobile No.</label>
             <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input <?php if(!empty($errors['partnerPhoneNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }else{ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['partnerPhoneNo'])) { echo $errors['partnerPhoneNo']; } ?></span>
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">Partner Status</label>
+            <label for="" class="required_field">Partner Status</label>
             <select name="partner_alive" class="et_pb_contact_select input <?php if(!empty($errors['alive'])) { echo "alive"; } ?>" data-required_mark="required" placeholder="">
             <?php $status_array = ['1'=>'Alive','0'=>'Deceased'] ;foreach($status_array as $status_key=>$status_value) { ?> 
                 <option class="option_feild" value="<?= $status_key;?>" <?php if(isset($_REQUEST['alive']) && $_REQUEST['alive'] == $status_value ){ echo "selected";}elseif( $userInfo['oth_member_info'][0]->alive == $status_key){ echo "selected";} ?> > <?= $status_value;?> </option>
@@ -79,7 +79,7 @@
         </p>
            <?php } ?>     
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last">
-        <label for="" class="">Address Line 1</label>
+        <label for="" class="required_field">Address Line 1</label>
         <textarea name="address_line_1"  class="input" data-required_mark="required" data-field_type="text" placeholder="Address Line 1"><?php if(isset($_REQUEST['address_line_1'])) { echo $_REQUEST['address_line_1']; }else{ echo $userInfo[0]->address_line_1; }  ?></textarea>
         <span class="error_messages"><?php if(!empty($errors['addressLine1'])) { echo $errors['addressLine1']; } ?></span>
         </p>
@@ -89,19 +89,19 @@
         </p>
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">City</label>
+            <label for="" class="required_field">City</label>
             <input type="text" name="city"  class="input <?php if(!empty($errors['city'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="City" value="<?php if(isset($_REQUEST['city'])) { echo $_REQUEST['city']; }else{ echo $userInfo[0]->city; } ?>">
             <span class="error_messages"><?php if(!empty($errors['city'])) { echo $errors['city']; } ?></span>
         </p>
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Postal Code</label>
+            <label for="" class="required_field">Postal Code</label>
             <input type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');" name="postal_code" class="input <?php if(!empty($errors['postalCode'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Postal Code" value="<?php if(isset($_REQUEST['postal_code'])) { echo $_REQUEST['postal_code']; } else{ echo $userInfo[0]->postal_code; }?>">
             <span class="error_messages"><?php if(!empty($errors['postalCode'])) { echo $errors['postalCode']; } ?></span>
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
-            <label for="" class="">Country</label>
+            <label for="" class="required_field">Country</label>
             <select name="country" id="country" onchange="getstate()" class="et_pb_contact_select input <?php if(!empty($errors['country'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Country">
             <option value="">Select Country</option>
             <?php foreach($countries as $country) { ?> 
@@ -112,7 +112,7 @@
         </p>
         <input type="hidden" id="state_id" value="<?php if(isset($_REQUEST['state'])) { echo $_REQUEST['state']; }else{ echo $userInfo[0]->state_id;} ?> ">
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">State</label>
+            <label for="" class="required_field">State</label>
             <select name="state" id="state" class="et_pb_contact_select input" data-required_mark="required" placeholder="State">
             </select>
         </p>
@@ -122,7 +122,7 @@
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="">Souvenir</label>
+            <label for="" class="required_field">Souvenir</label>
             <select name="souvenir" class="et_pb_contact_select input <?php if(!empty($errors['souvenir'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Souvenir">
             <option value="">Select Souvenir</option>
             <?php $souvenir_array = ['CD'=>'CD','PRINT'=>'PRINT'] ;foreach($souvenir_array as $souvenir_value) { ?> 
