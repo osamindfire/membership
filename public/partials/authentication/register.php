@@ -25,7 +25,7 @@
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="required_field">Mobile No.</label>
-            <input type="text" pattern="[1-9]{1}[0-9]{9}" title="Please enter valid number" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');"  name="primary_mobile_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Mobile No." value="<?php if(!empty($_REQUEST['primary_mobile_no'])) { echo $_REQUEST['primary_mobile_no']; } ?>">
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');"  name="primary_mobile_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Mobile No." value="<?php if(!empty($_REQUEST['primary_mobile_no'])) { echo $_REQUEST['primary_mobile_no']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['primaryMobileNo'])) { echo $errors['primaryMobileNo']; } ?></span>
         </p>
         
@@ -59,9 +59,8 @@
             <span class="error_messages"><?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
-            <label for="" class="<?php if(!empty($errors['spouseFirstName'] || $_REQUEST['spouse_first_name'])) { echo 'required_field'; } ?>">Spouse Mobile No.</label>
-            <input type="text" pattern="[1-9]{1}[0-9]{9}" title="Please enter valid number" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');"  name="secondary_mobile_no"  class="input <?php if(!empty($errors['secondaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Mobile No." value="<?php if(!empty($_REQUEST['secondary_mobile_no'])) { echo $_REQUEST['secondary_mobile_no']; } ?>">
-            <span class="error_messages"><?php if(!empty($errors['secondaryMobileNo'])) { echo $errors['secondaryMobileNo']; } ?></span>
+            <label for="" class="">Spouse Mobile No.</label>
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');"  name="secondary_mobile_no"  class="input" data-required_mark="required" placeholder="Spouse Mobile No." value="<?php if(!empty($_REQUEST['secondary_mobile_no'])) { echo $_REQUEST['secondary_mobile_no']; } ?>">
         </p>
         
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">

@@ -264,7 +264,7 @@ class Osa_Membership_Public
 				$adminPaymentSubject = "New Member Payment successfully";
 				$userInfo[0]->user_membership = $membershipPackage[0];
 				$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0], 'payment_success_member');
-				$this->sendMail([ADMIN_EMAIL,TREASURER_EMAIL,OSA_SECRETARY_EMAIL], $adminPaymentSubject, (array)$userInfo[0], 'payment_success_admin');
+				$this->sendMail(ADMIN_EMAIL, $adminPaymentSubject, (array)$userInfo[0], 'payment_success_admin');
 				
 				$membersInfo = $wpdb->get_results("SELECT wp_users.user_email,wp_member_user.id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = ".$userInfo[0]->member_id." and wp_member_user.type != 'child' ");
 						
@@ -359,7 +359,7 @@ class Osa_Membership_Public
 						exit();
 					}elseif (strtotime($memberData[0]->membership_expiry_date) >= strtotime($currentDate)) {
 						do_action('wp_login', $user_verify->user_login, $user_verify);
-						$redirectTo = home_url() . '/member-dashboard/profile/';
+						$redirectTo = home_url() . '/member-dashboard';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 						exit();
 					} elseif (empty($memberData[0]->membership_expiry_date)) {
@@ -569,10 +569,6 @@ class Osa_Membership_Public
 				} elseif (email_exists($spouseEmail) || username_exists($spouseEmail)) {
 					$errors['spouseEmail'] = "This email address is already in use";
 				}
-				$secondaryMobileNo = esc_sql($_REQUEST['secondary_mobile_no']);
-				if (empty($secondaryMobileNo)) {
-					$errors['secondaryMobileNo'] = "Please enter a Spouse Mobile No.";
-				}
 
 				// Check password is valid  
 				$spousePassword = esc_sql($_REQUEST['spouse_password']);
@@ -709,7 +705,7 @@ class Osa_Membership_Public
 						'parent_id' =>  $mainMemberPK,
 						'first_name' => $_POST['spouse_first_name'],
 						'last_name' => $_POST['spouse_last_name'],
-						'phone_no' => $_POST['secondary_mobile_no'],
+						'phone_no' => !empty($_POST['secondary_mobile_no']) ? $_POST['secondary_mobile_no'] : '',
 						'type' => 'parent',
 						'modified_date' => date('Y-m-d H:i:s'),
 						'alive' => 1,
@@ -1058,7 +1054,7 @@ class Osa_Membership_Public
 			}
 
 			$mobileNo = esc_sql($_REQUEST['main_member_phone_no']);
-			if (empty($mobileNo)) {
+			if (empty($mobileNo) && $_REQUEST['parent_id'] == 0) {
 				$errors['mainMemberMobileNo'] = "Please enter a Mobile";
 			}
 
@@ -1071,6 +1067,10 @@ class Osa_Membership_Public
 				$spouseLastName = esc_sql($_REQUEST['spouse_last_name']);
 				if (empty($spouseLastName)) {
 					$errors['spouseLastName'] = "Please enter a spouse Last Name";
+				}
+				$spouseMobileNo = esc_sql($_REQUEST['partner_phone_no']);
+				if (empty($spouseMobileNo) && $_REQUEST['parent_id'] != 0) {
+					$errors['partnerPhoneNo'] = "Please enter a Mobile";
 				}
 			}
 

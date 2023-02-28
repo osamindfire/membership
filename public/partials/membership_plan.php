@@ -15,6 +15,10 @@
   </div>
 
 <?php } ?>
+<br>
+<div class="alert" style="background-color:#003772!important">
+  <strong>Payment Options : PayPal/Credit Card/Zelle (For Zelle, send the payment to treasurer@odishascociety.org, make sure to mention your email address)</strong>
+  </div>
 <?php if (is_user_logged_in()) { ?>
 <div style="float:unset;padding:30px;">
 <a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>

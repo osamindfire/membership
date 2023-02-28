@@ -23,6 +23,7 @@
             <span class="error_messages"><?php if(!empty($errors['firstName'])) { echo $errors['firstName']; } ?></span>
         </p>
         <input type='hidden' name="main_id" value="<?= $userInfo[0]->id;?>">
+        <input type='hidden' name="parent_id" value="<?= $userInfo[0]->parent_id;?>">
         <input type='hidden' name="other_id" value="<?= $userInfo['oth_member_info'][0]->id;?>">
         <input type='hidden' name="member_id" value="<?= $userInfo[0]->member_id;?>">
             
@@ -63,7 +64,8 @@
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="">Partner Mobile No.</label>
-            <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }else{ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
+            <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input <?php if(!empty($errors['partnerPhoneNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }else{ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
+            <span class="error_messages"><?php if(!empty($errors['partnerPhoneNo'])) { echo $errors['partnerPhoneNo']; } ?></span>
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">

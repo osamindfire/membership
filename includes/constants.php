@@ -22,14 +22,10 @@ if( home_url() == 'http://osa.dev.local' || home_url() == 'http://osa-membership
         define('GOOGLE_CAPTCHA_SITE_KEY','6LdSiSUkAAAAAB-DiZc5Vdapb2QKPlB4UoNAQSDd');
         define('GOOGLE_CAPTCHA_SECRET_KEY','6LdSiSUkAAAAADUOlpalfGvsmlFNJ4uaR83Scx_o');
         define('ADMIN_EMAIL','mfsi.naveenb@gmail.com');
-        define('TREASURER_EMAIL','naveenb@mindfiresolutions.com');
-        define('OSA_SECRETARY_EMAIL','naveenbhardwaj3112@gmail.com');
 }else{
         define('GOOGLE_CAPTCHA_SITE_KEY','6Ld-lS4kAAAAAAqEROukn-IsDdBkGwNDumjGX2Rr');
         define('GOOGLE_CAPTCHA_SECRET_KEY','6Ld-lS4kAAAAAG8-KwWxMMWMcr5C_YLx9DUXQFnj');
-        define('ADMIN_EMAIL','vicepresident@odishasociety.org');
-        define('TREASURER_EMAIL','Treasurer@odishasociety.org');
-        define('OSA_SECRETARY_EMAIL','Secretary@odishasociety.org');
+        define('ADMIN_EMAIL','osaec@odishasociety.org');
 }
 define('FACEBOOK','https://www.facebook.com/groups/1902803256640735');
 define('TWITTER','https://twitter.com/OdishaSocietyNA');
