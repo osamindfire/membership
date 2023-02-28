@@ -417,6 +417,7 @@ class Osa_Membership_Admin
 			wp_users.user_email,
 			t1.first_name,
 			t1.last_name,
+			t1.alive,
 			t1.member_id,t1.phone_no,
 			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, 
 			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,

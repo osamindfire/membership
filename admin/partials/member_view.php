@@ -31,7 +31,9 @@
                     <div id="postbox-container-1" class="postbox-container">
                         <div id="normal-sortables" class="meta-box-sortables ui-sortable">
                             <div id="dashboard_site_health" class="postbox ">
-
+                                <div class="postbox-header">
+                                    <h2 class="hndle ui-sortable-handle">Main Member</h2>
+                                </div>
                                 <div class="inside">
 
                                     <table class="form-table" style="width:100%">
@@ -50,10 +52,9 @@
                                                 <td class="td-lable">Address</td>
                                                 <td><?php echo $val->address_line_1; ?></td>
                                             </tr>
-
                                             <tr>
-                                                <td class="td-lable">City</td>
-                                                <td><?php echo $val->city; ?></td>
+                                                <td class="td-lable">Country</td>
+                                                <td><?php echo $val->country; ?></td>
                                             </tr>
 
                                             <tr>
@@ -62,8 +63,13 @@
                                             </tr>
 
                                             <tr>
-                                                <td class="td-lable">Country</td>
-                                                <td><?php echo $val->country; ?></td>
+                                                <td class="td-lable">City</td>
+                                                <td><?php echo $val->city; ?></td>
+                                            </tr>
+
+                                            <tr>
+                                                <td class="td-lable">Chapter</td>
+                                                <td><?php echo $val->chapter_name; ?></td>
                                             </tr>
 
                                             <tr>
@@ -72,8 +78,12 @@
                                             </tr>
 
                                             <tr>
-                                                <td class="td-lable">Chapter</td>
-                                                <td><?php echo $val->chapter_name; ?></td>
+                                                <td class="td-lable">Member Status</td>
+                                                <td><?php if ($val->alive == 1) {
+                                                        echo 'Alive';
+                                                    } else {
+                                                        echo 'Deceased';
+                                                    } ?></td>
                                             </tr>
 
                                             <tr>
@@ -147,7 +157,7 @@
                                     </div>
                                     <div class="inside">
 
-                                        <table  style="width:100%; text-align: center;">
+                                        <table style="width:100%; text-align: center;">
                                             <!-- <table> -->
                                             <tr>
                                                 <th style="width:30%">Membership Plan</th>

@@ -500,16 +500,16 @@
 
 						for (let i = 0; i < response.length; i++) {
 
-							if (response[i]['membership_expiry_date'] === null) {
+							if (response[i]['membership_expiry_date'] == null) {
 								response[i]['membership_expiry_date'] = 'N/A';
 							}
-							if (response[i]['primary_phone_no'] === null) {
-								response[i]['primary_phone_no'] = 'N/A';
+							if (response[i]['phone_no'] == null) {
+								response[i]['phone_no'] = 'N/A';
 							}
-							if (response[i]['membership'] === null) {
+							if (response[i]['membership'] == null) {
 								response[i]['membership'] = 'N/A'
 							}
-							if (response[i]['address_line_2'] === null) {
+							if (response[i]['address_line_2'] == null) {
 								response[i]['address_line_2'] = 'N/A'
 							}
 
