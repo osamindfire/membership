@@ -51,6 +51,12 @@ error{
     color :rgb(228, 5, 35);
 }
 
+#alertMessage{
+  text-align: center;
+    color: green;
+    font-size: 1.5em;
+}
+
 .form-table td {
     padding: 7px 10px;
 }

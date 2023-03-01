@@ -352,52 +352,6 @@ class Osa_Membership_Admin
 		include_once(plugin_dir_path(__FILE__) . 'partials/member_listing.php');
 	}
 
-	public function member_deactivate()
-	{
-
-		global $wpdb;
-		if (isset($_GET['action'])) {
-
-			$isDeleted = $_GET['isDeleted'];
-			$memberId = $_GET['memberID'];
-
-			$memID = array_unique($memberId);
-
-
-			print_r($memID);
-
-			// $wpdb->update('wp_member_user', $Arr, array('id' => $memID), array('%d'), array('%d'));
-
-			$updateQuery = " UPDATE wp_member_user
-			SET is_deleted = $isDeleted
-			WHERE member_id IN( null ";
-
-			foreach ($memID as $id) {
-				$updateQuery .= " , $id";
-			}
-
-			$updateQuery .= " );";
-
-			$wpdb->get_results($updateQuery);
-
-
-			// $deactivate = $wpdb->update('wp_member_user', $Arr, array('id' => $memberId), array('%d'), array('%d'));
-
-			// if(is_wp_error($deactivate)){
-
-			// 	echo 'error';
-			// }else{
-
-			wp_reset_query();
-
-			echo 'deleted mem';
-			// }
-		} else {
-			// no posts found
-		}
-		wp_die();
-	}
-
 	/**
 	 * Callback for members  submenu(View)
 	 */
@@ -566,26 +520,23 @@ class Osa_Membership_Admin
 
 				/* Update user password. */
 				$user_id = $_POST['user_id'];
-				
+
 				if (!empty($_POST['password']) && strlen($_POST['password']) < '6') {
 					$errors['password'] = "Password must be at least six characters";
-				}
-				else if (!empty($_POST['password']) && empty($_POST['confirm_password'])) {
+				} else if (!empty($_POST['password']) && empty($_POST['confirm_password'])) {
 					$errors['confirmPassword'] = 'Please confirm your password';
-				} 
-				else if(!empty($_POST['password']) && !empty($_POST['confirm_password'] && strlen($_POST['password']) >= '6')) {
-					
-					if ($_POST['password'] == $_POST['confirm_password']){
+				} else if (!empty($_POST['password']) && !empty($_POST['confirm_password'] && strlen($_POST['password']) >= '6')) {
+
+					if ($_POST['password'] == $_POST['confirm_password']) {
 						$update_pass = wp_set_password(esc_sql($_POST['password']), $user_id);
 						// $update_pass=wp_update_user( array( 'ID' => $current_user->ID, 'user_pass' => esc_attr( $_POST['password_1'] ) ) );
 						if (is_wp_error($update_pass)) {
 							// There was an error; possibly this user doesn't exist.
 							$errors['password'] = 'Error in updating password';
 						}
-					}  
-					else
+					} else
 						$errors['confirmPassword'] = 'The passwords you entered do not match';
-				} 
+				}
 				/* End update user password. */
 
 				if (0 === count($errors)) {
@@ -684,12 +635,12 @@ class Osa_Membership_Admin
 				$errors['last_name'] = "Please enter a Last Name";
 			}
 
-			if($_POST['parent_id'] == 0){
+			if ($_POST['parent_id'] == 0) {
 				$phone = esc_sql($_POST['phone_no']);
 				if (empty($phone)) {
 					$errors['phone_no'] = "Please enter a Phone";
 				}
-		    }else{
+			} else {
 				$spousePhone = esc_sql($_POST['spouse_phone_no']);
 				if (empty($spousePhone)) {
 					$errors['spouse_phone_no'] = "Please enter a Phone";
@@ -775,7 +726,7 @@ class Osa_Membership_Admin
 				'%d-%m-%Y'
 			) AS user_registered,
 			wp_users.user_email,
-			t1.id,
+			t1.id, t1.user_id,
 			t1.first_name,
 			t1.last_name,
 			t1.member_id,
@@ -811,10 +762,9 @@ class Osa_Membership_Admin
 			 * Proceed for search
 			 */
 			if (!empty($search)) {
-				$search_keywords = explode(" ",$search);
+				$search_keywords = explode(" ", $search);
 
-				foreach($search_keywords as $search)
-				{
+				foreach ($search_keywords as $search) {
 					$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
 				           OR wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
@@ -824,7 +774,6 @@ class Osa_Membership_Admin
 						   OR wp_membership_type.membership LIKE '%$search%' )
 						   ";
 				}
-
 			}
 			/**
 			 * Proceed for filters
@@ -1037,16 +986,16 @@ class Osa_Membership_Admin
 
 		
 			WHERE
-			t1.type != 'child'";
+			t1.type != 'child'
+			AND t1.is_deleted = 0 ";
 
 			/**
 			 * Proceed for search
 			 */
 			if (!empty($search)) {
-				$search_keywords = explode(" ",$search);
+				$search_keywords = explode(" ", $search);
 
-				foreach($search_keywords as $search)
-				{
+				foreach ($search_keywords as $search) {
 					$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
 				           OR wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
@@ -1056,7 +1005,6 @@ class Osa_Membership_Admin
 						   OR wp_membership_type.membership LIKE '%$search%' )
 						   ";
 				}
-
 			}
 			/**
 			 * Proceed for filters
@@ -1094,4 +1042,93 @@ class Osa_Membership_Admin
 		wp_die();
 	}
 
+	/**
+	 * Ajax callback to deactivate member
+	 */
+	public function member_deactivate()
+	{
+
+		global $wpdb;
+		if (isset($_GET['action'])) {
+
+			$isDeleted = $_GET['isDeleted'];
+			$memberId = $_GET['memberID'];
+
+			$memID = array_unique($memberId);
+
+
+			print_r($memID);
+
+			// $wpdb->update('wp_member_user', $Arr, array('id' => $memID), array('%d'), array('%d'));
+
+			$updateQuery = " UPDATE wp_member_user
+			SET is_deleted = $isDeleted
+			WHERE member_id IN( null ";
+
+			foreach ($memID as $id) {
+				$updateQuery .= " , $id";
+			}
+
+			$updateQuery .= " );";
+
+			$wpdb->get_results($updateQuery);
+
+
+			// $deactivate = $wpdb->update('wp_member_user', $Arr, array('id' => $memberId), array('%d'), array('%d'));
+
+			// if(is_wp_error($deactivate)){
+
+			// 	echo 'error';
+			// }else{
+
+			wp_reset_query();
+
+			echo 'deleted mem';
+			// }
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
+
+	/**
+	 * Ajax callback to delete member
+	 */
+	public function member_delete()
+	{
+		
+		global $wpdb;
+		if (isset($_GET['action'])) {
+
+			$memberId = $_GET['memberId'];
+
+			$memID = array_unique($memberId);
+
+			// print_r($memID);
+            // die;
+			
+			$deleteQuery = " DELETE wp_member_user.*,wp_member_other_info.*,wp_member_membership.*,wp_users.* 
+			FROM wp_member_user 
+			LEFT JOIN wp_member_other_info ON wp_member_other_info.member_id = wp_member_user.member_id 
+			LEFT JOIN wp_member_membership ON wp_member_membership.member_id = wp_member_user.member_id 
+			LEFT JOIN wp_users ON wp_users.id = wp_member_user.user_id 
+			WHERE wp_member_user.member_id IN( null ";
+
+			foreach ($memID as $id) {
+				$deleteQuery .= " , $id";
+			}
+
+			$deleteQuery .= " );";
+
+			$wpdb->get_results($deleteQuery);
+
+			wp_reset_query();
+
+			echo 'deleted member';
+			// }
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
 }

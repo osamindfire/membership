@@ -20,7 +20,7 @@
 <div class="wrap member_list" id="member-ajax-filter-search">
     
     <h1 class="wp-heading-inline">Members</h1>
-    <!-- <div class="lds-dual-ring loader"></div> -->
+    <div id="alertMessage"></div>
 
     <hr class="wp-header-end">
 
