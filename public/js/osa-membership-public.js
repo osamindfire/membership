@@ -77,7 +77,7 @@ function getstate() {
 }
 
 function getStates() {
-	getChapters();
+	//getChapters();
 	let country = parseInt($("#country").val()) || 0;
 	let data = {
 		action: "state_action",
