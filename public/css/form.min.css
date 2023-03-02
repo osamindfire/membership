@@ -60,3 +60,9 @@ label{
     margin-top:-26px;
   }
 }
+
+.register_submit_button{
+  background-color: #00000054!important;
+  pointer-events: none;
+  opacity: 0.3;
+}

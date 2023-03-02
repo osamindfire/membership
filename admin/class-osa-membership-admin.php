@@ -764,20 +764,19 @@ class Osa_Membership_Admin
 			if (!empty($search)) {
 				$search_keywords = explode(" ", $search);
 
-				foreach($search_keywords as $search)
-				{
+				foreach ($search_keywords as $search) {
 					$query .= " AND ( ";
 					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
 						$date = date('Y-m-d', strtotime($search));
-						$query .= " wp_users.user_registered LIKE '%$date%' " ;
+						$query .= " wp_users.user_registered LIKE '%$date%' ";
 					}
 
 					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
 						$date = date('Y-m-d', strtotime($search));
-						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR" ;
+						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR";
 					}
-					
-				    $query .= " wp_users.user_email LIKE '%$search%' 
+
+					$query .= " wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
 						   OR t1.first_name LIKE '%$search%' 
 						   OR t1.last_name LIKE '%$search%'
@@ -1066,36 +1065,13 @@ class Osa_Membership_Admin
 			$memberId = $_GET['memberID'];
 
 			$memID = array_unique($memberId);
-
-
-			print_r($memID);
-
-			// $wpdb->update('wp_member_user', $Arr, array('id' => $memID), array('%d'), array('%d'));
-
-			$updateQuery = " UPDATE wp_member_user
-			SET is_deleted = $isDeleted
-			WHERE member_id IN( null ";
-
-			foreach ($memID as $id) {
-				$updateQuery .= " , $id";
-			}
-
-			$updateQuery .= " );";
-
+			$membersIdToString = implode(",", $memID);
+			$updateQuery = " UPDATE wp_member_user SET is_deleted = $isDeleted WHERE member_id IN(" . $membersIdToString . ") ";
 			$wpdb->get_results($updateQuery);
-
-
-			// $deactivate = $wpdb->update('wp_member_user', $Arr, array('id' => $memberId), array('%d'), array('%d'));
-
-			// if(is_wp_error($deactivate)){
-
-			// 	echo 'error';
-			// }else{
-
 			wp_reset_query();
 
+			$this->removeMemberfromGsuiteByEmailId($membersIdToString);
 			echo 'deleted mem';
-			// }
 		} else {
 			// no posts found
 		}
@@ -1107,39 +1083,40 @@ class Osa_Membership_Admin
 	 */
 	public function member_delete()
 	{
-		
+
 		global $wpdb;
 		if (isset($_GET['action'])) {
 
 			$memberId = $_GET['memberId'];
 
 			$memID = array_unique($memberId);
-
-			// print_r($memID);
-            // die;
-			
+			$membersIdToString = implode(",", $memID);
+			$this->removeMemberfromGsuiteByEmailId($membersIdToString);
 			$deleteQuery = " DELETE wp_member_user.*,wp_member_other_info.*,wp_member_membership.*,wp_users.* 
 			FROM wp_member_user 
 			LEFT JOIN wp_member_other_info ON wp_member_other_info.member_id = wp_member_user.member_id 
 			LEFT JOIN wp_member_membership ON wp_member_membership.member_id = wp_member_user.member_id 
 			LEFT JOIN wp_users ON wp_users.id = wp_member_user.user_id 
-			WHERE wp_member_user.member_id IN( null ";
-
-			foreach ($memID as $id) {
-				$deleteQuery .= " , $id";
-			}
-
-			$deleteQuery .= " );";
-
+			WHERE wp_member_user.member_id IN(" . $membersIdToString . ") ";
 			$wpdb->get_results($deleteQuery);
-
 			wp_reset_query();
-
 			echo 'deleted member';
-			// }
 		} else {
 			// no posts found
 		}
 		wp_die();
+	}
+
+	private function removeMemberfromGsuiteByEmailId($membersIdToString)
+	{
+		global $wpdb;
+		$getEmail = $wpdb->get_results("SELECT user_email FROM wp_member_user LEFT JOIN wp_users ON wp_users.ID = wp_member_user.user_id WHERE wp_member_user.member_id IN(" . $membersIdToString . ")");
+
+		foreach ($getEmail as $emailValue) {
+			$gsuite = new Osa_Membership_G_Suite();
+			$accessToken = $gsuite->reFreshGsuiteAccessToken();
+			$response = $gsuite->deleteMemberFromGsuiteGroup($accessToken, $emailValue->user_email);
+		}
+		return 1;
 	}
 }

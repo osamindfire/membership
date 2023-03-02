@@ -273,7 +273,7 @@ class Osa_Membership_Public
 				
 				$membersInfo = $wpdb->get_results("SELECT wp_users.user_email,wp_member_user.id FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = ".$userInfo[0]->member_id." and wp_member_user.type != 'child' ");
 						
-				/* $gsuite = new Osa_Membership_G_Suite();
+				$gsuite = new Osa_Membership_G_Suite();
 				$accessToken=$gsuite->reFreshGsuiteAccessToken();
 				foreach($membersInfo as $membersInfoValue)
 				{
@@ -286,7 +286,7 @@ class Osa_Membership_Public
 						$wpdb->update('wp_member_user', ['added_to_gsuite'=>$addedToGsuite,'gsuite_response'=>$gsuiteResponse], array('id' => $membersInfoValue->id), array('%d', '%s'), array('%d'));
 
 					}
-				} */
+				}
 				unset($_SESSION['user_id']);
 				unset($_SESSION['membership_type_id']);
 				$paymentInfoSaved = 1;
@@ -1430,105 +1430,5 @@ class Osa_Membership_Public
 		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/reset_password.php');
 		return ob_get_clean();
-	}
-
-
-	public function createGsuiteAccessToken()
-	{
-		$curl = curl_init();
-		$url='https://oauth2.googleapis.com/token?';
-		$url .= 'code=4/0AWtgzh6GPG_2A5abvx7v3Ma4WJyYVNe0sjMawUuTlkbR-GsiwrqJqwDFzTlcxGw9W8bPxQ';
-		$url .= '&client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com';
-		$url .= '&client_secret=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';
-		$url .= '&redirect_uri=http://newsite.odishasociety.org';
-		$url .= '&grant_type=authorization_code';
-
-		curl_setopt_array($curl, array(
-			CURLOPT_URL => $url,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => '',
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 0,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_HTTPHEADER => array(
-				'Content-Type:  application/x-www-form-urlencoded'
-			),
-		));
-
-		$response = curl_exec($curl);
-
-		curl_close($curl);
-		echo $response;
-	}
-
-	public function addMemberToGsuiteGroup()
-	{
-		$curl = curl_init();
-
-		$url='https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members?key=';
-		$url .= 'key=[AIzaSyAnVYjReID2Lx5jfpQPjB0p0smPuF5mug4] HTTP/1.1';
-
-		$accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163';
-
-		curl_setopt_array($curl, array(
-			CURLOPT_URL => $url,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => '',
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 0,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_POSTFIELDS => '{
-			"email": "naveenb@mindfiresolutions.com",
-			"role": "MEMBER"
-			}
-			',
-			CURLOPT_HTTPHEADER => array(
-				'Accept:  application/json',
-				'Content-Type:  application/json',
-				'Authorization: Bearer '.$accessToken
-			),
-		));
-
-		$response = curl_exec($curl);
-
-		curl_close($curl);
-		echo $response;
-	}
-
-	public function reFreshGsuiteAccessToken()
-	{
-		$curl = curl_init();
-		$url='https://oauth2.googleapis.com/token?';
-		$url .= 'client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com';
-		$url .= '&client_secret=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';
-		$url .= '&refresh_token=1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U';
-		$url .= '&grant_type=refresh_token';
-
-		$accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163';
-
-		curl_setopt_array($curl, array(
-			//CURLOPT_URL => 'https://oauth2.googleapis.com/token?client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com&client_secret=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&refresh_token=1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U&grant_type=refresh_token',
-			CURLOPT_URL => $url,
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => '',
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 0,
-			CURLOPT_FOLLOWLOCATION => true,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => 'POST',
-			CURLOPT_HTTPHEADER => array(
-				'Content-Type:  application/x-www-form-urlencoded',
-				'Authorization: Bearer '.$accessToken
-			),
-		));
-
-		$response = curl_exec($curl);
-
-		curl_close($curl);
-		echo $response;
 	}
 }

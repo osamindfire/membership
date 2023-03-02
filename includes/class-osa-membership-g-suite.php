@@ -69,18 +69,13 @@ class Osa_Membership_G_Suite
 
 	public function addMemberToGsuiteGroup($accessToken = '',$email='')
 	{
-		//$url = 'https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members?';
 		$url = ADD_MEMBER_URL.'key='.APP_KEY;
-		
-		//$accessToken = 'ya29.a0AVvZVso4Qr0qRSy0XdIW5NJI7PQt3M7r-dxLKP5iAjZ1zfPAClBZBQWm8O1hRwETGkHW3hARVUzu_l-VzfcA86SGKNyMi1nChqaNS3XfT0tHy7LOnJtSmX4kc8t47DeY6UxvWI_UhTz7qgqs9LHAdsZ-ehAHYEeAaCgYKARoSAQASFQGbdwaIwfyrHW8hIsLXHGkb2E9yoA0167';
 		$data['role'] = 'MEMBER';
 		$data['email'] = $email;
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
-		//curl_setopt($ch, CURLOPT_URL, 'https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members?key=AIzaSyAnVYjReID2Lx5jfpQPjB0p0smPuF5mug4');
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_POST, 1);
-		//curl_setopt($ch, CURLOPT_POSTFIELDS, "{\n    \"email\": \"naveenbhardwaj3112@gmail.com\",\n    \"role\": \"MEMBER\"\n}");
 		curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 		$headers = array();
 		$headers[] = 'Accept: application/json';
@@ -108,20 +103,11 @@ class Osa_Membership_G_Suite
 	{
 		try {
 			$curl = curl_init();
-			/* $url='https://oauth2.googleapis.com/token?';
-		$url .= 'client_id=635897124568-pns8ads1ja5e9235k680tnfgrachd5e4.apps.googleusercontent.com';
-		$url .= '&client_secret=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';
-		$url .= '&refresh_token=1//0gn0vhfOsPtSyCgYIARAAGBASNwF-L9IrSNkW2xoESTPmozi5HVsF6SokSdMvFsqMgIvnIEv-a_oPjp2UzeGiNA-tFsNHeA7R__U';
-		$url .= '&grant_type=refresh_token';
-
-		$accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163'; */
 			$url = AUTH_TOKEN_URL;
 			$url .= 'client_id=' . AUTH_CLIENT_ID;
 			$url .= '&client_secret=' . AUTH_CLIENT_SECRET;
 			$url .= '&refresh_token=' . REFRESH_TOEKN;
 			$url .= '&grant_type=refresh_token';
-
-			/* $accessToken= 'ya29.a0AVvZVsrlBL3-Vu6H7asyw1lXEq1omdc6VtksgD6cDFAXe7XggvWcLi1rcvDSJa3GBVDJDyQY1JRzYbo_xK9wZdIzbylwYNjEI7nGdeUZkMy6kwlRTR8rr6ufGJTqLIHKKM9FiuVqxDeu_HoblQ4E4npD1NfNaCgYKAXwSARISFQGbdwaIGkbNu0Xm5I8qaN_1api-TQ0163'; */
 			curl_setopt_array($curl, array(
 				CURLOPT_URL => $url,
 				CURLOPT_RETURNTRANSFER => true,

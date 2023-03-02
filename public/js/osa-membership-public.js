@@ -49,14 +49,18 @@ $(document).ready(function () {
 });
 function checkAgreement() {
 	$('#register_submit_button').attr('disabled', 'disabled');
+	//if(!$('#register_submit_button').hasClass('register_submit_button'))
+    $('#register_submit_button').addClass('register_submit_button');
 
 	if ($('#agreement_page_id').is(':checked')) {
 		$('.agreement_error').hide();
 		$('#register_submit_button').removeAttr('disabled');
+		$('#register_submit_button').removeClass('register_submit_button');
 	} else {
 		//alert('You must agree to Terms of Service');
 		$('.agreement_error').show();
 		$('#register_submit_button').attr('disabled', 'disabled');
+		$('#register_submit_button').addClass('register_submit_button');
 	}
 }
 function getstate() {
