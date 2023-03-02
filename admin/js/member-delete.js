@@ -128,7 +128,7 @@
              DeleteArr.push($(this).attr('data-member-id'));
            }
 
-            if (confirm("Are you sure you want to delete this Member? All the data related to Partner, Child and Membersip has been deleted and can not be recovered again.")) {
+            if (confirm("Are you sure want to permanently delete this member record ? \nThis process cannot be undone and you will lost all the transactions related to this member.")) {
 
                 let data = {
                     action: "member_delete",
@@ -144,10 +144,14 @@
                         if (response) {
                             // location.reload();
                             // $('#alertMessage').html('<p>Member Deleted Successfully!</p>'); 
-                            alert('Member Deleted Successfully!');
+
+                            $('#alertMessage').html('<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> \
+					<p><strong>Member Deleted.</strong></p><button type="button" class="notice-dismiss success-notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>')
+                          
+                            // alert('Member Deleted Successfully!');
                             setTimeout(function(){
                             location.reload(); 
-                            }, 8000);
+                            }, 2000);
                         }
 
                     },
