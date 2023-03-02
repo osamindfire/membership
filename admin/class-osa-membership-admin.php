@@ -463,7 +463,7 @@ class Osa_Membership_Admin
 				wp_member_other_info.membership_expiry_date,
 				'%d-%m-%Y'
 			) AS membership_expiry_date,
-			wp_membership_type.membership, wp_member_other_info.souvenir, 
+			wp_membership_type.membership,wp_membership_type.type as membership_type, wp_member_other_info.souvenir, 
 			wp_member_other_info.city, wp_member_other_info.state_id, wp_member_other_info.country_id, wp_member_other_info.chapter_type_id as chapter_id,
 			wp_member_other_info.postal_code,
 			wp_countries.country, wp_states.state, wp_states.chapter_type_id, wp_chapters.name as chapter_name
@@ -505,6 +505,10 @@ class Osa_Membership_Admin
 
 			$childCount = count($childs);
 
+			if(empty($parents)){
+				$parentCount = 0;
+			}else $parentCount =1;
+			
 			//$chapters = $wpdb->get_results("SELECT  * FROM wp_chapters ;");
 
 			//$data = json_encode($data);
@@ -516,7 +520,7 @@ class Osa_Membership_Admin
 		if (isset($_POST['submit'])) {
 
 			try {
-				$errors = $this->validateForm($childCount);
+				$errors = $this->validateForm($childCount, $parentCount);
 
 				/* Update user password. */
 				$user_id = $_POST['user_id'];
@@ -540,7 +544,6 @@ class Osa_Membership_Admin
 				/* End update user password. */
 
 				if (0 === count($errors)) {
-
 					//main member update
 					$mainArr = [];
 					$mainArr['first_name'] = $_POST['first_name'];
@@ -558,15 +561,47 @@ class Osa_Membership_Admin
 
 
 					//partner update
-					$othArr = [];
-					$othArr['first_name'] = $_POST['spouse_first_name'];
-					$othArr['last_name'] = $_POST['spouse_last_name'];
-					$othArr['alive'] = $_POST['spouse_status'];
-					$othArr['phone_no'] = $_POST['spouse_phone_no'];
+					if (!empty($_POST['spouse_first_name'])) {
+						$othArr = [];
+						$othArr['first_name'] = $_POST['spouse_first_name'];
+						$othArr['last_name'] = $_POST['spouse_last_name'];
+						$othArr['alive'] = $_POST['spouse_status'];
+						$othArr['phone_no'] = $_POST['spouse_phone_no'];
+						$othId = $_POST['spouse_id'];
 
-					$othId = $_POST['spouse_id'];
-					$othMember = $wpdb->update('wp_member_user', $othArr, array('id' => $othId), array('%s', '%s', '%d', '%s'), array('%d'));
+						if (!empty($othId)) {
+							$othMember = $wpdb->update('wp_member_user', $othArr, array('id' => $othId), array('%s', '%s', '%d', '%s'), array('%d'));
+						} else {
+							$username = $_POST['spouse_email'];
+							$password = $_POST['spouse_password'];
+							$email = $_POST['spouse_email'];
+							//add spouse
+							if (!empty($username) && !empty($email)) {
+								$userId = wp_create_user($username, $password, $email);
 
+								if ($userId) {
+									$wpdb->update('wp_users', ['display_name'=>$_POST['spouse_first_name'],'user_nicename'=>$_POST['spouse_first_name']], array('ID' => $userId), array('%s', '%s'), array('%d'));
+									add_user_meta($userId, 'wp_capabilities', 'a:1:{s:10:"subscriber";b:1;}', true);
+									$wpdb->query($wpdb->prepare(
+										"INSERT INTO wp_member_user (user_id, member_id, parent_id, first_name, last_name, phone_no, type , modified_date, alive, email_valid, is_deleted) VALUES ( %d, %d, %d, %s, %s, %s, %s, %s, %d, %d, %d)",
+										array(
+											'user_id' => $userId,
+											'member_id' => $member_id,
+											'parent_id' =>  $main_id,
+											'first_name' => $_POST['spouse_first_name'],
+											'last_name' => $_POST['spouse_last_name'],
+											'phone_no' => !empty($_POST['spouse_phone_no']) ? $_POST['spouse_phone_no'] : '',
+											'type' => 'parent',
+											'modified_date' => date('Y-m-d H:i:s'),
+											'alive' => 1,
+											'email_valid' => 1,
+											'is_deleted' =>  0
+										)
+									));
+								}
+							}
+						}
+					}
 					//child update
 					if ($childCount !== 0) {
 						for ($i = 0; $i < $childCount; $i++) {
@@ -585,8 +620,6 @@ class Osa_Membership_Admin
 					$othInfo = [];
 					$othInfo['address_line_1'] = $_POST['address_line_1'];
 					$othInfo['address_line_2'] = $_POST['address_line_2'];
-					// $othInfo['primary_phone_no'] = $_POST['primary_phone_no'];
-					// $othInfo['secondary_phone_no'] = $_POST['secondary_phone_no'];
 					$othInfo['city'] = $_POST['city'];
 					$othInfo['souvenir'] = $_POST['souvenir'];
 					$othInfo['postal_code'] = $_POST['postal_code'];
@@ -620,29 +653,29 @@ class Osa_Membership_Admin
 	/**
 	 *  Member edit form validations
 	 */
-	public function validateForm($childCount = 0)
+	public function validateForm($childCount = 0, $parentCount)
 	{
 		$errors = array();
 
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			$firstName = esc_sql($_POST['first_name']);
-			if (empty($firstName)) {
+			if (!trim($firstName ?? '')) {
 				$errors['first_name'] = "Please enter a First Name";
 			}
 			$lastName = esc_sql($_POST['last_name']);
-			if (empty($lastName)) {
+			if (!trim($lastName ?? '')) {
 				$errors['last_name'] = "Please enter a Last Name";
 			}
 
 			if ($_POST['parent_id'] == 0) {
 				$phone = esc_sql($_POST['phone_no']);
-				if (empty($phone)) {
+				if (!trim($phone ?? '')) {
 					$errors['phone_no'] = "Please enter a Phone";
 				}
 			} else {
 				$spousePhone = esc_sql($_POST['spouse_phone_no']);
-				if (empty($spousePhone)) {
+				if (!trim($spousePhone ?? '')) {
 					$errors['spouse_phone_no'] = "Please enter a Phone";
 				}
 			}
@@ -650,25 +683,65 @@ class Osa_Membership_Admin
 			if (!empty($_POST['spouse_email'])) {
 				// Validate spouse  
 				$spouseFirstName = esc_sql($_POST['spouse_first_name']);
-				if (empty($spouseFirstName)) {
-					$errors['spouse_first_name'] = "Please enter a spouse First Name";
+				if (!trim($spouseFirstName ?? '')) {
+					$errors['spouse_first_name'] = "Please enter a partner First Name";
 				}
 				$spouseLastName = esc_sql($_POST['spouse_last_name']);
-				if (empty($spouseLastName)) {
-					$errors['spouse_last_name'] = "Please enter a spouse Last Name";
+				if (!trim($spouseLastName ?? '')) {
+					$errors['spouse_last_name'] = "Please enter a partner Last Name";
 				}
 			}
+
+			if (!empty($_POST['spouse_first_name']) && $parentCount == 0) {
+				// Validate spouse  
+				$spouseFirstName = esc_sql($_POST['spouse_first_name']);
+				if (!trim($spouseFirstName ?? '')) {
+					$errors['spouse_first_name'] = "Please enter a Partner First Name";
+				}
+				$spouseLastName = esc_sql($_POST['spouse_last_name']);
+				if (!trim($spouseLastName ?? '')) {
+					$errors['spouse_last_name'] = "Please enter a Partner Last Name";
+				}
+				
+				// Check email address is present and valid  
+				$spouseEmail = esc_sql($_POST['spouse_email']);
+				if (isset($_POST['spouse_email']) && empty($spouseEmail)) {
+					$errors['spouse_email'] = "Please enter a Partner Email";
+				} elseif (isset($_POST['spouse_email']) && !is_email($spouseEmail)) {
+					$errors['spouse_email'] = "Please enter a valid Email";
+				} elseif (isset($_POST['spouse_email']) && (email_exists($spouseEmail) || username_exists($spouseEmail))) {
+					$errors['spouse_email'] = "This email address is already in use";
+				}
+				
+				// Check password is valid  
+				$spousePassword = esc_sql($_POST['spouse_password']);
+				if (isset($_POST['spouse_password']) && empty($spousePassword)) {
+					$errors['spouse_password'] = "Please enter a Partner Password";
+				} elseif (isset($_POST['spouse_password']) && (0 === preg_match("/.{6,}/", $_POST['spouse_password']))) {
+					$errors['spouse_password'] = "Password must be at least six";
+				}
+
+				// Check password confirmation_matches
+				$cSpousePassword = esc_sql($_POST['spouse_confirm_password']);
+				if (isset($_POST['spouse_password']) && empty($cSpousePassword)) {
+					$errors['spouse_confirm_password'] = "Please enter a Partner Password";
+				}else 
+				if (isset($_POST['spouse_password']) && (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password']))) {
+					$errors['spouse_confirm_password'] = "Spouse Passwords do not match";
+				}
+			}
+
 
 			if ($childCount !== 0) {
 				for ($i = 0; $i < $childCount; $i++) {
 					if (!empty($_POST['child_id_' . $i])) {
 						// Validate child  
 						$childFirstName = esc_sql($_POST['child_first_' . $i]);
-						if (empty($childFirstName)) {
+						if (!trim($childFirstName ?? '')) {
 							$errors['child_first_' . $i] = "Please enter a child First Name";
 						}
 						$childLastName = esc_sql($_POST['child_last_' . $i]);
-						if (empty($childLastName)) {
+						if (!trim($childLastName ?? '')) {
 							$errors['child_last_' . $i] = "Please enter a child Last Name";
 						}
 					}
@@ -676,30 +749,32 @@ class Osa_Membership_Admin
 			}
 
 			$addressLine1 = esc_sql($_POST['address_line_1']);
-			if (empty($addressLine1)) {
+			if (!trim($addressLine1 ?? '')) {
 				$errors['address_line_1'] = "Please enter address";
 			}
 
 			$city = esc_sql($_POST['city']);
-			if (empty($city)) {
+			if (!trim($city ?? '')) {
 				$errors['city'] = "Please enter city";
 			}
 
 			$postalCode = esc_sql($_POST['postal_code']);
-			if (empty($postalCode)) {
+			if (!trim($postalCode ?? '')) {
 				$errors['postal_code'] = "Please enter Postal Code";
 			}
 
 			$country = esc_sql($_POST['country_id']);
-			if (empty($country)) {
+			if (!trim($country ?? '')) {
 				$errors['country'] = "Please select Country";
 			}
 
 			$state = esc_sql($_POST['state_id']);
-			if (empty($state)) {
+			if (!trim($state ?? '')) {
 				$errors['state'] = "Please select State";
 			}
+
 		}
+
 		return $errors;
 	}
 
@@ -764,20 +839,19 @@ class Osa_Membership_Admin
 			if (!empty($search)) {
 				$search_keywords = explode(" ", $search);
 
-				foreach($search_keywords as $search)
-				{
+				foreach ($search_keywords as $search) {
 					$query .= " AND ( ";
 					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
 						$date = date('Y-m-d', strtotime($search));
-						$query .= " wp_users.user_registered LIKE '%$date%' " ;
+						$query .= " wp_users.user_registered LIKE '%$date%' ";
 					}
 
 					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
 						$date = date('Y-m-d', strtotime($search));
-						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR" ;
+						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR";
 					}
-					
-				    $query .= " wp_users.user_email LIKE '%$search%' 
+
+					$query .= " wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
 						   OR t1.first_name LIKE '%$search%' 
 						   OR t1.last_name LIKE '%$search%'
@@ -1107,7 +1181,7 @@ class Osa_Membership_Admin
 	 */
 	public function member_delete()
 	{
-		
+
 		global $wpdb;
 		if (isset($_GET['action'])) {
 
@@ -1116,8 +1190,8 @@ class Osa_Membership_Admin
 			$memID = array_unique($memberId);
 
 			// print_r($memID);
-            // die;
-			
+			// die;
+
 			$deleteQuery = " DELETE wp_member_user.*,wp_member_other_info.*,wp_member_membership.*,wp_users.* 
 			FROM wp_member_user 
 			LEFT JOIN wp_member_other_info ON wp_member_other_info.member_id = wp_member_user.member_id 

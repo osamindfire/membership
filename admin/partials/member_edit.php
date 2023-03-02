@@ -55,13 +55,13 @@
 
                                                 <tr>
                                                     <td><strong><label for="first_name" class="required">First Name</label></strong><br>
-                                                        <input type="text" name="first_name" value="<?php echo $val->first_name; ?>" required><br>
+                                                        <input type="text" name="first_name" value="<?php if(isset($_POST['first_name'])){echo $_POST['first_name'];} else {echo $val->first_name;}?>" required><br>
                                                         <error><?php if (!empty($errors['first_name'])) {
                                                                     echo $errors['first_name'];
                                                                 } ?></error>
                                                     </td>
                                                     <td><strong><label for="last_name" class="required">Last Name</label></strong><br>
-                                                        <input type="text" name="last_name" value="<?php echo $val->last_name; ?>" required><br>
+                                                        <input type="text" name="last_name" value="<?php if(isset($_POST['last_name'])){echo $_POST['last_name'];} else {echo $val->last_name;} ?>" required><br>
                                                         <error><?php if (!empty($errors['last_name'])) {
                                                                     echo $errors['last_name'];
                                                                 } ?></error>
@@ -87,7 +87,7 @@
                                                     }
                                                     ?>
                                                     <td><strong><label for="phone_no" class="<?= $required ?>">Phone</label></strong><br>
-                                                        <input type="text" name="phone_no" value="<?php echo $val->phone_no; ?>" required><br>
+                                                        <input type="text" name="phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if(isset($_POST['phone_no'])){echo $_POST['phone_no'];} else { echo $val->phone_no; } ?>" required><br>
                                                         <error><?php if (!empty($errors['phone_no'])) {
                                                                     echo $errors['phone_no'];
                                                                 } ?></error>
@@ -102,13 +102,13 @@
                                                 <tr>
                                                     <td><strong><label for="address_line_1" class="required">Address Line 1</label></strong><br>
                                                         <!-- <input type="text" name="address_line_1" value="<?php echo $val->address_line_1; ?>" required> -->
-                                                        <textarea name="address_line_1" id="" cols="" rows="2"><?php echo $val->address_line_1; ?></textarea><br>
+                                                        <textarea name="address_line_1" id="" cols="" rows="2"><?php if(isset($_POST['address_line_1'])){echo $_POST['address_line_1'];} else {  echo $val->address_line_1; } ?></textarea><br>
                                                         <error><?php if (!empty($errors['address_line_1'])) {
                                                                     echo $errors['address_line_1'];
                                                                 } ?></error>
                                                     </td>
                                                     <td><strong><label for="address_line_2">Address Line 2</label></strong><br>
-                                                        <textarea name="address_line_2" id="" cols="" rows="2"><?php echo $val->address_line_2; ?></textarea>
+                                                        <textarea name="address_line_2" id="" cols="" rows="2"><?php if(isset($_POST['address_line_2'])){echo $_POST['address_line_2'];} else { echo $val->address_line_2; }?></textarea>
                                                     </td>
 
                                                 </tr>
@@ -121,6 +121,9 @@
                                                             <?php
                                                             foreach ($countries as $country) {
                                                                 $selected = '';
+                                                                if (isset($_POST['country_id']) && $country->country_type_id == $_POST['country_id']) {
+                                                                    $selected = 'selected';
+                                                                } else
                                                                 if ($country->country == $val->country) {
                                                                     $selected = 'selected';
                                                                 }
@@ -139,6 +142,9 @@
                                                             <?php
                                                             foreach ($states as $state) {
                                                                 $selected = '';
+                                                                if (isset($_POST['state_id']) && $state->state_type_id == $_POST['state_id']) {
+                                                                    $selected = 'selected';
+                                                                } else
                                                                 if ($state->state == $val->state) {
                                                                     $selected = 'selected';
                                                                 }
@@ -163,6 +169,9 @@
                                                             <?php
                                                             foreach ($chapters as $chapter) {
                                                                 $selected = '';
+                                                                if (isset($_POST['chapter_id']) && $chapter->chapter_type_id == $_POST['chapter_id']) {
+                                                                    $selected = 'selected';
+                                                                } else
                                                                 if ($chapter->chapter_type_id == $val->chapter_id) {
                                                                     $selected = 'selected';
                                                                 }
@@ -175,7 +184,7 @@
                                                                 } ?></error>
                                                     </td>
                                                     <td><strong><label for="city" class="required">City</label></strong><br>
-                                                        <input type="text" name="city" value="<?php echo $val->city; ?>" required><br>
+                                                        <input type="text" name="city" value="<?php if(isset($_POST['city'])){echo $_POST['city'];} else { echo $val->city;} ?>" required><br>
                                                         <error><?php if (!empty($errors['city'])) {
                                                                     echo $errors['city'];
                                                                 } ?></error>
@@ -186,7 +195,7 @@
 
                                                 <tr>
                                                     <td><strong><label for="postal_code" class="required">Postal Code</label></strong><br>
-                                                        <input type="text" name="postal_code" value="<?php echo $val->postal_code; ?>" required><br>
+                                                        <input type="text" name="postal_code" value="<?php if(isset($_POST['postal_code'])){echo $_POST['postal_code'];} else{ echo $val->postal_code; }?>" required><br>
                                                         <error><?php if (!empty($errors['postal_code'])) {
                                                                     echo $errors['postal_code'];
                                                                 } ?></error>
@@ -197,6 +206,9 @@
                                                             <?php $souvenir = array("CD", "Print");
                                                             foreach ($souvenir as $list) {
                                                                 $selected = '';
+                                                                if (isset($_POST['souvenir']) && $list == $_POST['souvenir']) {
+                                                                    $selected = 'selected';
+                                                                } else
                                                                 if ($list == $val->souvenir) {
                                                                     $selected = 'selected';
                                                                 }
@@ -215,6 +227,9 @@
                                                             <?php $status = array("Alive" => 1, "Deceased" => 0);
                                                             foreach ($status as $key => $value) {
                                                                 $selected = '';
+                                                                if (isset($_POST['status']) && $value == $_POST['status']) {
+                                                                    $selected = 'selected';
+                                                                } else
                                                                 if ($val->alive == $value) {
                                                                     $selected = 'selected';
                                                                 }
@@ -290,14 +305,18 @@
                                                             <!-- <th scope="row"><label for="spouse_first_name" class="required">First Name</label></th> -->
 
                                                             <td><strong><label for="spouse_first_name" class="required">First Name</label></strong><br>
-                                                                <input type="text" name="spouse_first_name" value="<?php echo $parent->first_name; ?>"><br>
+                                                                <input type="text" name="spouse_first_name" value="<?php if (isset($_POST['spouse_first_name'])) {
+                                                                                                                        echo $_POST['spouse_first_name'];
+                                                                                                                    } else { echo $parent->first_name; }?>"><br>
                                                                 <error><?php if (!empty($errors['spouse_first_name'])) {
                                                                             echo $errors['spouse_first_name'];
                                                                         } ?></error>
                                                             </td>
 
                                                             <td><strong><label for="spouse_last_name" class="required">Last Name</label></strong><br>
-                                                                <input type="text" name="spouse_last_name" value="<?php echo $parent->last_name; ?>"><br>
+                                                                <input type="text" name="spouse_last_name" value="<?php if (isset($_POST['spouse_last_name'])) {
+                                                                                                                        echo $_POST['spouse_last_name'];
+                                                                                                                    } else { echo $parent->last_name; } ?>"><br>
                                                                 <error><?php if (!empty($errors['spouse_last_name'])) {
                                                                             echo $errors['spouse_last_name'];
                                                                         } ?></error>
@@ -310,7 +329,9 @@
 
                                                         <tr>
                                                             <td><strong><label for="spouse_email" class="required">Email</label></strong><br>
-                                                                <input type="text" name="spouse_email" readonly value="<?php echo $parent->user_email; ?>">
+                                                                <input type="text" name="spouse_email" readonly value="<?php if (isset($_POST['spouse_email'])) {
+                                                                                                                            echo $_POST['spouse_email'];
+                                                                                                                        } else{ echo $parent->user_email;}?>">
                                                             </td>
 
                                                             <?php
@@ -320,7 +341,9 @@
                                                             }
                                                             ?>
                                                             <td><strong><label for="spouse_phone_no" class="<?= $requiredParent ?>">Phone</label></strong><br>
-                                                                <input type="text" name="spouse_phone_no" value="<?php echo $parent->phone_no; ?>" required><br>
+                                                                <input type="text" name="spouse_phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_phone_no'])) {
+                                                                                                                        echo $_POST['spouse_phone_no'];
+                                                                                                                    } else{ echo $parent->phone_no; }?>" required><br>
                                                                 <error><?php if (!empty($errors['spouse_phone_no'])) {
                                                                             echo $errors['spouse_phone_no'];
                                                                         } ?></error>
@@ -334,6 +357,9 @@
                                                                     <?php $status = array("Alive" => 1, "Deceased" => 0);
                                                                     foreach ($status as $key => $value) {
                                                                         $selected = '';
+                                                                        if (isset($_POST['spouse_status']) && $value == $_POST['spouse_status']) {
+                                                                            $selected = 'selected';
+                                                                        } else
                                                                         if ($parent->alive == $value) {
                                                                             $selected = 'selected';
                                                                         }
@@ -352,6 +378,77 @@
 
                                         </div>
                                     </div>
+                                <?php } else if (empty($parents) && $val->membership_type != 1) { ?>
+                                    <div id="dashboard_site_health" class="postbox ">
+                                        <div class="postbox-header">
+                                            <h2 class="hndle ui-sortable-handle">Add Partner</h2>
+                                        </div>
+                                        <div class="inside">
+                                        <p id="alertPartnerNotFound">Note: No data found for Partner.You can also create partner account !</p>
+
+                                            <table class="form-table" role="presentation">
+                                                <tbody>
+                                                    <tr>
+                                                        <td><strong><label for="spouse_first_name" class="">First Name</label></strong><br>
+                                                            <input type="text" name="spouse_first_name" value="<?php if (isset($_POST['spouse_first_name'])) {
+                                                                                                                    echo $_POST['spouse_first_name'];
+                                                                                                                } ?>"><br>
+                                                            <error><?php if (!empty($errors['spouse_first_name'])) {
+                                                                        echo $errors['spouse_first_name'];
+                                                                    } ?></error>
+                                                        </td>
+
+                                                        <td><strong><label for="spouse_last_name" class="">Last Name</label></strong><br>
+                                                            <input type="text" name="spouse_last_name" value="<?php if (isset($_POST['spouse_last_name'])) {
+                                                                                                                    echo $_POST['spouse_last_name'];
+                                                                                                                } ?>"><br>
+                                                            <error><?php if (!empty($errors['spouse_last_name'])) {
+                                                                        echo $errors['spouse_last_name'];
+                                                                    } ?></error>
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><strong><label for="spouse_email" class="">Email</label></strong><br>
+                                                            <input type="email" name="spouse_email" value="<?php if (isset($_POST['spouse_email'])) {
+                                                                                                                echo $_POST['spouse_email'];
+                                                                                                            } ?>"><br>
+                                                            <error><?php if (!empty($errors['spouse_email'])) {
+                                                                        echo $errors['spouse_email'];
+                                                                    } ?></error>
+                                                        </td>
+
+                                                        <td><strong><label for="spouse_phone_no" class="">Phone</label></strong><br>
+                                                            <input type="text" name="spouse_phone_no" value="<?php if (isset($_POST['spouse_phone_no'])) {
+                                                                                                                    echo $_POST['spouse_phone_no'];
+                                                                                                                } ?>"><br>
+
+                                                        </td>
+                                                    </tr>
+
+                                                    <tr>
+                                                        <td><strong><label for="spouse_password" class="">Password</label></strong><br>
+                                                            <input type="text" name="spouse_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_password'])) {
+                                                                                                                    echo $_POST['spouse_password'];
+                                                                                                                } ?>"><br>
+                                                            <error><?php if (!empty($errors['spouse_password'])) {
+                                                                        echo $errors['spouse_password'];
+                                                                    } ?></error>
+                                                        </td>
+
+                                                        <td><strong><label for="spouse_confirm_password" class="">Confirm Password</label></strong><br>
+                                                            <input type="text" name="spouse_confirm_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_confirm_password'])) {
+                                                                                                                            echo $_POST['spouse_confirm_password'];
+                                                                                                                        } ?>" required><br>
+                                                            <error><?php if (!empty($errors['spouse_confirm_password'])) {
+                                                                        echo $errors['spouse_confirm_password'];
+                                                                    } ?></error>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
                                 <?php } ?>
 
                                 <?php if (!empty($childs)) { ?>
@@ -366,7 +463,7 @@
                                                     <?php foreach ($childs as $key => $child) { ?>
                                                         <tr>
                                                             <td><strong><label for="child_first" class="required">First Name</label></strong><br>
-                                                                <input type="text" name="child_first_<?php echo $key; ?>" value="<?php echo $child->first_name; ?>" required><br>
+                                                                <input type="text" name="child_first_<?php echo $key; ?>" value="<?php if (isset($_POST['child_first_'.$key])) { echo $_POST['child_first_'.$key]; } else { echo $child->first_name; }?>" ><br>
                                                                 <error><?php if (!empty($errors['child_first_' . $key])) {
                                                                             echo $errors['child_first_' . $key];
                                                                         } ?></error>
@@ -375,7 +472,7 @@
 
                                                             </td>
                                                             <td><strong><label for="child_last" class="required">Last Name</label></strong><br>
-                                                                <input type="text" name="child_last_<?php echo $key; ?>" value="<?php echo $child->last_name; ?>" required><br>
+                                                                <input type="text" name="child_last_<?php echo $key; ?>" value="<?php if (isset($_POST['child_last_'.$key])) { echo $_POST['child_last_'.$key]; } else { echo $child->last_name; }?>" required><br>
                                                                 <error><?php if (!empty($errors['child_last_' . $key])) {
                                                                             echo $errors['child_last_' . $key];
                                                                         } ?></error>
