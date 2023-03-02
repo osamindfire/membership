@@ -76,7 +76,7 @@ $partnerCount= count($userInfo['oth_member_info']);
             <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input <?php if(!empty($errors['partnerPhoneNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }else{ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['partnerPhoneNo'])) { echo $errors['partnerPhoneNo']; } ?></span>
         </p>
-        <?php if(count($userInfo['oth_member_info'][0]) == 0){ ?>
+        <?php if(count($userInfo['oth_member_info']) == 0){ ?>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="<?php if($userInfo[0]->partner_exist == 1 || !empty($_REQUEST['spouse_first_name'])){ echo "required_field";}?>">Spouse Password</label>
             <input type="text" name="spouse_password"  class="input <?php if(!empty($errors['spousePassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Password" value="<?php if(isset($_REQUEST['spouse_password'])) { echo $_REQUEST['spouse_password']; } ?>">
