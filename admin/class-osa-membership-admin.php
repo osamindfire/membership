@@ -555,7 +555,7 @@ class Osa_Membership_Admin
 
 					$del = $_POST['is_deleted'];
 					$wpdb->update('wp_member_user', array('is_deleted' => $del), array('member_id' => $member_id), array('%d'), array('%d'));
-
+					$this->removeMemberfromGsuiteByEmailId($member_id);
 
 					//partner update
 					$othArr = [];
