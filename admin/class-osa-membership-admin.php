@@ -761,7 +761,7 @@ class Osa_Membership_Admin
 		header("Content-Type: application/json");
 		global $wpdb;
 
-		if (isset($_GET['page']) || isset($_GET['search']) || isset($_GET['action']) == 'download_csv_file') {
+		if (isset($_GET['page']) || isset($_GET['search'])) {
 
 			$search = $_GET['search'];
 			$orderby = $_GET['orderby'];
@@ -1006,4 +1006,102 @@ class Osa_Membership_Admin
 		}
 		wp_die();
 	}
+
+	/**
+	 * Ajax callback function for csv download
+	 */
+	public function csv_download_action()
+	{
+		header("Content-Type: application/json");
+		global $wpdb;
+
+		if (isset($_GET['page']) || isset($_GET['search']) || isset($_GET['action']) == 'download_csv_file') {
+
+			$search = $_GET['search'];
+			$filter_option = $_GET['filter_option'];
+			$filter_input = $_GET['filter_input'];
+
+			$query = "SELECT
+			DATE_FORMAT(
+				wp_users.user_registered,
+				'%d-%m-%Y'
+			) AS user_registered,
+			wp_users.user_email,
+			t1.first_name, t1.last_name, t1.member_id, t1.is_deleted, t1.phone_no,
+			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, 
+			wp_member_other_info.city, wp_member_other_info.postal_code, wp_member_other_info.souvenir,
+			wp_states.state, wp_chapters.name as chapter_name, wp_countries.country, 
+			DATE_FORMAT(
+				wp_member_other_info.membership_expiry_date,
+				'%d-%m-%Y'
+			) AS membership_expiry_date, wp_membership_type.membership 
+			FROM
+			`wp_users`
+			INNER JOIN wp_member_user t1 ON
+			t1.user_id = wp_users.ID
+			LEFT JOIN wp_member_other_info  ON wp_member_other_info.member_id = t1.member_id 
+			LEFT JOIN wp_membership_type  ON wp_membership_type.membership_type_id = wp_member_other_info.membership_type 
+			LEFT JOIN  wp_states ON wp_member_other_info.state_id = wp_states.state_type_id
+			LEFT JOIN wp_chapters ON wp_member_other_info.chapter_type_id = wp_chapters.chapter_type_id
+			LEFT JOIN wp_countries ON wp_countries.country_type_id = wp_member_other_info.country_id
+
+		
+			WHERE
+			t1.type != 'child'";
+
+			/**
+			 * Proceed for search
+			 */
+			if (!empty($search)) {
+				$search_keywords = explode(" ",$search);
+
+				foreach($search_keywords as $search)
+				{
+					$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
+				           OR wp_users.user_email LIKE '%$search%' 
+						   OR t1.member_id LIKE '%$search%' 
+						   OR t1.first_name LIKE '%$search%' 
+						   OR t1.last_name LIKE '%$search%'
+						   OR t1.phone_no LIKE '%$search%' 
+						   OR wp_membership_type.membership LIKE '%$search%' )
+						   ";
+				}
+
+			}
+			/**
+			 * Proceed for filters
+			 */
+			if (!empty($filter_option) && !empty($filter_input)) {
+
+				for ($i = 0; $i < count($filter_option); $i++) {
+
+					if ($filter_option[$i] == "country") {
+						$query .= " AND wp_member_other_info.country_id = $filter_input[$i] ";
+					} else if ($filter_option[$i] == "state") {
+						$query .= " AND wp_member_other_info.state_id = $filter_input[$i] ";
+					} else if ($filter_option[$i] == "city") {
+						$query .= " AND wp_member_other_info.city LIKE '%$filter_input[$i]%' ";
+					} else if ($filter_option[$i] == "chapter") {
+						$query .= " AND wp_member_other_info.chapter_type_id = $filter_input[$i] ";
+					} else if ($filter_option[$i] == "membership") {
+						$query .= " AND wp_member_other_info.membership_type = $filter_input[$i] ";
+					}
+				}
+			}
+
+			$query .= " ORDER BY wp_users.user_registered ASC";
+
+			// echo $query;
+			// die;
+			$data = $wpdb->get_results($query);
+
+			wp_reset_query();
+
+			echo json_encode($data);
+		} else {
+			// no posts found
+		}
+		wp_die();
+	}
+
 }
