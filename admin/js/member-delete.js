@@ -34,7 +34,9 @@
         let ajax_url = "/wp-admin\/admin-ajax.php";
 
 
-
+        /**
+         * Bulk action for Delete and Deactivate member
+         */
         $(document).on('click', '.isChecked', function (e) {
 
             var DeactivateArr = [];
@@ -42,21 +44,25 @@
             $("input:checkbox[name=member_id]:checked").each(function () {
                 DeactivateArr.push($(this).val());
             });
-         
-            let del_ele = $('#delete_member').length;
+
+            let del_ele = $('#deactivate_member').length;
 
             if (this.checked && del_ele === 0) {
-                // let html = '<a id="delete_member" class="dashicons-before dashicons-trash vers" title="Deactivate Members " href=""></a>';
-                let html = ' <input type="button" name="" id="delete_member" class="button" value="Deactivate Member" />  ';
+                // let html = '<a id="deactivate_member" class="dashicons-before dashicons-trash vers" title="Deactivate Members " href=""></a>';
+                let html = ' <input type="button" name="" id="deactivate_member" class="button" value="Deactivate Member" />  ';
+                html += '<input type="button" name="" id="delete_member" class="button" value="Delete Member" /> ';
                 $('#members-filter').find('.actions').append(html);
             }
-            else if(DeactivateArr.length === 0){
-                $('#members-filter .actions').find('#delete_member').remove();
+            else if (DeactivateArr.length === 0) {
+                $('#members-filter .actions').find('#deactivate_member , #delete_member').remove();
             }
 
         });
 
-        $(document).on('click', '#delete_member', function (e) {
+        /**
+         * Deactivate Member Process
+         */
+        $(document).on('click', '#deactivate_member', function (e) {
             e.preventDefault();
 
             var DeactivateArr = [];
@@ -65,30 +71,87 @@
                 DeactivateArr.push($(this).val());
             });
 
-            if(DeactivateArr.length === 0){
+            if (DeactivateArr.length === 0) {
                 alert('No members selected');
             }
-            else{
+            else {
 
-            if (confirm("Are you sure you want to deactivate this Members?")) {
+                if (confirm("Are you sure you want to deactivate this Members?")) {
 
-                //alert(DeactivateArr);
+                    //alert(DeactivateArr);
+
+                    let data = {
+                        action: "member_deactivate",
+                        memberID: DeactivateArr,
+                        isDeleted: 1,
+                    }
+
+                    $.ajax({
+                        url: ajax_url,
+                        data: data,
+                        success: function (response) {
+
+                            if (response) {
+
+                                location.reload();
+
+                            }
+
+                        },
+                        error: function (e, response) {
+                            console.log("error");
+                        }
+                    });
+                }
+                else {
+                    location.reload();
+                }
+            }
+
+        });
+
+
+        /**
+         * Delete Member Process
+         */
+        $(document).on('click', '#delete_member, #trash_member', function (e) {
+            e.preventDefault();
+
+            var DeleteArr = [];
+
+            $("input:checkbox[name=member_id]:checked").each(function () {
+                DeleteArr.push($(this).val());
+            });
+
+
+           if(($(this).attr('id')) == 'trash_member'){
+             DeleteArr.push($(this).attr('data-member-id'));
+           }
+
+            if (confirm("Are you sure want to permanently delete this member record ? \nThis process cannot be undone and you will lost all the transactions related to this member.")) {
 
                 let data = {
-                    action: "member_deactivate",
-                    memberID: DeactivateArr,
-                    isDeleted: 1,
+                    action: "member_delete",
+                    memberId: DeleteArr,
                 }
 
                 $.ajax({
                     url: ajax_url,
                     data: data,
                     success: function (response) {
+                        // console.log(response);
 
                         if (response) {
-                            
-                            location.reload();
+                            // location.reload();
+                            // $('#alertMessage').html('<p>Member Deleted Successfully!</p>'); 
 
+                            $('#alertMessage').html('<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> \
+					<p><strong>Member Deleted.</strong></p><button type="button" class="notice-dismiss success-notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>')
+                          
+                            // alert('Member Deleted Successfully!');
+                            setTimeout(function(){
+                            location.reload(); 
+                            }, 2000);
                         }
 
                     },
@@ -97,18 +160,14 @@
                     }
                 });
             }
-            else{
+            else {
                 location.reload();
             }
-        }
 
         });
 
-
-
-
-
     });
+
 
 
 })(jQuery);

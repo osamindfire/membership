@@ -525,7 +525,7 @@
 							let html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized ' + dActivateClass + '"> \
 											<th scope="row" class="check-column"> <label class="screen-reader-text" for="cb-select-1"> \
 													Select Hello world! </label> \
-												<input '+ disabled + ' class="isChecked" name="member_id" value="' + response[i]['member_id'] + '" type="checkbox"> \
+												<input '+ disabled + ' class="isChecked" name="member_id" data-user-id="' + response[i]['user_id'] + '" value="' + response[i]['member_id'] + '" type="checkbox"> \
 											</th> \
 											<td class="title column-title has-row-actions column-primary page-title" data-colname="Title"><a class="row-title" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '">' + response[i]['member_id'] + '</a></td> \
 											<td class="author column-author" data-colname="Author">'+ response[i]['first_name'] + ' ' + response[i]['last_name'] + ' </td>  \
@@ -541,7 +541,7 @@
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['city'] + ' </td> \
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['postal_code'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a> </td> \
+											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-trash" title="Delete" id="trash_member" data-member-id="'+response[i]['member_id']+'" href=""></a> </td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
