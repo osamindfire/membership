@@ -829,10 +829,6 @@ class Osa_Membership_Public
 	}
 	public function membersListing()
 	{
-		$gsuite = new Osa_Membership_G_Suite();
-				$accessToken=$gsuite->reFreshGsuiteAccessToken();
-			
-				$response = $gsuite->deleteMemberFromGsuiteGroup($accessToken,'habec@mailinator.com');
 		global $wpdb;
 		global $wp;
 		global $current_user;
