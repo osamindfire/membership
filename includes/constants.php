@@ -38,3 +38,4 @@ define('REFRESH_TOEKN',get_option( 'refresh_token' ));
 define('ACCESS_TOKEN',get_option( 'access_token' ));
 define('ADD_MEMBER_URL','https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members?');
 define('APP_KEY',get_option( 'app_key' ));
+define('DELETE_MEMBER_URL','https://admin.googleapis.com/admin/directory/v1/groups/osa_testing@odishasociety.org/members/');

@@ -149,4 +149,31 @@ class Osa_Membership_G_Suite
 			echo 'Exception: ',  $e->getMessage(), "\n";
 		}
 	}
+
+	public function deleteMemberFromGsuiteGroup($accessToken = '',$email='')
+	{
+	
+			$curl = curl_init();
+			$url = DELETE_MEMBER_URL.$email.'?key='.APP_KEY;
+			$ch = curl_init();
+
+			curl_setopt($ch, CURLOPT_URL, $url);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+
+			curl_setopt($ch, CURLOPT_ENCODING, 'gzip, deflate');
+
+			$headers = array();
+			$headers[] = 'Authorization: Bearer '. $accessToken;
+			$headers[] = 'Accept: application/json';
+			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+			$result = curl_exec($ch);
+			if (curl_errno($ch)) {
+				echo 'Error:' . curl_error($ch);
+			}
+			curl_close($ch);
+
+			return empty($result) ? 1 : 0;
+	}
 }

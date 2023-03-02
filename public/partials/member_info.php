@@ -38,7 +38,7 @@
         </tr>
         <tr class="price">
             <td class="vertical_line" style="text-align:left;"><strong>Partner Status</strong></td>
-            <td class="vertical_line" style="text-align:left;"><?= ($memberInfo['oth_member_info'][0]->alive == 1) ? 'Alive' : 'Deceased'; ?></td>
+            <td class="vertical_line" style="text-align:left;"><?php if(count($memberInfo['oth_member_info']) >= 1 && $memberInfo['oth_member_info'][0]->alive == 1){ echo "Alive";}elseif(count($memberInfo['oth_member_info']) > 1 && $memberInfo['oth_member_info'][0]->alive == 0){ echo "Deceased";}else{ echo "N/A";}; ?></td>
         </tr>
         <tr class="price">
             <td class="vertical_line" style="text-align:left;"><strong>Address Line 1</strong></td>
@@ -69,7 +69,7 @@
             <td class="vertical_line" style="text-align:left;"><?= !empty($memberInfo[0]->souvenir) ? $memberInfo[0]->souvenir : 'N/A'; ?></td>
         </tr>
 
-        <?php $count=1;foreach($memberInfo['oth_member_info'] as $childValues){ if($childValues->type !=='parent'){?>
+        <?php $count=1;foreach($memberInfo['child_info'] as $childValues){ if($childValues->type !=='parent'){?>
         <tr class="price">
          <td class="vertical_line" style="text-align:left;"><strong>Child <?=$count;?></strong></td>
             <td class="vertical_line" style="text-align:left;"><?= !empty($childValues->first_name) ? $childValues->first_name.' '.$childValues->last_name : 'N/A'; ?></td>

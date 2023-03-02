@@ -16,6 +16,8 @@ $(document).ready(function () {
 	$(wrapper).on("click",".remove_child", function(e){ //user click on remove text
 		e.preventDefault(); $(this).parent('p').parent('div').remove(); x--;
 	});
+	
+	checkAgreement();
 	$('.agreement_error').hide();
 	$('#register_submit_button').click(function () {
 		if ($(this).is(':checked')) {
@@ -46,6 +48,8 @@ $(document).ready(function () {
 
 });
 function checkAgreement() {
+	$('#register_submit_button').attr('disabled', 'disabled');
+
 	if ($('#agreement_page_id').is(':checked')) {
 		$('.agreement_error').hide();
 		$('#register_submit_button').removeAttr('disabled');
@@ -73,7 +77,7 @@ function getstate() {
 }
 
 function getStates() {
-	getChapters();
+	//getChapters();
 	let country = parseInt($("#country").val()) || 0;
 	let data = {
 		action: "state_action",

@@ -8,13 +8,16 @@
 </style>
 <div class="main">
   <div class="column col-1 vertical-menu">
-    <p><a href="<?php echo home_url('member-dashboard'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard' || home_url($wp->request) == home_url() . '/member-dashboard/member-info') {
+    <p style="margin-right: 10px;
+    width: 200px;"><a href="<?php echo home_url('member-dashboard'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard' || home_url($wp->request) == home_url() . '/member-dashboard/member-info') {
                                                                       echo "active";
                                                                     } ?>"><img src="<?= DIR_URL; ?>/dashboard_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Dashboard</strong></a></p>
-    <p><a href="<?php echo home_url('member-dashboard/profile/'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard/profile') {
+    <p style="margin-right: 10px;
+    width: 200px;"><a href="<?php echo home_url('member-dashboard/profile/'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard/profile') {
                                                                                 echo "active";
                                                                               } ?>"><img src="<?= DIR_URL; ?>/profile_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Profile</strong></a></p>
-    <p><a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
+    <p style="margin-right: 10px;
+    width: 200px;"><a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
   </div>
   <div class="column col-2">
     <?php
@@ -27,7 +30,7 @@
     } elseif (home_url($wp->request) == home_url() . '/member-dashboard/transaction') {
       do_action('member_transaction');
     } else { ?>
-      <div class="et_pb_inner_shadow form_background" style="width: 100%;">
+      <div class="et_pb_inner_shadow form_background" style="width: 100%;background-color:#e4e7ed">
         <div class="et_pb_row et_pb_row_0">
           <div class="et_pb_contact">
             <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="GET">
@@ -66,7 +69,7 @@
                 
             </p>
               <div class="et_contact_bottom_container">
-                <button type="submit" class="et_pb_button" style="background-color: deepskyblue !important;" data-quickaccess-id="button"> <i class="fa fa-search"></i></button>
+                <button type="submit" class="et_pb_button" style="background-color: deepskyblue !important;margin-right:5px;" data-quickaccess-id="button"> <i class="fa fa-search"></i></button>
                 <a class="et_pb_button" href="<?php echo home_url('member-dashboard'); ?>"> <i class="fa fa-refresh"></i></a>
               </div>
 
@@ -77,7 +80,7 @@
 
       <table class="table et_pb_with_background et_pb_inner_shadow price responsive-table" style="width: 100%;table-layout:fixed;">
         <thead class="thead">
-          <tr class="et_pb_pricing_heading">
+          <tr class="et_pb_pricing_heading" style="background-color: deepskyblue;font-size:initial">
             <th class="text-center vertical_line" style="width:11%;word-wrap: break-word;">Member ID</th>
             <th class="text-center vertical_line" style="width:12%;word-wrap: break-word;">Name</th>
             <th class="text-center vertical_line" style="width:20%;word-wrap: break-word;">Email</th>
@@ -91,7 +94,7 @@
         <tbody>
           <?php if ($rowcount > 0) {
             foreach ($rows as $member) { ?>
-              <tr class="price">
+              <tr class="price" style="color: #000;">
                 <td class="text-center vertical_line" style="width:11%;word-wrap: break-word;"><?= $member->member_id; ?></td>
                 <td class="text-center vertical_line" style="width:12%;word-wrap: break-word;"><?= $member->first_name . ' ' . $member->last_name; ?></td>
                 <td class="text-center vertical_line" style="width:20%;word-wrap: break-word;"><?= $member->user_email; ?></td>

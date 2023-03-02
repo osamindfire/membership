@@ -277,32 +277,36 @@ td{
     }
 
 .vertical-menu {
-    width: 200px;
+    width: 100%;
   }
   
   .vertical-menu a {
-    background-color: #eee;
+    background-color: #fff;
     color: black;
     display: block;
     padding: 12px;
     text-decoration: none;
+
+    border: 1px solid black;
   }
   
   .vertical-menu a:hover {
-    background-color: #ccc;
+    background-color: #5cb85c;
+    border: 1px solid #fff;
   }
   
   .vertical-menu a.active {
-    background-color: #04AA6D;
+    background-color: #5cb85c;
     color: white;
+    border: 1px solid #000;
   }
-
 
 .col-1{
-    width: 15%;
+    width: 100%;
+    display: flex;
   }
   .col-2{
-    width: 85%;
+    width: 100%;
   }
   @keyframes gradient {
       0% {
