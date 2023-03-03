@@ -49,7 +49,7 @@ $partnerCount= count($userInfo['oth_member_info']);
 
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="<?php if(empty($userInfo[0]->parent_id)) { echo "required_field"; } ?>">Mobile No.</label>
-            <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="main_member_phone_no"  class="input <?php if(!empty($errors['mainMemberMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Mobile No." value="<?php if(isset($_REQUEST['main_member_phone_no'])) { echo $_REQUEST['main_member_phone_no']; }else{ echo $userInfo[0]->main_member_phone; }  ?>">
+            <input maxlength="15" id="main_member_phone_no" type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="main_member_phone_no"  class="input <?php if(!empty($errors['mainMemberMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Mobile No." value="<?php if(isset($_REQUEST['main_member_phone_no'])) { echo $_REQUEST['main_member_phone_no']; }else{ echo $userInfo[0]->main_member_phone; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['mainMemberMobileNo'])) { echo $errors['mainMemberMobileNo']; } ?></span>
         </p>
         <?php if(!empty($userInfo[0]->family_plan)) { ?>
@@ -73,7 +73,7 @@ $partnerCount= count($userInfo['oth_member_info']);
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="<?php if(empty($userInfo['oth_member_info'][0]->parent_id) && count($userInfo['oth_member_info']) >= 1) { echo "required_field"; } ?>">Partner Mobile No.</label>
-            <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input <?php if(!empty($errors['partnerPhoneNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }else{ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
+            <input type="text" maxlength="15" id="partner_member_phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input <?php if(!empty($errors['partnerPhoneNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }else{ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['partnerPhoneNo'])) { echo $errors['partnerPhoneNo']; } ?></span>
         </p>
         <?php if(count($userInfo['oth_member_info']) == 0){ ?>

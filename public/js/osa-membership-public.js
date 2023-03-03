@@ -1,22 +1,47 @@
 $(document).ready(function () {
+
+	$('#main_member_phone_no').change(function (e) {
+		var phoneNo = $(this).val();
+		firsttwodigit = phoneNo.substring(0, 2);
+		if(firsttwodigit == '+1')
+		{
+			phoneNo = phoneNo.slice(2);
+		}
+			phoneNo = phoneNo.replace(/\D+/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '+1-$1-$2-$3');
+		    phoneNo = phoneNo.substring(0, 15);
+		
+		$('#main_member_phone_no').val(phoneNo);
+	});
+	$('#partner_member_phone_no').change(function (e) {
+		var phoneNo = $(this).val();
+		firsttwodigit = phoneNo.substring(0, 2);
+		if(firsttwodigit == '+1')
+		{
+			phoneNo = phoneNo.slice(2);
+		}
+			phoneNo = phoneNo.replace(/\D+/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '+1-$1-$2-$3');
+		    phoneNo = phoneNo.substring(0, 15);
+		
+		$('#partner_member_phone_no').val(phoneNo);
+	});
 	getstate();
-	var max_fields      = 6; //maximum input boxes allowed
-	var wrapper   		= $(".input_fields_wrap"); //Fields wrapper
-	var add_button      = $(".add_field_button"); //Add button ID
-	
+	var max_fields = 6; //maximum input boxes allowed
+	var wrapper = $(".input_fields_wrap"); //Fields wrapper
+	var add_button = $(".add_field_button"); //Add button ID
+
 	var x = 1; //initlal text box count
-	$(add_button).click(function(e){ //on add input button click
+	$(add_button).click(function (e) { //on add input button click
 		e.preventDefault();
-		if(x < max_fields){ //max input box allowed
+		if (x < max_fields) { //max input box allowed
 			x++; //text box increment
 			$(wrapper).append('<div><p class="et_pb_contact_field ui-sortable et_pb_contact_field_half"><label>Child First Name</label><input type="text" name="child_first_name[]"  class="input"  placeholder="Child First Name" value=""/></p><p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last"><label>Child Last Name</label><input type="text" name="child_last_name[]"  class="input" placeholder="Child Last Name" value=""></p><p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last remove_child_text"><a href="#" class="remove_child">Remove</a></p></div>'); //add input box
 		}
 	});
-	
-	$(wrapper).on("click",".remove_child", function(e){ //user click on remove text
+
+	$(wrapper).on("click", ".remove_child", function (e) { //user click on remove text
 		e.preventDefault(); $(this).parent('p').parent('div').remove(); x--;
 	});
-	
+
 	checkAgreement();
 	$('.agreement_error').hide();
 	$('#register_submit_button').click(function () {
@@ -50,7 +75,7 @@ $(document).ready(function () {
 function checkAgreement() {
 	$('#register_submit_button').attr('disabled', 'disabled');
 	//if(!$('#register_submit_button').hasClass('register_submit_button'))
-    $('#register_submit_button').addClass('register_submit_button');
+	$('#register_submit_button').addClass('register_submit_button');
 
 	if ($('#agreement_page_id').is(':checked')) {
 		$('.agreement_error').hide();

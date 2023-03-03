@@ -25,7 +25,7 @@
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="required_field">Mobile No.</label>
-            <input type="text" id="phone_no" name="primary_mobile_no"  class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Format eg +1-XXX-XXX-XXXX" maxlength="15" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if(!empty($_REQUEST['primary_mobile_no'])) { echo $_REQUEST['primary_mobile_no']; } ?>">
+            <input type="text" name="primary_mobile_no" id="main_member_phone_no" class="input <?php if(!empty($errors['primaryMobileNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Format eg +1-XXX-XXX-XXXX" maxlength="15" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if(!empty($_REQUEST['primary_mobile_no'])) { echo $_REQUEST['primary_mobile_no']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['primaryMobileNo'])) { echo $errors['primaryMobileNo']; } ?></span>
         </p>
         
@@ -60,7 +60,7 @@
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="">Spouse Mobile No.</label>
-            <input type="text" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');"  name="secondary_mobile_no"  class="input" data-required_mark="required" placeholder="Format eg +1-XXX-XXX-XXXX" value="<?php if(!empty($_REQUEST['secondary_mobile_no'])) { echo $_REQUEST['secondary_mobile_no']; } ?>">
+            <input type="text" id="partner_member_phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');"  name="secondary_mobile_no" maxlength="15" class="input" data-required_mark="required" placeholder="Format eg +1-XXX-XXX-XXXX" value="<?php if(!empty($_REQUEST['secondary_mobile_no'])) { echo $_REQUEST['secondary_mobile_no']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['secondaryMobileNo'])) { echo $errors['secondaryMobileNo']; } ?></span>
         </p>
         
