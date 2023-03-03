@@ -488,7 +488,7 @@ class Osa_Membership_Admin
 			$data = $wpdb->get_results($query);
 
 			$parents = $wpdb->get_results(
-				"SELECT t1.id , t1.alive, t1.first_name, t1.last_name, t1.parent_id,t1.phone_no, t2.user_email FROM wp_member_user t1
+				"SELECT t1.id, t1.user_id, t1.alive, t1.first_name, t1.last_name, t1.parent_id,t1.phone_no, t2.user_email FROM wp_member_user t1
 				LEFT JOIN wp_users t2 ON  t1.user_id = t2.ID
 				where t1.member_id = $member_id 
 				AND t1.type = 'parent' AND t1.id != '$main_id';"
@@ -505,10 +505,10 @@ class Osa_Membership_Admin
 
 			$childCount = count($childs);
 
-			if(empty($parents)){
+			if (empty($parents)) {
 				$parentCount = 0;
-			}else $parentCount =1;
-			
+			} else $parentCount = 1;
+
 			//$chapters = $wpdb->get_results("SELECT  * FROM wp_chapters ;");
 
 			//$data = json_encode($data);
@@ -544,6 +544,15 @@ class Osa_Membership_Admin
 				/* End update user password. */
 
 				if (0 === count($errors)) {
+
+					// user/member email update
+					$userArr = [];
+					$user_id = $_POST['user_id'];
+					$userArr['user_email'] = $_POST['user_email'];
+					$userArr['user_login'] = $_POST['user_email'];
+
+					$user = $wpdb->update('wp_users', $userArr, array('ID' => $user_id), array('%s', '%s'), array('%d'));
+
 					//main member update
 					$mainArr = [];
 					$mainArr['first_name'] = $_POST['first_name'];
@@ -552,6 +561,10 @@ class Osa_Membership_Admin
 					$mainArr['phone_no'] = $_POST['phone_no'];
 
 					$mainMember = $wpdb->update('wp_member_user', $mainArr, array('id' => $main_id), array('%s', '%s', '%d', '%s'), array('%d'));
+
+					// update first name in user table
+					$fisrtArr = array('user_nicename' => $_POST['first_name'], 'display_name' => $_POST['first_name']);
+					$wpdb->update('wp_users', $fisrtArr, array('ID' => $user_id), array('%s', '%s'), array('%d'));
 
 					// echo $mainMember;
 					// die;
@@ -571,6 +584,17 @@ class Osa_Membership_Admin
 
 						if (!empty($othId)) {
 							$othMember = $wpdb->update('wp_member_user', $othArr, array('id' => $othId), array('%s', '%s', '%d', '%s'), array('%d'));
+
+							// spouse email update
+							$spouseUserArr = [];
+							$spouseUserId = $_POST['spouse_user_id'];
+							$spouseUserArr['user_email'] = $_POST['spouse_email'];
+							$spouseUserArr['user_login'] = $_POST['spouse_email'];
+							$user = $wpdb->update('wp_users', $spouseUserArr, array('ID' => $spouseUserId), array('%s', '%s'), array('%d'));
+
+							// update first name in user table
+							$spouseFisrtArr = array('user_nicename' => $_POST['spouse_first_name'], 'display_name' => $_POST['spouse_first_name']);
+							$wpdb->update('wp_users', $spouseFisrtArr, array('ID' => $spouseUserId), array('%s', '%s'), array('%d'));
 						} else {
 							$username = $_POST['spouse_email'];
 							$password = $_POST['spouse_password'];
@@ -580,7 +604,7 @@ class Osa_Membership_Admin
 								$userId = wp_create_user($username, $password, $email);
 
 								if ($userId) {
-									$wpdb->update('wp_users', ['display_name'=>$_POST['spouse_first_name'],'user_nicename'=>$_POST['spouse_first_name']], array('ID' => $userId), array('%s', '%s'), array('%d'));
+									$wpdb->update('wp_users', ['display_name' => $_POST['spouse_first_name'], 'user_nicename' => $_POST['spouse_first_name']], array('ID' => $userId), array('%s', '%s'), array('%d'));
 									add_user_meta($userId, 'wp_capabilities', 'a:1:{s:10:"subscriber";b:1;}', true);
 									$wpdb->query($wpdb->prepare(
 										"INSERT INTO wp_member_user (user_id, member_id, parent_id, first_name, last_name, phone_no, type , modified_date, alive, email_valid, is_deleted) VALUES ( %d, %d, %d, %s, %s, %s, %s, %s, %d, %d, %d)",
@@ -635,12 +659,7 @@ class Osa_Membership_Admin
 
 
 					$url = home_url('/wp-admin/admin.php?page=member-edit&mid=' . $_GET['mid'] . '&id=' . $_GET['id'] . '&success');
-					//echo $url;
-					// $redirectTo = home_url() . '/wp-admin/admin.php?page=member-edit&mid=16950&id=8661';
 					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
-
-					// echo '<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> 
-					// 		<p><strong>Details updated.</strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>';
 				}
 			} catch (Exception $e) {
 				echo 'Error writing to database: ',  $e->getMessage(), "\n";
@@ -656,6 +675,7 @@ class Osa_Membership_Admin
 	public function validateForm($childCount = 0, $parentCount)
 	{
 		$errors = array();
+		global $wpdb;
 
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
@@ -668,29 +688,46 @@ class Osa_Membership_Admin
 				$errors['last_name'] = "Please enter a Last Name";
 			}
 
+			// validate phone 
+			$phone = esc_sql($_POST['phone_no']);
+			$spousePhone = esc_sql($_POST['spouse_phone_no']);
 			if ($_POST['parent_id'] == 0) {
-				$phone = esc_sql($_POST['phone_no']);
 				if (!trim($phone ?? '')) {
 					$errors['phone_no'] = "Please enter a Phone";
 				}
 			} else {
-				$spousePhone = esc_sql($_POST['spouse_phone_no']);
 				if (!trim($spousePhone ?? '')) {
 					$errors['spouse_phone_no'] = "Please enter a Phone";
 				}
 			}
 
-			if (!empty($_POST['spouse_email'])) {
-				// Validate spouse  
-				$spouseFirstName = esc_sql($_POST['spouse_first_name']);
-				if (!trim($spouseFirstName ?? '')) {
-					$errors['spouse_first_name'] = "Please enter a partner First Name";
-				}
-				$spouseLastName = esc_sql($_POST['spouse_last_name']);
-				if (!trim($spouseLastName ?? '')) {
-					$errors['spouse_last_name'] = "Please enter a partner Last Name";
-				}
+			if (!empty($phone)) {
+				$valid = $this->validatePhoneNo($phone);
+				if (!$valid) {
+					$errors['phone_no'] = "Please enter valid format<br> (eg: +1-XXX-XXX-XXXX)";
+				};
 			}
+			if (!empty($spousePhone)) {
+				$sValid = $this->validatePhoneNo($spousePhone);
+				if (!$sValid) {
+					$errors['spouse_phone_no'] = "Please enter valid format<br> (eg: +1-XXX-XXX-XXXX)";
+				};
+			}
+
+			// Check email address is present and valid  
+			$user_emails = $wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" . $_POST['user_id'] . " and user_email  = '" . $_POST['user_email'] . "' ");
+
+			$userEmail = esc_sql($_POST['user_email']);
+			if (isset($_POST['user_email']) && empty($userEmail)) {
+				$errors['user_email'] = "Please enter a Partner Email";
+			} elseif (isset($_POST['user_email']) && !is_email($userEmail)) {
+				$errors['user_email'] = "Please enter a valid Email";
+			} elseif (isset($_POST['user_email']) && !empty($user_emails)) {
+				$errors['user_email'] = "This email address is already in use";
+			}
+			// } elseif (isset($_POST['user_email']) && (email_exists($userEmail) || username_exists($userEmail))) {
+			// 	$errors['user_email'] = "This email address is already in use";
+			// }
 
 			if (!empty($_POST['spouse_first_name']) && $parentCount == 0) {
 				// Validate spouse  
@@ -702,7 +739,7 @@ class Osa_Membership_Admin
 				if (!trim($spouseLastName ?? '')) {
 					$errors['spouse_last_name'] = "Please enter a Partner Last Name";
 				}
-				
+
 				// Check email address is present and valid  
 				$spouseEmail = esc_sql($_POST['spouse_email']);
 				if (isset($_POST['spouse_email']) && empty($spouseEmail)) {
@@ -712,7 +749,7 @@ class Osa_Membership_Admin
 				} elseif (isset($_POST['spouse_email']) && (email_exists($spouseEmail) || username_exists($spouseEmail))) {
 					$errors['spouse_email'] = "This email address is already in use";
 				}
-				
+
 				// Check password is valid  
 				$spousePassword = esc_sql($_POST['spouse_password']);
 				if (isset($_POST['spouse_password']) && empty($spousePassword)) {
@@ -725,12 +762,33 @@ class Osa_Membership_Admin
 				$cSpousePassword = esc_sql($_POST['spouse_confirm_password']);
 				if (isset($_POST['spouse_password']) && empty($cSpousePassword)) {
 					$errors['spouse_confirm_password'] = "Please enter a Partner Password";
-				}else 
+				} else 
 				if (isset($_POST['spouse_password']) && (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password']))) {
 					$errors['spouse_confirm_password'] = "Spouse Passwords do not match";
 				}
-			}
+			} else if ($parentCount == 1) {
+				// Validate spouse  
+				$spouseFirstName = esc_sql($_POST['spouse_first_name']);
+				if (!trim($spouseFirstName ?? '')) {
+					$errors['spouse_first_name'] = "Please enter a partner First Name";
+				}
+				$spouseLastName = esc_sql($_POST['spouse_last_name']);
+				if (!trim($spouseLastName ?? '')) {
+					$errors['spouse_last_name'] = "Please enter a partner Last Name";
+				}
 
+				$spouse_emails = $wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" . $_POST['spouse_user_id'] . " and user_email  = '" . $_POST['spouse_email'] . "' ");
+
+				// Check email address is present and valid  
+				$spouseEmail = esc_sql($_POST['spouse_email']);
+				if (isset($_POST['spouse_email']) && empty($spouseEmail)) {
+					$errors['spouse_email'] = "Please enter a Partner Email";
+				} elseif (isset($_POST['spouse_email']) && !is_email($spouseEmail)) {
+					$errors['spouse_email'] = "Please enter a valid Email";
+				} elseif (isset($_POST['spouse_email']) && !empty($spouse_emails)) {
+					$errors['spouse_email'] = "This email address is already in use";
+				}
+			}
 
 			if ($childCount !== 0) {
 				for ($i = 0; $i < $childCount; $i++) {
@@ -772,10 +830,19 @@ class Osa_Membership_Admin
 			if (!trim($state ?? '')) {
 				$errors['state'] = "Please select State";
 			}
-
 		}
 
 		return $errors;
+	}
+
+	private function validatePhoneNo($phone)
+	{
+		$toArr = str_split($phone);
+		$valid = 1;
+		if ($phone[0] != '+' || $phone[1] != '1' || $phone[2] != '-' || $phone[6] != '-' || $phone[10] != '-' || count($toArr) != 15) {
+			$valid = 0;
+		}
+		return $valid;
 	}
 
 	/**
@@ -877,6 +944,8 @@ class Osa_Membership_Admin
 						$query .= " AND wp_member_other_info.chapter_type_id = $filter_input[$i] ";
 					} else if ($filter_option[$i] == "membership") {
 						$query .= " AND wp_member_other_info.membership_type = $filter_input[$i] ";
+					} else if ($filter_option[$i] == "member_status") {
+						$query .= " AND t1.is_deleted = $filter_input[$i] ";
 					}
 				}
 			}
@@ -1181,7 +1250,6 @@ class Osa_Membership_Admin
 	 */
 	public function member_delete()
 	{
-
 		global $wpdb;
 		if (isset($_GET['action'])) {
 
@@ -1192,11 +1260,12 @@ class Osa_Membership_Admin
 			// print_r($memID);
 			// die;
 
-			$deleteQuery = " DELETE wp_member_user.*,wp_member_other_info.*,wp_member_membership.*,wp_users.* 
+			$deleteQuery = " DELETE wp_member_user.*,wp_member_other_info.*,wp_member_membership.*,wp_users.*,wp_usermeta.*
 			FROM wp_member_user 
 			LEFT JOIN wp_member_other_info ON wp_member_other_info.member_id = wp_member_user.member_id 
 			LEFT JOIN wp_member_membership ON wp_member_membership.member_id = wp_member_user.member_id 
 			LEFT JOIN wp_users ON wp_users.id = wp_member_user.user_id 
+			LEFT JOIN wp_usermeta ON wp_usermeta.user_id = wp_users.id
 			WHERE wp_member_user.member_id IN( null ";
 
 			foreach ($memID as $id) {

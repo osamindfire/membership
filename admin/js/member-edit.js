@@ -119,6 +119,20 @@
         });
         //
 
+        $('#main_phone_no, #spouse_phone_no, #add_spouse_phone_no').change(function (e) {
+            let phoneNo = $(this).val();
+            let firsttwodigit = phoneNo.substring(0, 2);
+            if(firsttwodigit == '+1')
+            {
+                phoneNo = phoneNo.slice(2);
+            }
+                phoneNo = phoneNo.replace(/\D+/g, '').replace(/(\d{3})(\d{3})(\d{4})/, '+1-$1-$2-$3');
+                phoneNo = phoneNo.substring(0, 15);
+            
+            let id = $(this).attr('id');
+            $('#'+id).val(phoneNo);
+        });
+
     });
 
 
