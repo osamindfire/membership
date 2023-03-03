@@ -33,6 +33,38 @@
 
 	$(window).load(function () {
 
+		populateMembershipPlan();
+		$("#membership_type_id").change(function(){
+			populateMembershipPlan();
+		});
+		function populateMembershipPlan(){
+
+			let membership_type_id = $("#membership_type_id").val();
+			let data = {
+				action: "get_membership_plan_ajax_action",
+				id: membership_type_id,
+			}
+			
+			$.ajax({
+				url: "/wp-admin\/admin-ajax.php",
+				data: data,
+				success: function (response) {
+
+					if (response) {
+
+						console.log(response[0]['fee']);
+						$("#fee").val(response[0]['fee']);
+						$("#total_days").val(response[0]['total_days']);
+
+
+					}
+				},
+				error: function (e, response) {
+					 console.log("error");
+				}
+			});
+		};
+
 		// $('.loader').hide();
 		// Call member data when window loaded
 		filteredData();
@@ -534,6 +566,10 @@
 								dActivateClass = 'out-red';
 								// disabled = "disabled";
 							}
+							let addMembership = '<a class="vers dashicons-before dashicons-plus" title="Add Membership" href="?page=assign-membership&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a>';
+							if (response[i]['membership_type']) {
+								addMembership = '<a style="display:none" class="vers dashicons-before dashicons-plus" title="Add Membership" href="?page=assign-membership&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a>';
+							}
 
 
 
@@ -556,7 +592,7 @@
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['city'] + ' </td> \
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['postal_code'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-trash" title="Delete" id="trash_member" data-member-id="'+response[i]['member_id']+'" href=""></a> </td> \
+											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-trash" title="Delete" id="trash_member" data-member-id="'+response[i]['member_id']+'" href=""></a>'+addMembership+'</td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);

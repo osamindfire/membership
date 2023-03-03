@@ -17,7 +17,11 @@
     <!-- <?php echo $data; ?> -->
     <!-- <?php echo $test; ?> -->
 
-
+    <?php if (isset($_GET['message'])) { ?>
+                <div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible">
+                    <p><strong><?= $_GET['message'];?></strong></p><button type="button" class="notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button>
+                </div>
+            <?php } ?>
 
     <?php if (!empty($data)) {
         foreach ($data as $key => $val) { ?>

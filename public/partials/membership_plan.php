@@ -16,8 +16,10 @@
 
 <?php } ?>
 <br>
-<div class="alert" style="background-color:#003772!important">
-  <strong>Payment Options : PayPal/Credit Card/Zelle (For Zelle, send the payment to treasurer@odishascociety.org, make sure to mention your email address)</strong>
+<div class="alert" style="background-color:#003772!important;font-style:italic">
+  <strong>For Credit Card/PayPal payment, select a membership plan below and proceed.<br>
+  For Zelle, send the payment to treasurer@odishascociety.org, make sure to mention your email address that you used to register as a member.<br>
+  For cash, mail a check to the OSA treasurer at the address mentioned <a href="<?= home_url('contact-us');?>">here</a>, payable to "Odisha Society of Americas"</strong>
   </div>
 <?php if (is_user_logged_in()) { ?>
 <div style="float:unset;padding:30px;">

@@ -255,7 +255,7 @@ class Osa_Membership_Public
 						'start_date' =>  $starttDate,
 						'end_date' => $endDate,
 						'membership_type_id' => $_SESSION['membership_type_id'],
-						'comment' => '',
+						'comment' => isset($_POST['txn_id']) ? $_POST['txn_id'] : $_POST['payer_id'],
 						'update_by' => $_SESSION['user_id'],
 						'payment_info' => serialize($_REQUEST),
 					)
@@ -957,7 +957,7 @@ class Osa_Membership_Public
 		global $current_user;
 		$logged_user = wp_get_current_user();
 		$membershipExpiryDate = $this->getMembershipExpireDate();
-		$totalParent = $this->getTotalParent($user_ID);
+		//$totalParent = $this->getTotalParent($user_ID);
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
 			if ($_POST) {
 				$errors = $this->validateProfileForm();
@@ -968,7 +968,21 @@ class Osa_Membership_Public
 					$mainArr['last_name'] = $_POST['last_name'];
 					$mainArr['phone_no'] = $_POST['main_member_phone_no'];
 					$mainId = $_POST['main_id'];
-					$mainMember = $wpdb->update('wp_member_user', $mainArr, array('id' => $mainId), array('%s', '%s', '%s'), array('%d'));
+					$mainMember = $wpdb->update('wp_member_user', $mainArr, array('id' => $mainId), array('%s', '%s','%s'), array('%d'));
+					$wpdb->update('wp_users', ['display_name'=>$_POST['first_name'],'user_nicename'=>$_POST['first_name']], array('ID' => $_POST['main_member_user_id']), array('%s', '%s'), array('%d'));
+					$mainMemberEmailExist = $wpdb->get_results("SELECT user_email FROM wp_users WHERE user_email  = '" .$_POST['email']. "' ");
+					
+					$mailUpdated=0;
+					if(trim($mainMemberEmailExist[0]->user_email) != trim($_POST['email']))
+					{
+						$mailUpdated= 1;
+						$wpdb->update('wp_users', ['user_login'=>$_POST['email'],'user_email'=>$_POST['email']], array('ID' => $_POST['main_member_user_id']), array('%s', '%s'), array('%d'));
+					}
+					$partnerMemberEmailExist = $wpdb->get_results("SELECT user_email FROM wp_users WHERE user_email  = '" .$_POST['spouse_email']. "' ");
+					if(isset($_POST['partner_member_user_id']) && trim($partnerMemberEmailExist[0]->user_email) != trim($_POST['email']))
+					{
+						$wpdb->update('wp_users', ['user_login'=>$_POST['spouse_email'],'user_email'=>$_POST['spouse_email']], array('ID' => $_POST['partner_member_user_id']), array('%s', '%s'), array('%d'));
+					}
 					//partner update
 					if (!empty($_POST['spouse_first_name'])) {
 						$othArr = [];
@@ -977,9 +991,11 @@ class Osa_Membership_Public
 						$othArr['phone_no'] = $_POST['partner_phone_no'];
 						$othArr['alive'] = $_POST['partner_alive'];
 						$othId = $_POST['other_id'];
-						if (!empty($othId)) {
-							$othMember = $wpdb->update('wp_member_user', $othArr, array('id' => $othId), array('%s', '%s', '%s', '%d'), array('%d'));
-						} else {
+						if(!empty($othId ))
+						{
+							$othMember = $wpdb->update('wp_member_user', $othArr, array('id' => $othId), array('%s', '%s','%s','%d'), array('%d'));
+							$wpdb->update('wp_users', ['display_name'=>$_POST['spouse_first_name'],'user_nicename'=>$_POST['spouse_first_name']], array('ID' => $_POST['partner_member_user_id']), array('%s', '%s'), array('%d'));
+						}else{
 							$username = $_POST['spouse_email'];
 							$password = $_POST['spouse_password'];
 							$email = $_POST['spouse_email'];
@@ -1047,7 +1063,14 @@ class Osa_Membership_Public
 							));
 						}
 					}
-					$redirectTo = home_url() . '/member-dashboard/profile?success=1';
+					if($mailUpdated == 1)
+					{
+						wp_logout();
+						unset($_SESSION['user_id']);
+						$redirectTo = home_url() . '/login?email_updated=1';
+					}else{
+						$redirectTo = home_url() . '/member-dashboard/profile?success=1';
+					}
 					echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 					exit();
 				}
@@ -1111,6 +1134,7 @@ class Osa_Membership_Public
 	private function validateProfileForm()
 	{
 		$errors = array();
+		global $wpdb;
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 			$firstName = esc_sql($_REQUEST['first_name']);
@@ -1133,7 +1157,17 @@ class Osa_Membership_Public
 					$errors['mainMemberMobileNo'] = "Incorrect format. Please use this format : +1-XXX-XXX-XXXX";
 				}
 			}
+			// Check email address is present and valid 
+			$email = esc_sql($_REQUEST['email']);
+			if (isset($_REQUEST['email']) && empty($email)) {
+				$errors['email'] = "Please enter a Partner Email";
+			} elseif (isset($_REQUEST['email']) && !is_email($email)) {
+				$errors['email'] = "Please enter a valid Email";
+			} elseif (isset($_REQUEST['email']) && isset($_REQUEST['main_member_user_id']) && ($wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" .$_REQUEST['main_member_user_id']. " and user_email  = '" .$_REQUEST['email']. "' "))) {
+				$errors['email'] = "This email address is already in use";
+			}
 
+			
 			if (!empty($_REQUEST['spouse_first_name']) || $_REQUEST['partner_exist']) {
 				// Validate spouse  
 				$spouseFirstName = esc_sql($_REQUEST['spouse_first_name']);
@@ -1161,10 +1195,9 @@ class Osa_Membership_Public
 					$errors['spouseEmail'] = "Please enter a Partner Email";
 				} elseif (isset($_REQUEST['spouse_email']) && !is_email($spouseEmail)) {
 					$errors['spouseEmail'] = "Please enter a valid Email";
-				} elseif (isset($_REQUEST['spouse_email']) && (email_exists($spouseEmail) || username_exists($spouseEmail))) {
+				} elseif (isset($_REQUEST['spouse_email']) && isset($_REQUEST['partner_member_user_id']) &&($wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" .$_REQUEST['partner_member_user_id']. " and user_email  = '" .$_REQUEST['spouse_email']. "' "))) {
 					$errors['spouseEmail'] = "This email address is already in use";
 				}
-
 				// Check password is valid  
 				$spousePassword = esc_sql($_REQUEST['spouse_password']);
 				if (isset($_REQUEST['spouse_password']) && empty($spousePassword)) {
