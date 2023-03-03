@@ -132,4 +132,11 @@ color : red !important;
     content:" *";
     color: red;
   }
+
+
+ #alertPartnerNotFound{
+    text-align: center;
+    font-style: italic;
+    color: red;
+  }
   
