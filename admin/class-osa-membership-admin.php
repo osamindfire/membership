@@ -353,7 +353,7 @@ class Osa_Membership_Admin
 
 		if (isset($_POST['assign_membershiplan_form']) && wp_verify_nonce($_POST['assign_membershiplan_form'], 'assign_membership_plan')) {
 			try {
-				$errors = []; //echo "<pre>";print_r($_POST);die;
+				$errors = [];
 				$membership = esc_sql($_POST['membership_type']);
 				if (empty($membership)) {
 					$errors['membership_type'] = "Please select Membership Plan";
@@ -365,8 +365,8 @@ class Osa_Membership_Admin
 				}
 
 				if (0 === count($errors)) {
-					$userInfo = $wpdb->get_results("SELECT wp_users.user_email,wp_member_user.user_id,wp_member_user.member_id,wp_member_user.first_name,wp_member_user.last_name,wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = " . $_GET['mid'] . " limit 1");
-					/* $starttDate = date('Y-m-d');
+					$userInfo = $wpdb->get_results("SELECT wp_users.user_nicename, wp_users.user_email,wp_member_user.user_id,wp_member_user.member_id,wp_member_user.first_name,wp_member_user.last_name,wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = " . $_GET['mid'] . " limit 1");
+					$starttDate = date('Y-m-d');
 					$endDate = date('Y-m-d', strtotime($starttDate . ' + ' . $_POST['total_days'] . ' days'));
 					$membershipType =  $_POST['membership_type'];
 					$wpdb->query($wpdb->prepare(
@@ -386,14 +386,13 @@ class Osa_Membership_Admin
 						$wpdb->prepare("UPDATE wp_member_other_info 
 					SET membership_expiry_date = %s,membership_type = %d 
 					WHERE member_id = %d", $endDate, $membershipType, $_GET['mid'])
-					); */
-					
-					/* $subject = "Membership Plan Assigned and Approved successfully";
-					$userInfo[0]->user_membership = $membershipPackage[0]; */
-					//$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0]);
-					
+					);
+					$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type  WHERE membership_type_id  = " . $membershipType . " limit 1");
+					$subject = "Membership Plan Assigned and Approved successfully";
+					$userInfo[0]->user_membership = $membershipPackage[0];
+					$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0]);
+
 					$url = home_url('/wp-admin/admin.php?page=member-view&mid='.$_GET['mid'].'&id='.$_GET['id'].'&message='.$subject.' ');
-					//print_r($url);die;
 					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
 				}
 			} catch (Exception $e) {
@@ -406,8 +405,7 @@ class Osa_Membership_Admin
 	{
 
 		ob_start();
-		include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/payment_success_emal.php');
-				
+		include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/payment_success_email.php');
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 		try {
 			$response = wp_mail($to, $subject, $emailBody, $headers);
