@@ -152,6 +152,7 @@ class Osa_Membership_Admin
 		if ((isset($_GET['page'])) && ($_GET['page'] === 'membershipplan-edit')) {
 			add_submenu_page('members', 'Membership Edit', null, 'administrator', 'membershipplan-edit', array($this, 'render_membershipplan_edit_page'));
 		}
+		add_submenu_page('members', 'Assign Membership', null, 'administrator', 'assign-membership', array($this, 'render_assign_membership'));
 	}
 
 	/**
@@ -297,6 +298,9 @@ class Osa_Membership_Admin
 		if (isset($_POST['membershiplan_form']) && wp_verify_nonce($_POST['membershiplan_form'], 'membershiplan')) {
 			try {
 				$errors = [];
+				echo "<pre>";
+				print_r($_POST);
+				die;
 				$membership = esc_sql($_POST['membership']);
 				if (empty($membership)) {
 					$errors['membership'] = "Membership cannot be blank";
@@ -341,6 +345,77 @@ class Osa_Membership_Admin
 			}
 		}
 		include_once(plugin_dir_path(__FILE__) . 'partials/membership_plans/membership_plan_add.php');
+	}
+	public function render_assign_membership()
+	{
+		global $wpdb,$user_ID;
+		$membershipPlans = $wpdb->get_results("SELECT  wp_membership_type.* FROM wp_membership_type where status= 1 ");
+
+		if (isset($_POST['assign_membershiplan_form']) && wp_verify_nonce($_POST['assign_membershiplan_form'], 'assign_membership_plan')) {
+			try {
+				$errors = []; //echo "<pre>";print_r($_POST);die;
+				$membership = esc_sql($_POST['membership_type']);
+				if (empty($membership)) {
+					$errors['membership_type'] = "Please select Membership Plan";
+				}
+
+				$fee = esc_sql($_POST['transaction_id_and_check_no']);
+				if (empty($fee)) {
+					$errors['transaction_id_and_check_no'] = "Please enter Transaction Id / Check No.";
+				}
+
+				if (0 === count($errors)) {
+					$userInfo = $wpdb->get_results("SELECT wp_users.user_email,wp_member_user.user_id,wp_member_user.member_id,wp_member_user.first_name,wp_member_user.last_name,wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = " . $_GET['mid'] . " limit 1");
+					/* $starttDate = date('Y-m-d');
+					$endDate = date('Y-m-d', strtotime($starttDate . ' + ' . $_POST['total_days'] . ' days'));
+					$membershipType =  $_POST['membership_type'];
+					$wpdb->query($wpdb->prepare(
+						"INSERT INTO wp_member_membership (user_id, member_id, start_date, end_date, membership_type_id, comment , update_by,payment_info) VALUES ( %d, %d, %s, %s, %d, %s, %s,%s)",
+						array(
+							'user_id' => $userInfo[0]->user_id,
+							'member_id' => $_GET['mid'],
+							'start_date' =>  $starttDate,
+							'end_date' => $endDate,
+							'membership_type_id' => $membershipType,
+							'comment' => $_POST['transaction_id_and_check_no'],
+							'update_by' => $user_ID,
+							'payment_info' => serialize($_POST),
+						)
+					));
+					$wpdb->query(
+						$wpdb->prepare("UPDATE wp_member_other_info 
+					SET membership_expiry_date = %s,membership_type = %d 
+					WHERE member_id = %d", $endDate, $membershipType, $_GET['mid'])
+					); */
+					
+					/* $subject = "Membership Plan Assigned and Approved successfully";
+					$userInfo[0]->user_membership = $membershipPackage[0]; */
+					//$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0]);
+					
+					$url = home_url('/wp-admin/admin.php?page=member-view&mid='.$_GET['mid'].'&id='.$_GET['id'].'&message='.$subject.' ');
+					//print_r($url);die;
+					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
+				}
+			} catch (Exception $e) {
+				echo 'Error writing to database: ',  $e->getMessage(), "\n";
+			}
+		}
+		include_once(plugin_dir_path(__FILE__) . 'partials/assign_membership.php');
+	}
+	public function sendMail($to, $subject, $data = array(), $type = '')
+	{
+
+		ob_start();
+		include_once(plugin_dir_path(__FILE__) . 'partials/email_templates/payment_success_emal.php');
+				
+		$headers = array('Content-Type: text/html; charset=UTF-8');
+		try {
+			$response = wp_mail($to, $subject, $emailBody, $headers);
+			return $response;
+		} catch (Exception $e) {
+			echo 'Error while sendnig mail: ',  $e->getMessage(), "\n";
+		}
+		return ob_get_clean();
 	}
 
 	/**
@@ -731,7 +806,7 @@ class Osa_Membership_Admin
 			t1.last_name,
 			t1.member_id,
 			t1.parent_id,
-			t1.is_deleted, t1.phone_no,
+			t1.is_deleted, t1.phone_no,wp_member_other_info.membership_type,
 			wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, 
 			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no, 
 			wp_member_other_info.city, wp_member_other_info.postal_code, wp_states.state, wp_chapters.name as chapter_name, wp_countries.country, 
@@ -1118,5 +1193,22 @@ class Osa_Membership_Admin
 			$response = $gsuite->deleteMemberFromGsuiteGroup($accessToken, $emailValue->user_email);
 		}
 		return 1;
+	}
+
+	public function get_membership_plan_ajax_action()
+	{
+
+		header("Content-Type: application/json");
+		global $wpdb;
+
+		if (isset($_GET['id'])) {
+			$query = "SELECT * from wp_membership_type where membership_type_id= " . $_GET['id'] . " ";
+			$data = $wpdb->get_results($query);
+			wp_reset_query();
+			echo json_encode($data);
+		} else {
+			// no posts found
+		}
+		wp_die();
 	}
 }

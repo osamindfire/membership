@@ -34,6 +34,8 @@ $partnerCount= count($userInfo['oth_member_info']);
         <input type='hidden' name="other_id" value="<?= $userInfo['oth_member_info'][0]->id;?>">
         <input type='hidden' name="member_id" value="<?= $userInfo[0]->member_id;?>">
         <input type='hidden' name="partner_exist" value="<?= $userInfo[0]->partner_exist;?>">
+        <input type='hidden' name="main_member_user_id" value="<?= $userInfo[0]->user_id;?>">
+        <input type='hidden' name="partner_member_user_id" value="<?= $userInfo['oth_member_info'][0]->user_id;?>">
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="required_field">Last Name</label>
@@ -43,7 +45,7 @@ $partnerCount= count($userInfo['oth_member_info']);
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="required_field">Email</label>
-            <input type="text" name="email"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Last Name" value="<?php if(isset($_REQUEST['email'])) { echo $_REQUEST['email']; }else{ echo $userInfo[0]->user_email; } ?>" disabled>
+            <input type="text" name="email"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Last Name" value="<?php if(isset($_REQUEST['email'])) { echo $_REQUEST['email']; }else{ echo $userInfo[0]->user_email; } ?>">
             <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
         </p>
 
@@ -67,7 +69,7 @@ $partnerCount= count($userInfo['oth_member_info']);
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="<?php if($userInfo[0]->partner_exist == 1 || !empty($_REQUEST['spouse_first_name']) ){ echo "required_field";}?>">Partner Email</label>
-            <input type="text" name="spouse_email"  class="input <?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?>" data-required_mark="required" placeholder="Spouse Email" value="<?php if(isset($_REQUEST['spouse_email'])) { echo $_REQUEST['spouse_email']; }else{ echo $userInfo['oth_member_info'][0]->user_email; } ?>" <?php if(!empty($userInfo['oth_member_info'][0]->user_email && $partnerCount == 1 )) { echo "disabled";}?> >
+            <input type="text" name="spouse_email"  class="input <?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?>" data-required_mark="required" placeholder="Spouse Email" value="<?php if(isset($_REQUEST['spouse_email'])) { echo $_REQUEST['spouse_email']; }else{ echo $userInfo['oth_member_info'][0]->user_email; } ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?></span>
         </p>
 
