@@ -123,10 +123,11 @@
                 DeleteArr.push($(this).val());
             });
 
-
            if(($(this).attr('id')) == 'trash_member'){
              DeleteArr.push($(this).attr('data-member-id'));
            }
+
+        //    console.log(DeleteArr); 
 
             if (confirm("Are you sure want to permanently delete this member record ? \nThis process cannot be undone and you will lost all the transactions related to this member.")) {
 
@@ -142,16 +143,18 @@
                         // console.log(response);
 
                         if (response) {
-                            // location.reload();
-                            // $('#alertMessage').html('<p>Member Deleted Successfully!</p>'); 
 
+                            DeleteArr.forEach((ele)=>{
+                                let test = $('[name=member_id][value="'+ele+'"]').parent().parent().remove();
+                               });   
+        
                             $('#alertMessage').html('<div id="setting-error-settings_updated" class="notice notice-success settings-error is-dismissible"> \
 					<p><strong>Member Deleted.</strong></p><button type="button" class="notice-dismiss success-notice-dismiss"><span class="screen-reader-text">Dismiss this notice.</span></button></div>')
                           
                             // alert('Member Deleted Successfully!');
-                            setTimeout(function(){
-                            location.reload(); 
-                            }, 2000);
+                            // setTimeout(function(){
+                            // location.reload(); 
+                            // }, 2000);
                         }
 
                     },

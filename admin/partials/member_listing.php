@@ -52,7 +52,8 @@
                             "State" => "state",
                             "City" => "city",
                             "Chapter" => "chapter",
-                            "Membership" => "membership"
+                            "Membership" => "membership",
+                            "Member Status" => "member_status"
                         );
                         foreach ($filter_option as $key => $value) {
                         ?><option class="level-0" value="<?php echo $value; ?>"><?php echo $key; ?></option>

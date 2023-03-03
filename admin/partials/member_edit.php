@@ -71,10 +71,13 @@
 
                                                 <tr>
                                                     <td><strong><label for="user_email" class="required">Member Email</label></strong><br>
-                                                        <input type="text" name="user_email" readonly value="<?php echo $val->user_email; ?>" required>
+                                                        <input type="text" name="user_email" value="<?php if(isset($_POST['user_email'])){echo $_POST['user_email'];} else {echo $val->user_email;} ?>" ><br>
+                                                        <error><?php if (!empty($errors['user_email'])) {
+                                                                            echo $errors['user_email'];
+                                                                        } ?></error>    
                                                     </td>
                                                     <td><strong><label for="membership">Membership</label></strong><br>
-                                                        <input type="text" name="membership" readonly value="<?php echo $val->membership; ?>" required>
+                                                        <input type="text" name="membership" readonly value="<?php echo $val->membership; ?>" >
                                                     </td>
 
                                                 </tr>
@@ -86,8 +89,8 @@
                                                         $required = 'required';
                                                     }
                                                     ?>
-                                                    <td><strong><label for="phone_no" class="<?= $required ?>">Phone</label></strong><br>
-                                                        <input type="text" name="phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if(isset($_POST['phone_no'])){echo $_POST['phone_no'];} else { echo $val->phone_no; } ?>" required><br>
+                                                    <td><strong><label for="phone_no" class="<?= $required ?> ">Phone</label></strong><br>
+                                                        <input type="text" name="phone_no" id="main_phone_no" maxlength="15" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if(isset($_POST['phone_no'])){echo $_POST['phone_no'];} else { echo $val->phone_no; } ?>" required><br>
                                                         <error><?php if (!empty($errors['phone_no'])) {
                                                                     echo $errors['phone_no'];
                                                                 } ?></error>
@@ -323,15 +326,19 @@
                                                             </td>
 
                                                             <input type="text" name="spouse_id" hidden value="<?php echo $parent->id; ?>">
+                                                            <input type="text" name="spouse_user_id" hidden value="<?php echo $parent->user_id; ?>">
                                                             <input type="text" name="spouse_parent_id" hidden value="<?php echo $parent->parent_id; ?>">
 
                                                         </tr>
 
                                                         <tr>
                                                             <td><strong><label for="spouse_email" class="required">Email</label></strong><br>
-                                                                <input type="text" name="spouse_email" readonly value="<?php if (isset($_POST['spouse_email'])) {
+                                                                <input type="text" name="spouse_email" value="<?php if (isset($_POST['spouse_email'])) {
                                                                                                                             echo $_POST['spouse_email'];
-                                                                                                                        } else{ echo $parent->user_email;}?>">
+                                                                                                                        } else{ echo $parent->user_email;}?>"><br>
+                                                                <error><?php if (!empty($errors['spouse_email'])) {
+                                                                            echo $errors['spouse_email'];
+                                                                        } ?></error>                                                       
                                                             </td>
 
                                                             <?php
@@ -341,7 +348,7 @@
                                                             }
                                                             ?>
                                                             <td><strong><label for="spouse_phone_no" class="<?= $requiredParent ?>">Phone</label></strong><br>
-                                                                <input type="text" name="spouse_phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_phone_no'])) {
+                                                                <input type="text" name="spouse_phone_no" id="spouse_phone_no" maxlength="15" class="phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_phone_no'])) {
                                                                                                                         echo $_POST['spouse_phone_no'];
                                                                                                                     } else{ echo $parent->phone_no; }?>" required><br>
                                                                 <error><?php if (!empty($errors['spouse_phone_no'])) {
@@ -384,7 +391,7 @@
                                             <h2 class="hndle ui-sortable-handle">Add Partner</h2>
                                         </div>
                                         <div class="inside">
-                                        <p id="alertPartnerNotFound">Note: No data found for Partner.You can also create partner account !</p>
+                                        <p id="alertPartnerNotFound">Note: No data found for Partner. You can also create partner account !</p>
 
                                             <table class="form-table" role="presentation">
                                                 <tbody>
@@ -419,7 +426,7 @@
                                                         </td>
 
                                                         <td><strong><label for="spouse_phone_no" class="">Phone</label></strong><br>
-                                                            <input type="text" name="spouse_phone_no" value="<?php if (isset($_POST['spouse_phone_no'])) {
+                                                            <input type="text" name="spouse_phone_no" id="add_spouse_phone_no" class="phone_no" value="<?php if (isset($_POST['spouse_phone_no'])) {
                                                                                                                     echo $_POST['spouse_phone_no'];
                                                                                                                 } ?>"><br>
 

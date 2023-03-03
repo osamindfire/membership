@@ -156,6 +156,10 @@
 				filter_input.remove();
 				populateMembership(filter_id);
 
+			} else if (el.val() === "member_status") {
+				filter_input.remove();
+				populateMemberStatus(filter_id);
+
 			} else {
 				filter_input.remove();
 				$(this).parent().append('<input type="text" name="filter_input" id="filter_input_id_' + filter_id + '" class="" value="">');
@@ -172,7 +176,8 @@
 				"State": "state",
 				"City": "city",
 				"Chapter": "chapter",
-				"Membership": "membership"
+				"Membership": "membership",
+				"Member Status": "member_status"
 			}
 
 			//let form_el_count = $("#members-filter").children().length;
@@ -413,6 +418,16 @@
 			});
 
 		};
+
+		function populateMemberStatus(id){
+
+			let html = '<select name="filter_input" id="filter_input_id_' + id + '" class="postform">'
+			html += '<option class="level-0" value="0">Active</option>';
+			html += '<option class="level-0" value="1">Deactive</option>';
+			html += '</select>';
+
+			mafs.find("#filter_input_area_" + id).append(html);
+		}
 		//Filter ends here
 
 
@@ -514,10 +529,10 @@
 							}
 
 							let dActivateClass = '';
-							let disabled = '';
+							// let disabled = '';
 							if (response[i]['is_deleted'] == 1) {
 								dActivateClass = 'out-red';
-								disabled = "disabled";
+								// disabled = "disabled";
 							}
 
 
@@ -525,7 +540,7 @@
 							let html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized ' + dActivateClass + '"> \
 											<th scope="row" class="check-column"> <label class="screen-reader-text" for="cb-select-1"> \
 													Select Hello world! </label> \
-												<input '+ disabled + ' class="isChecked" name="member_id" data-user-id="' + response[i]['user_id'] + '" value="' + response[i]['member_id'] + '" type="checkbox"> \
+												<input  class="isChecked" name="member_id" data-user-id="' + response[i]['user_id'] + '" value="' + response[i]['member_id'] + '" type="checkbox"> \
 											</th> \
 											<td class="title column-title has-row-actions column-primary page-title" data-colname="Title"><a class="row-title" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '">' + response[i]['member_id'] + '</a></td> \
 											<td class="author column-author" data-colname="Author">'+ response[i]['first_name'] + ' ' + response[i]['last_name'] + ' </td>  \
