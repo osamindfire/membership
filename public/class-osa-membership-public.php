@@ -255,7 +255,7 @@ class Osa_Membership_Public
 						'start_date' =>  $starttDate,
 						'end_date' => $endDate,
 						'membership_type_id' => $_SESSION['membership_type_id'],
-						'comment' => '',
+						'comment' => isset($_POST['txn_id']) ? $_POST['txn_id'] : $_POST['payer_id'],
 						'update_by' => $_SESSION['user_id'],
 						'payment_info' => serialize($_REQUEST),
 					)

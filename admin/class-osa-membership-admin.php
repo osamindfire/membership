@@ -382,15 +382,26 @@ class Osa_Membership_Admin
 							'payment_info' => serialize($_POST),
 						)
 					));
-					$wpdb->query(
+					$result= $wpdb->query(
 						$wpdb->prepare("UPDATE wp_member_other_info 
 					SET membership_expiry_date = %s,membership_type = %d 
 					WHERE member_id = %d", $endDate, $membershipType, $_GET['mid'])
 					);
+					$otherPartenruserInfo = $wpdb->get_results("SELECT wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = " . $_GET['mid'] . " and type !='child' ");
+
 					$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type  WHERE membership_type_id  = " . $membershipType . " limit 1");
+					if($result)
+					{
 					$subject = "Membership Plan Assigned and Approved successfully";
 					$userInfo[0]->user_membership = $membershipPackage[0];
 					$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0]);
+
+					$gsuite = new Osa_Membership_G_Suite();
+					foreach($otherPartenruserInfo as $othMemberValue){
+					$accessToken = $gsuite->reFreshGsuiteAccessToken();
+					$gsuite->addMemberToGsuiteGroup($accessToken, $othMemberValue->user_email);
+					}
+					}
 
 					$url = home_url('/wp-admin/admin.php?page=member-view&mid='.$_GET['mid'].'&id='.$_GET['id'].'&message='.$subject.' ');
 					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
@@ -492,7 +503,7 @@ class Osa_Membership_Admin
 			) AS start_date, DATE_FORMAT(
 				t1.end_date,
 				'%d-%m-%Y'
-			) AS end_date, t2.membership, t2.fee FROM wp_member_membership t1
+			) AS end_date, t2.membership, t2.fee ,t1.comment FROM wp_member_membership t1
 			INNER JOIN wp_membership_type t2 ON t1.membership_type_id = t2.membership_type_id
 			 where t1.member_id = $member_id ;");
 
