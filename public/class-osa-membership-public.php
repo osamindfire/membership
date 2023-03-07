@@ -871,7 +871,7 @@ class Osa_Membership_Public
 					$where .= " ( t1.first_name like '%$globalSearch%'";
 					$where .= " OR t1.last_name like '%$globalSearch%'";
 					$where .= " OR t1.member_id like '%$globalSearch%'";
-					if (DateTime::createFromFormat('d-m-Y', $globalSearch) !== false) {
+					if (DateTime::createFromFormat('m-d-Y', $globalSearch) !== false) {
 						$date = date('Y-m-d', strtotime($globalSearch));
 						$where .= " OR user_registered like '%$date%'";
 					}
@@ -915,7 +915,7 @@ class Osa_Membership_Public
 			$rows = $wpdb->get_results("SELECT
 			DATE_FORMAT(
 				wp_users.user_registered,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS user_registered,
 			wp_users.ID as user_id,
 			wp_users.user_email,
@@ -926,7 +926,7 @@ class Osa_Membership_Public
 			wp_member_other_info.city,wp_member_other_info.address_line_1, wp_member_other_info.address_line_2, t1.phone_no,
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS membership_expiry_date,
 			wp_membership_type.membership,
 			wp_states.state

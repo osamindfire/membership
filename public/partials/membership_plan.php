@@ -1,25 +1,25 @@
 <?php if (isset($_GET["register_success"])){  ?>
-  <div class="alert">
+  <div class="alert" style="background-color: #003772 !important;">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
   <strong>Member has been registered successfully. Please select the membership plan !</strong>
   </div>
 <?php }elseif(isset($_GET["membership_expired"])){ ?>
-  <div class="alert">
+  <div class="alert" style="background-color: #003772 !important;">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
   <strong>Your membership has expired. Please renew the membership plan !</strong>
   </div>
 <?php }elseif(isset($_GET["no_membership_plan"])){ ?>
-  <div class="alert">
+  <div class="alert" style="background-color: #003772 !important;">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
   <strong>Please buy membership plan then you will be able to search other Odia members and manage several activities with this access !</strong>
   </div>
 
 <?php } ?>
-<br>
-<div class="alert" style="background-color:#003772!important;font-style:italic">
+<br><!-- #04AA6D -->
+<div class="alert" style="background-color:#04AA6D!important;font-style:italic">
   <strong>For Credit Card/PayPal payment, select a membership plan below and proceed.<br>
   For Zelle, send the payment to treasurer@odishascociety.org, make sure to mention your email address that you used to register as a member.<br>
-  For cash, mail a check to the OSA treasurer at the address mentioned <a href="<?= home_url('contact-us');?>">here</a>, payable to "Odisha Society of Americas"</strong>
+  For cash, mail a check to the OSA treasurer at the address mentioned <a style="color:yellow" href="<?= home_url('contact-us');?>">here</a>, payable to "Odisha Society of Americas"</strong>
   </div>
 <?php if (is_user_logged_in()) { ?>
 <div style="float:unset;padding:30px;">

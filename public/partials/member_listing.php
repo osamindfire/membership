@@ -77,32 +77,33 @@
           </div>
         </div>
       </div><br>
-
-      <table class="table et_pb_with_background et_pb_inner_shadow price responsive-table" style="width: 100%;table-layout:fixed;">
+      <div class="hack1">
+    <div class="hack2">
+      <table class="table et_pb_with_background et_pb_inner_shadow price responsive-table">
         <thead class="thead">
           <tr class="et_pb_pricing_heading" style="background-color: deepskyblue;font-size:initial">
-            <th class="text-center vertical_line" style="width:11%;word-wrap: break-word;">Member ID</th>
-            <th class="text-center vertical_line" style="width:12%;word-wrap: break-word;">Name</th>
-            <th class="text-center vertical_line" style="width:20%;word-wrap: break-word;">Email</th>
-            <th class="text-center vertical_line" style="width:15%;word-wrap: break-word;">Join Date</th>
-            <th class="text-center vertical_line" style="word-wrap: break-word;">State</th>
-            <th class="text-center vertical_line" style="word-wrap: break-word;">City</th>
-            <th class="text-center vertical_line" style="width:15%;word-wrap: break-word;">Phone</th>
-            <th class="text-center vertical_line" style="width:10%;word-wrap: break-word;">Details</th>
+            <th class="text-center vertical_line" >Member ID</th>
+            <th class="text-center vertical_line" >Name</th>
+            <th class="text-center vertical_line" >Email</th>
+            <th class="text-center vertical_line" >Join Date</th>
+            <th class="text-center vertical_line" >State</th>
+            <th class="text-center vertical_line" >City</th>
+            <th class="text-center vertical_line" >Phone</th>
+            <th class="text-center vertical_line" >Details</th>
           </tr>
         </thead>
         <tbody>
           <?php if ($rowcount > 0) {
             foreach ($rows as $member) { ?>
               <tr class="price" style="color: #000;">
-                <td class="text-center vertical_line" style="width:11%;word-wrap: break-word;"><?= $member->member_id; ?></td>
-                <td class="text-center vertical_line" style="width:12%;word-wrap: break-word;"><?= $member->first_name . ' ' . $member->last_name; ?></td>
-                <td class="text-center vertical_line" style="width:20%;word-wrap: break-word;"><?= $member->user_email; ?></td>
-                <td class="text-center vertical_line" style="width:15%;word-wrap: break-word;"><?= $member->user_registered; ?></td>
-                <td class="text-center vertical_line" style="word-wrap: break-word;"><?= $member->state; ?></td>
-                <td class="text-center vertical_line" style="word-wrap: break-word;"><?= $member->city; ?></td>
-                <td class="text-center vertical_line" style="width:15%;word-wrap: break-word;"><?= $member->phone_no; ?></td>
-                <td class="text-center vertical_line" style="width:10%;word-wrap: break-word;"><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
+                <td class="text-center vertical_line" ><?= $member->member_id; ?></td>
+                <td class="text-center vertical_line" ><?= $member->first_name . ' ' . $member->last_name; ?></td>
+                <td class="text-center vertical_line" ><?= $member->user_email; ?></td>
+                <td class="text-center vertical_line" ><?= $member->user_registered; ?></td>
+                <td class="text-center vertical_line" ><?= $member->state; ?></td>
+                <td class="text-center vertical_line" ><?= $member->city; ?></td>
+                <td class="text-center vertical_line" ><?= $member->phone_no; ?></td>
+                <td class="text-center vertical_line" ><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>
               </tr>
             <?php }
           } else { ?>
@@ -113,6 +114,8 @@
         </tbody>
 
       </table>
+          </div>
+          </div>
       <?php
 
       $links = paginate_links(array(

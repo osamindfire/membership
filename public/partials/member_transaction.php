@@ -13,8 +13,8 @@
         <tr class="price">
             <td class="vertical_line" style="text-align:center;"><strong><?= $membership->membership;?></strong></td>
             <td class="vertical_line" style="text-align:center;"><?= $membership->fee;?></td>
-            <td class="vertical_line" style="text-align:center;"><?= date('d-m-Y',strtotime($membership->start_date));?></td>
-            <td class="vertical_line" style="text-align:center;"><?= date('d-m-Y',strtotime($membership->end_date));?></td>
+            <td class="vertical_line" style="text-align:center;"><?= date('m-d-Y',strtotime($membership->start_date));?></td>
+            <td class="vertical_line" style="text-align:center;"><?php if($membership->membership_type_id == 3) { echo "N/A";}else{ echo date('m-d-Y',strtotime($membership->end_date));}?></td>
         </tr>
         <?php } ?>
     </tbody>
