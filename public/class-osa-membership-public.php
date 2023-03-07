@@ -558,11 +558,19 @@ class Osa_Membership_Public
 				$errors['password'] = "Please enter a Password";
 			} elseif (0 === preg_match("/.{6,}/", $_POST['password'])) {
 				$errors['password'] = "Password must be at least six characters";
+			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['password']))
+			{
+				$errors['password'] = "Please enter alphanumeric characters only";
 			}
 
 			$cPassword = esc_sql($_REQUEST['confirm_password']);
 			if (empty($cPassword)) {
 				$errors['confirmPassword'] = "Please Confirm Password";
+			}elseif (0 === preg_match("/.{6,}/", $_POST['confirm_password'])) {
+				$errors['confirmPassword'] = "Password must be at least six characters";
+			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['confirm_password']))
+			{
+				$errors['confirmPassword'] = "Please enter alphanumeric characters only";
 			} elseif (0 !== strcmp($_POST['password'], $_POST['confirm_password'])) // Check password confirmation_matches 
 			{
 				$errors['confirmPassword'] = "Passwords do not match";
@@ -603,16 +611,25 @@ class Osa_Membership_Public
 					$errors['spousePassword'] = "Please enter a Spouse Password";
 				} elseif (0 === preg_match("/.{6,}/", $_POST['spouse_password'])) {
 					$errors['spousePassword'] = "Password must be at least six characters";
+				}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['spouse_password']))
+				{
+					$errors['spousePassword'] = "Please enter alphanumeric characters only";
 				}
 
 				// Check password confirmation_matches
-				$cSpousePassword = esc_sql($_REQUEST['spouse_password']);
+				
+				$cSpousePassword = esc_sql($_REQUEST['spouse_confirm_password']);
 				if (empty($cSpousePassword)) {
 					$errors['confirmSpousePassword'] = "Please enter a Spouse Password";
-				}
-				if (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password'])) {
+				}elseif (0 === preg_match("/.{6,}/", $_POST['spouse_confirm_password'])) {
+					$errors['spousePassword'] = "Password must be at least six characters";
+				}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['spouse_confirm_password']))
+				{
+					$errors['confirmSpousePassword'] = "Please enter alphanumeric characters only";
+				}elseif (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password'])) {
 					$errors['confirmSpousePassword'] = "Spouse Passwords do not match";
 				}
+				
 			}
 
 			$addressLine1 = esc_sql($_REQUEST['address_line_1']);

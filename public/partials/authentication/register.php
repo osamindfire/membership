@@ -77,7 +77,7 @@
         </p>
 
         <div class="input_fields_wrap">
-        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last"><a class="add_field_button add_child_button">Add Child</a></p>
+        <p class="et_pb_contact_field ui-sortable et_pb_contact_field_last"><a class="add_field_button add_child_button" style="display:inline-flex">Add Child</a></p>
     
         
         <?php foreach($_REQUEST['child_first_name'] as $index=>$childValues){ ?>
