@@ -126,8 +126,21 @@
 
                     // resArray.push(1,2,3, 'pooja');
                     for (let i = 0; i < response.length; i++) {
-                        if(response[i]['address_line_2'] == null){
-                            response[i]['address_line_2'] = 'N/A';
+
+                        if (response[i]['membership_expiry_date'] == null) {
+                            response[i]['membership_expiry_date'] = 'N/A';
+                        }
+                        if (response[i]['phone_no'] == null) {
+                            response[i]['phone_no'] = 'N/A';
+                        }
+                        if (response[i]['membership'] == null) {
+                            response[i]['membership'] = 'N/A'
+                        }
+                        if (response[i]['address_line_2'] == null) {
+                            response[i]['address_line_2'] = 'N/A'
+                        }
+                        if (response[i]['membership_type_id'] == 3 ) {
+                            response[i]['membership_expiry_date'] = 'N/A';
                         }
 
                         resArray.push([

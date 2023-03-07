@@ -176,6 +176,10 @@
 			let el = $(this);
 			//alert('addmore');
 			let filter_opt_dict = {
+				"Email" : "email",
+				"First Name" : "first_name",
+				"Last Name" : "last_name",
+				"Is Member" : "is_member",
 				"Country": "country",
 				"State": "state",
 				"City": "city",
@@ -541,7 +545,7 @@
 							if (response[i]['address_line_2'] == null) {
 								response[i]['address_line_2'] = 'N/A'
 							}
-							if (response[i]['membership'] == 'Life Member') {
+							if (response[i]['membership_type_id'] == 3 ) {
 								response[i]['membership_expiry_date'] = 'N/A';
 							}
 

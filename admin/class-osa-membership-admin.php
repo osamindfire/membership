@@ -882,7 +882,7 @@ class Osa_Membership_Admin
 				'%m-%d-%Y'
 			) AS membership_expiry_date,
 			-- t2.first_name as partner_first_name, t2.last_name as partner_last_name, 
-			wp_membership_type.membership 
+			wp_membership_type.membership,wp_membership_type.membership_type_id  
 			FROM
 			`wp_users`
 			INNER JOIN wp_member_user t1 ON
@@ -907,9 +907,6 @@ class Osa_Membership_Admin
 				$search_keywords = explode(" ", $search);
 
 				foreach ($search_keywords as $search) {
-					// if(DateTime::createFromFormat('m-d-Y', '12-31-2022') !== false)
-					// { $date= DateTime::createFromFormat('m-d-Y', '12-31-2022'); echo $date->format('Y-m-d');}
-					// die;
 
 					$query .= " AND ( ";
 					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
