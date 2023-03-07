@@ -133,6 +133,10 @@ color : red !important;
     color: red;
   }
 
+.del-loader:after{
+  width: 10px !important;
+  height: 10px !important;
+}
 
  #alertPartnerNotFound{
     text-align: center;
