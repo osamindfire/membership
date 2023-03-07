@@ -450,7 +450,7 @@ class Osa_Membership_Admin
 			$query = "SELECT
 			DATE_FORMAT(
 				wp_users.user_registered,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS user_registered,
 			wp_users.user_email,
 			t1.first_name,
@@ -461,7 +461,7 @@ class Osa_Membership_Admin
 			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS membership_expiry_date,
 			wp_membership_type.membership, wp_member_other_info.souvenir,
 			 wp_member_other_info.city, wp_member_other_info.chapter_type_id as chapter_id,
@@ -499,11 +499,11 @@ class Osa_Membership_Admin
 
 			$memberships = $wpdb->get_results("SELECT DATE_FORMAT(
 				t1.start_date,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS start_date, DATE_FORMAT(
 				t1.end_date,
-				'%d-%m-%Y'
-			) AS end_date, t2.membership, t2.fee ,t1.comment FROM wp_member_membership t1
+				'%m-%d-%Y'
+			) AS end_date, t2.membership, t2.fee FROM wp_member_membership t1
 			INNER JOIN wp_membership_type t2 ON t1.membership_type_id = t2.membership_type_id
 			 where t1.member_id = $member_id ;");
 
@@ -532,7 +532,7 @@ class Osa_Membership_Admin
 			$query = "SELECT
 			DATE_FORMAT(
 				wp_users.user_registered,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS user_registered,
 			wp_users.user_email,
 			t1.user_id,
@@ -545,7 +545,7 @@ class Osa_Membership_Admin
 			-- wp_member_other_info.primary_phone_no, wp_member_other_info.secondary_phone_no,
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS membership_expiry_date,
 			wp_membership_type.membership,wp_membership_type.type as membership_type, wp_member_other_info.souvenir, 
 			wp_member_other_info.city, wp_member_other_info.state_id, wp_member_other_info.country_id, wp_member_other_info.chapter_type_id as chapter_id,
@@ -949,7 +949,7 @@ class Osa_Membership_Admin
 			$query = "SELECT
 			DATE_FORMAT(
 				wp_users.user_registered,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS user_registered,
 			wp_users.user_email,
 			t1.id, t1.user_id,
@@ -963,10 +963,10 @@ class Osa_Membership_Admin
 			wp_member_other_info.city, wp_member_other_info.postal_code, wp_states.state, wp_chapters.name as chapter_name, wp_countries.country, 
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS membership_expiry_date,
 			-- t2.first_name as partner_first_name, t2.last_name as partner_last_name, 
-			wp_membership_type.membership 
+			wp_membership_type.membership,wp_membership_type.membership_type_id  
 			FROM
 			`wp_users`
 			INNER JOIN wp_member_user t1 ON
@@ -991,14 +991,17 @@ class Osa_Membership_Admin
 				$search_keywords = explode(" ", $search);
 
 				foreach ($search_keywords as $search) {
+
 					$query .= " AND ( ";
 					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
-						$date = date('Y-m-d', strtotime($search));
+						// $date = date('Y-m-d', strtotime($search));
+						$date= DateTime::createFromFormat('m-d-Y', $search)->format('Y-m-d');
 						$query .= " wp_users.user_registered LIKE '%$date%' ";
 					}
 
 					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
-						$date = date('Y-m-d', strtotime($search));
+						// $date = date('Y-m-d', strtotime($search));
+						$date= DateTime::createFromFormat('m-d-Y', $search)->format('Y-m-d');
 						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR";
 					}
 
@@ -1018,7 +1021,13 @@ class Osa_Membership_Admin
 
 				for ($i = 0; $i < count($filter_option); $i++) {
 
-					if ($filter_option[$i] == "country") {
+					if ($filter_option[$i] == "email") {
+						$query .= " AND wp_users.user_email LIKE '%$filter_input[$i]%' ";
+					} else if ($filter_option[$i] == "first_name") {
+						$query .= " AND t1.first_name LIKE '%$filter_input[$i]%' ";
+					} else if ($filter_option[$i] == "last_name") {
+						$query .= " AND t1.last_name LIKE '%$filter_input[$i]%' ";
+					} else if ($filter_option[$i] == "country") {
 						$query .= " AND wp_member_other_info.country_id = $filter_input[$i] ";
 					} else if ($filter_option[$i] == "state") {
 						$query .= " AND wp_member_other_info.state_id = $filter_input[$i] ";
@@ -1030,7 +1039,9 @@ class Osa_Membership_Admin
 						$query .= " AND wp_member_other_info.membership_type = $filter_input[$i] ";
 					} else if ($filter_option[$i] == "member_status") {
 						$query .= " AND t1.is_deleted = $filter_input[$i] ";
-					}
+					} else if ($filter_option[$i] == "is_member") {
+						$query .= " AND t1.alive = $filter_input[$i] ";
+					} 
 				}
 			}
 
@@ -1201,7 +1212,7 @@ class Osa_Membership_Admin
 			$query = "SELECT
 			DATE_FORMAT(
 				wp_users.user_registered,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS user_registered,
 			wp_users.user_email,
 			t1.first_name, t1.last_name, t1.member_id, t1.is_deleted, t1.phone_no,
@@ -1210,7 +1221,7 @@ class Osa_Membership_Admin
 			wp_states.state, wp_chapters.name as chapter_name, wp_countries.country, 
 			DATE_FORMAT(
 				wp_member_other_info.membership_expiry_date,
-				'%d-%m-%Y'
+				'%m-%d-%Y'
 			) AS membership_expiry_date, wp_membership_type.membership 
 			FROM
 			`wp_users`
@@ -1234,8 +1245,19 @@ class Osa_Membership_Admin
 				$search_keywords = explode(" ", $search);
 
 				foreach ($search_keywords as $search) {
-					$query .= " AND ( wp_users.user_registered LIKE '%$search%' 
-				           OR wp_users.user_email LIKE '%$search%' 
+
+					$query .= " AND ( ";
+					if (DateTime::createFromFormat('m-d-Y', $search) !== false) {
+						$date = date('Y-m-d', strtotime($search));
+						$query .= " wp_users.user_registered LIKE '%$date%' ";
+					}
+
+					if (DateTime::createFromFormat('m-d-Y', $search) !== false) {
+						$date = date('Y-m-d', strtotime($search));
+						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR";
+					}
+
+					$query .= " wp_users.user_email LIKE '%$search%' 
 						   OR t1.member_id LIKE '%$search%' 
 						   OR t1.first_name LIKE '%$search%' 
 						   OR t1.last_name LIKE '%$search%'
@@ -1251,7 +1273,13 @@ class Osa_Membership_Admin
 
 				for ($i = 0; $i < count($filter_option); $i++) {
 
-					if ($filter_option[$i] == "country") {
+					if ($filter_option[$i] == "email") {
+						$query .= " AND wp_users.user_email LIKE '%$filter_input[$i]%' ";
+					} else if ($filter_option[$i] == "first_name") {
+						$query .= " AND t1.first_name LIKE '%$filter_input[$i]%' ";
+					} else if ($filter_option[$i] == "last_name") {
+						$query .= " AND t1.last_name LIKE '%$filter_input[$i]%' ";
+					} else if($filter_option[$i] == "country") {
 						$query .= " AND wp_member_other_info.country_id = $filter_input[$i] ";
 					} else if ($filter_option[$i] == "state") {
 						$query .= " AND wp_member_other_info.state_id = $filter_input[$i] ";
@@ -1261,7 +1289,9 @@ class Osa_Membership_Admin
 						$query .= " AND wp_member_other_info.chapter_type_id = $filter_input[$i] ";
 					} else if ($filter_option[$i] == "membership") {
 						$query .= " AND wp_member_other_info.membership_type = $filter_input[$i] ";
-					}
+					}  else if ($filter_option[$i] == "is_member") {
+						$query .= " AND t1.alive = $filter_input[$i] ";
+					} 
 				}
 			}
 

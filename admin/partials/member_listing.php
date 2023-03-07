@@ -48,7 +48,10 @@
 
                         <?php
                         $filter_option = array(
-                            "Country" => "country",
+                            "Email" => "email",
+                            "First Name" => "first_name",
+                            "Last Name" => "last_name",
+                            "Is Member" => "is_member",
                             "State" => "state",
                             "City" => "city",
                             "Chapter" => "chapter",
@@ -109,7 +112,7 @@
                 <!-- <th scope="col" id="categories" class="manage-column">Join Date</th> -->
                 <th scope="col" id="tags" class="manage-column">Expiry Date</th>
                 <th scope="col" id="tags" class="manage-column">Phone</th>
-                <th scope="col" id="tags" class="manage-column">Status</th>
+                <th scope="col" id="tags" class="manage-column">Membership Status</th>
                 <th scope="col" id="tags" class="manage-column">Action</th>
             </tr>
         </thead>
