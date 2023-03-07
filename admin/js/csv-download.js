@@ -126,8 +126,25 @@
 
                     // resArray.push(1,2,3, 'pooja');
                     for (let i = 0; i < response.length; i++) {
-                        if(response[i]['address_line_2'] == null){
-                            response[i]['address_line_2'] = 'N/A';
+
+                        if (response[i]['membership_expiry_date'] == null) {
+                            response[i]['membership_expiry_date'] = 'N/A';
+                        }
+
+                        if (response[i]['phone_no'] == null || response[i]['phone_no'] == '') {
+                            response[i]['phone_no'] = 'N/A';
+                        }else{
+                            response[i]['phone_no'] = response[i]['phone_no'].toString() ;
+                        }
+
+                        if (response[i]['membership'] == null) {
+                            response[i]['membership'] = 'N/A'
+                        }
+                        if (response[i]['address_line_2'] == null) {
+                            response[i]['address_line_2'] = 'N/A'
+                        }
+                        if (response[i]['membership_type_id'] == 3 ) {
+                            response[i]['membership_expiry_date'] = 'N/A';
                         }
 
                         resArray.push([
@@ -136,7 +153,7 @@
                             response[i]['user_email'],
                             response[i]['user_registered'],
                             response[i]['membership_expiry_date'],
-                            response[i]['phone_no'],
+                            '"'+response[i]['phone_no']+'"',
                             '"'+response[i]['address_line_1']+'"',
                             '"'+response[i]['address_line_2']+'"',
                             response[i]['country'],

@@ -192,7 +192,11 @@
 				filter_input.remove();
 				populateMemberStatus(filter_id);
 
-			} else {
+			} else if (el.val() === "is_member") {
+				filter_input.remove();
+				populateStatus(filter_id);
+				
+            } else {
 				filter_input.remove();
 				$(this).parent().append('<input type="text" name="filter_input" id="filter_input_id_' + filter_id + '" class="" value="">');
 			}
@@ -204,6 +208,10 @@
 			let el = $(this);
 			//alert('addmore');
 			let filter_opt_dict = {
+				"Email" : "email",
+				"First Name" : "first_name",
+				"Last Name" : "last_name",
+				"Is Member" : "is_member",
 				"Country": "country",
 				"State": "state",
 				"City": "city",
@@ -455,7 +463,17 @@
 
 			let html = '<select name="filter_input" id="filter_input_id_' + id + '" class="postform">'
 			html += '<option class="level-0" value="0">Active</option>';
-			html += '<option class="level-0" value="1">Deactive</option>';
+			html += '<option class="level-0" value="1">Inactive</option>';
+			html += '</select>';
+
+			mafs.find("#filter_input_area_" + id).append(html);
+		}
+
+		function populateStatus(id){
+
+			let html = '<select name="filter_input" id="filter_input_id_' + id + '" class="postform">'
+			html += '<option class="level-0" value="1">Alive</option>';
+			html += '<option class="level-0" value="0">Deceased</option>';
 			html += '</select>';
 
 			mafs.find("#filter_input_area_" + id).append(html);
@@ -559,6 +577,9 @@
 							if (response[i]['address_line_2'] == null) {
 								response[i]['address_line_2'] = 'N/A'
 							}
+							if (response[i]['membership_type_id'] == 3 ) {
+								response[i]['membership_expiry_date'] = 'N/A';
+							}
 
 							let dActivateClass = '';
 							// let disabled = '';
@@ -573,7 +594,7 @@
 
 
 
-							let html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized ' + dActivateClass + '"> \
+							let html = '<tr id="member-1" class="iedit author-self level-0 member-1 type-post status-publish format-standard hentry category-uncategorized memberList ' + dActivateClass + '"> \
 											<th scope="row" class="check-column"> <label class="screen-reader-text" for="cb-select-1"> \
 													Select Hello world! </label> \
 												<input  class="isChecked" name="member_id" data-user-id="' + response[i]['user_id'] + '" value="' + response[i]['member_id'] + '" type="checkbox"> \
@@ -592,7 +613,7 @@
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['city'] + ' </td> \
 											<td class="categories hidden column-categories" data-colname="Categories">'+ response[i]['postal_code'] + ' </td> \
 											<td class="categories column-categories" data-colname="Categories">'+ response[i]['membership'] + ' </td> \
-											<td class="categories column-categories" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-trash" title="Delete" id="trash_member" data-member-id="'+response[i]['member_id']+'" href=""></a>'+addMembership+'</td> \
+											<td class="categories column-categories actions" data-colname="Categories"> <a class="dashicons-before dashicons-visibility" title="View" href="?page=member-view&mid='+ response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-edit" title="Edit" href="?page=member-edit&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a><a class="vers dashicons-before dashicons-trash" title="Delete" id="trash_member" data-member-id="'+response[i]['member_id']+'" href=""></a>'+addMembership+'</td> \
 										</tr>';
 
 							mafs.find("#the-member-list").append(html);
