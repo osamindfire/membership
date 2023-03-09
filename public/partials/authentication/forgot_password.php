@@ -13,7 +13,7 @@
         
         <p class=" et_pb_contact_field ui-sortable">
             <label for="" class="et_pb_contact_form_label">Email</label>
-            <input type="text" name="email"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="email" value="<?php if(!empty($_REQUEST['email'])) { echo $_REQUEST['email']; } ?>">
+            <input type="text" name="email"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Email" value="<?php if(!empty($_REQUEST['email'])) { echo $_REQUEST['email']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
         </p>
         <div  style="margin-left:22px; transform:scale(0.77);-webkit-transform:scale(0.77);transform-origin:0 0;-webkit-transform-origin:0 0;" class="g-recaptcha" 

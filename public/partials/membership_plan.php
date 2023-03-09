@@ -23,7 +23,7 @@
   </div>
 <?php if (is_user_logged_in()) { ?>
 <div style="float:unset;padding:30px;">
-<a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
+<a href="<?php echo home_url('member-dashboard/logout/') /* echo wp_logout_url('login') */; ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
 </div>
 <?php } ?>
 <?php $sNo=1; foreach($membershipPlans as $plan) { ;?>

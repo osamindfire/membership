@@ -173,7 +173,7 @@ $emailBody='<!doctype html>
 							<tr>
 							  <td>
 							  <p>Hi <strong> Admin</strong>,<br>New member payment was successful.</p>
-							  <p><strong>Email</strong>: '.$memberEmail.' <br><strong>Membership Plan</strong>:'.$memberPlan.'<br><strong>Membership Fee</strong>: $'.$memberFee.'</p>
+							  <p><strong>Email</strong>: '.$memberEmail.' <br><strong>Membership Plan</strong>: '.$memberPlan.'<br><strong>Membership Fee</strong>: $'.$memberFee.'</p>
 							  </td>
 							 
 							</tr>

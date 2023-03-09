@@ -239,6 +239,7 @@ class Osa_Membership {
 
 		$this->loader->add_action('wp_ajax_register_validate', $this->plugin_public, 'register_validate');
 		$this->loader->add_action('wp_ajax_nopriv_register_validate',$this->plugin_public, 'register_validate');
+		//$this->loader->add_action('wp_logout',$this->plugin_public,'logout_member');
 		/**
 		 * Cron job for sending membership expire notification mail 
 		 */

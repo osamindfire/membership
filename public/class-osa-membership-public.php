@@ -120,16 +120,6 @@ class Osa_Membership_Public
 		if (!isset($_SESSION)) {
 			session_start();
 		} 
-		
-		if (stristr($_SERVER['REQUEST_URI'], 'logout') && !current_user_can('administrator')) {
-			wp_logout();
-			unset($_SESSION['user_id']);
-			wp_redirect('login');
-			exit;
-		}
-		/* if (isset($_SESSION['user_id'])) {
-			wp_set_current_user($_SESSION['user_id']);
-		} */
 		add_rewrite_endpoint('profile', EP_PERMALINK | EP_PAGES);
 		add_rewrite_endpoint('member-info', EP_PERMALINK | EP_PAGES);
 		add_rewrite_endpoint('change-password', EP_PERMALINK | EP_PAGES);
@@ -475,6 +465,35 @@ class Osa_Membership_Public
 		}
 		return $valid;
 	}
+	function isPasswordValid($password){
+
+		$status = 0;
+		if(!empty($password))
+		{
+		$whiteListed = "\$\@\#\^\|\!\~\=\+\-\_\.";
+		$message = "Password is invalid";
+		$containsLetter  = preg_match('/[a-zA-Z]/', $password);
+		$containsDigit   = preg_match('/\d/', $password);
+		$containsSpecial = preg_match('/['.$whiteListed.']/', $password);
+		$containsAnyOther = preg_match('/[^A-Za-z-\d'.$whiteListed.']/', $password);
+		if (strlen($password) < 6 ) $message = "Password should be at least 6 characters long";
+		//else if (strlen($password) > 20 ) $message = "Password should be at maximum 20 characters long";
+		else if(!$containsLetter) $message = "Password should contain at least one letter.";
+		else if(!$containsDigit) $message = "Password should contain at least one number.";
+		else if(!$containsSpecial) $message = "Password should contain at least one of these ".stripslashes( $whiteListed )." ";
+		else if($containsAnyOther) $message = "Password should contain only the mentioned characters";
+		else {
+			$status = 1;
+			$message = "Password is valid";
+		}
+		}else{
+			$message = 'Please enter a Password';
+		}
+		return array(
+			"status" => $status,
+			"message" => $message
+		);
+}
 	/* 
 	Function name: validateForm
 	Description : Validate register input feilds
@@ -534,24 +553,14 @@ class Osa_Membership_Public
 
 			// Check password is valid 
 			$password = esc_sql($_REQUEST['password']);
-			if (empty($password)) {
-				$errors['password'] = "Please enter a Password";
-			} elseif (0 === preg_match("/.{6,}/", $_POST['password'])) {
-				$errors['password'] = "Password must be at least six characters";
-			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['password']))
-			{
-				$errors['password'] = "Please enter alphanumeric characters only";
-			}
+			$passwordResponse = $this->isPasswordValid($password);
+			if($passwordResponse['status'] == 0){ $errors['password'] = $passwordResponse['message'];}
+
 
 			$cPassword = esc_sql($_REQUEST['confirm_password']);
-			if (empty($cPassword)) {
-				$errors['confirmPassword'] = "Please Confirm Password";
-			}elseif (0 === preg_match("/.{6,}/", $_POST['confirm_password'])) {
-				$errors['confirmPassword'] = "Password must be at least six characters";
-			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['confirm_password']))
-			{
-				$errors['confirmPassword'] = "Please enter alphanumeric characters only";
-			} elseif (0 !== strcmp($_POST['password'], $_POST['confirm_password'])) // Check password confirmation_matches 
+			$passwordResponse = $this->isPasswordValid($cPassword);
+			if($passwordResponse['status'] == 0){ $errors['confirmPassword'] = $passwordResponse['message'];}
+			elseif (0 !== strcmp($_POST['password'], $_POST['confirm_password'])) // Check password confirmation_matches 
 			{
 				$errors['confirmPassword'] = "Passwords do not match";
 			}
@@ -587,19 +596,28 @@ class Osa_Membership_Public
 
 				// Check password is valid  
 				$spousePassword = esc_sql($_REQUEST['spouse_password']);
-				if (empty($spousePassword)) {
+				$passwordResponse = $this->isPasswordValid($spousePassword);
+				if($passwordResponse['status'] == 0){ $errors['spousePassword'] = $passwordResponse['message'];}
+
+				/* if (empty($spousePassword)) {
 					$errors['spousePassword'] = "Please enter a Spouse Password";
 				} elseif (0 === preg_match("/.{6,}/", $_POST['spouse_password'])) {
 					$errors['spousePassword'] = "Password must be at least six characters";
 				}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['spouse_password']))
 				{
 					$errors['spousePassword'] = "Please enter alphanumeric characters only";
-				}
+				} */
 
 				// Check password confirmation_matches
 				
 				$cSpousePassword = esc_sql($_REQUEST['spouse_confirm_password']);
-				if (empty($cSpousePassword)) {
+				$passwordResponse = $this->isPasswordValid($cSpousePassword);
+				if($passwordResponse['status'] == 0){ $errors['confirmSpousePassword'] = $passwordResponse['message'];}
+				elseif (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password'])) {
+					$errors['confirmSpousePassword'] = "Spouse Passwords do not match";
+				}
+
+				/* if (empty($cSpousePassword)) {
 					$errors['confirmSpousePassword'] = "Please enter a Spouse Password";
 				}elseif (0 === preg_match("/.{6,}/", $_POST['spouse_confirm_password'])) {
 					$errors['spousePassword'] = "Password must be at least six characters";
@@ -608,7 +626,7 @@ class Osa_Membership_Public
 					$errors['confirmSpousePassword'] = "Please enter alphanumeric characters only";
 				}elseif (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password'])) {
 					$errors['confirmSpousePassword'] = "Spouse Passwords do not match";
-				}
+				} */
 				
 			}
 
@@ -1196,17 +1214,17 @@ class Osa_Membership_Public
 				}
 				// Check password is valid  
 				$spousePassword = esc_sql($_REQUEST['spouse_password']);
-				if (isset($_REQUEST['spouse_password']) && empty($spousePassword)) {
-					$errors['spousePassword'] = "Please enter a Partner Password";
-				} elseif (isset($_REQUEST['spouse_password']) && (0 === preg_match("/.{6,}/", $_POST['spouse_password']))) {
-					$errors['spousePassword'] = "Password must be at least six characters";
+				if (isset($_REQUEST['spouse_password']) && !empty($spousePassword)) {
+				$passwordResponse = $this->isPasswordValid($spousePassword);
+				if($passwordResponse['status'] == 0){ $errors['spousePassword'] = $passwordResponse['message'];}
 				}
-
 				// Check password confirmation_matches
 				$cSpousePassword = esc_sql($_REQUEST['spouse_password']);
-				if (isset($_REQUEST['spouse_password']) && empty($cSpousePassword)) {
-					$errors['confirmSpousePassword'] = "Please enter a Partner Password";
-				}
+				if (isset($_REQUEST['spouse_password']) && !empty($cSpousePassword)) {
+					$passwordResponse = $this->isPasswordValid($spousePassword);
+					if($passwordResponse['status'] == 0){ $errors['confirmSpousePassword'] = $passwordResponse['message'];}
+					}
+
 				if (isset($_REQUEST['spouse_password']) && (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password']))) {
 					$errors['confirmSpousePassword'] = "Spouse Passwords do not match";
 				}
@@ -1314,24 +1332,14 @@ class Osa_Membership_Public
 						$errors['old_password'] = "You have entered an incorrect Password";
 					} else {
 						$newPassword = esc_sql($_REQUEST['new_password']);
-						if (empty($newPassword)) {
-							$errors['new_password'] = "Please enter a New Password";
-						} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
-							$errors['new_password'] = "Password must be at least six characters";
-						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['new_password']))
-						{
-							$errors['new_password'] = "Please enter alphanumeric characters only";
-						}
+						
+						$passwordResponse = $this->isPasswordValid($newPassword);
+						if($passwordResponse['status'] == 0){ $errors['new_password'] = $passwordResponse['message'];}
 
 						$cPassword = esc_sql($_REQUEST['confirm_password']);
-						if (empty($cPassword)) {
-							$errors['confirm_password'] = "Please enter a Confirm Password";
-						} elseif (0 === preg_match("/.{6,}/", $_POST['confirm_password'])) {
-							$errors['confirm_password'] = "Password must be at least six characters";
-						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['confirm_password']))
-						{
-							$errors['confirm_password'] = "Please enter alphanumeric characters only";
-						}elseif ($_POST['old_password'] == $newPassword) {
+						$passwordResponse = $this->isPasswordValid($cPassword);
+						if($passwordResponse['status'] == 0){ $errors['confirm_password'] = $passwordResponse['message'];}
+						elseif ($_POST['old_password'] == $newPassword) {
 							$errors['confirm_password'] = "Your new password cannot be the same as your current password";
 						}
 
@@ -1447,24 +1455,13 @@ class Osa_Membership_Public
 					} else {
 
 						$newPassword = esc_sql($_POST['new_password']);
-						if (empty($newPassword)) {
-							$errors['new_password'] = "Please enter a New Password";
-						} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
-							$errors['new_password'] = "Password must be at least six characters";
-						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['new_password']))
-						{
-							$errors['new_password'] = "Please enter alphanumeric characters only";
-						}
-
+						$passwordResponse = $this->isPasswordValid($newPassword);
+						if($passwordResponse['status'] == 0){ $errors['new_password'] = $passwordResponse['message'];}
+						
 						$cPassword = esc_sql($_POST['confirm_password']);
-						if (empty($cPassword)) {
-							$errors['confirm_password'] = "Please enter a Confirm Password";
-						} elseif (0 === preg_match("/.{6,}/", $_POST['confirm_password'])) {
-							$errors['confirm_password'] = "Password must be at least six characters";
-						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['confirm_password']))
-						{
-							$errors['confirm_password'] = "Please enter alphanumeric characters only";
-						}elseif ($_POST['confirm_password'] != $_POST['new_password']) {
+						$passwordResponse = $this->isPasswordValid($cPassword);
+						if($passwordResponse['status'] == 0){ $errors['confirm_password'] = $passwordResponse['message'];}
+						elseif ($_POST['confirm_password'] != $_POST['new_password']) {
 							$errors['confirm_password'] = "Your new password and confirm password does not match";
 						}
 					}
@@ -1540,24 +1537,13 @@ class Osa_Membership_Public
 
 			// Check password is valid 
 			$password = $_POST['post_fields']['password'];
-			if (empty($password)) {
-				$errors['password'] = "Please enter a Password";
-			} elseif (0 === preg_match("/.{6,}/", $_POST['post_fields']['password'])) {
-				$errors['password'] = "Password must be at least six characters";
-			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['post_fields']['password']))
-			{
-				$errors['password'] = "Please enter alphanumeric characters only";
-			}
-
+			$passwordResponse = $this->isPasswordValid($_POST['post_fields']['password']);
+			if($passwordResponse['status'] == 0){ $errors['password'] = $passwordResponse['message'];}
+			
 			$cPassword = $_POST['post_fields']['confirm_password'];
-			if (empty($cPassword)) {
-				$errors['confirm_password'] = "Please enter Confirm Password";
-			}elseif (0 === preg_match("/.{6,}/", $cPassword)) {
-				$errors['confirm_password'] = "Password must be at least six characters";
-			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $cPassword))
-			{
-				$errors['confirm_password'] = "Please enter alphanumeric characters only";
-			} elseif (0 !== strcmp($password, $cPassword)) // Check password confirmation_matches 
+			$passwordResponse = $this->isPasswordValid($cPassword);
+			if($passwordResponse['status'] == 0){ $errors['confirm_password'] = $passwordResponse['message']; }
+			elseif (0 !== strcmp($password, $cPassword)) // Check password confirmation_matches 
 			{
 				$errors['confirm_password'] = "Passwords do not match";
 			}
@@ -1594,26 +1580,14 @@ class Osa_Membership_Public
 
 				// Check password is valid  
 				$spousePassword = esc_sql($_POST['post_fields']['spouse_password']);
-				if (empty($spousePassword)) {
-					$errors['spouse_password'] = "Please enter a Spouse Password";
-				} elseif (0 === preg_match("/.{6,}/", $_POST['post_fields']['spouse_password'])) {
-					$errors['spouse_password'] = "Password must be at least six characters";
-				}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['post_fields']['spouse_password']))
-				{
-					$errors['spouse_password'] = "Please enter alphanumeric characters only";
-				}
-
+				$passwordResponse = $this->isPasswordValid($spousePassword);
+				if($passwordResponse['status'] == 0){ $errors['spouse_password'] = $passwordResponse['message'];}
 				// Check password confirmation_matches
 				
 				$cSpousePassword = esc_sql($_POST['post_fields']['spouse_confirm_password']);
-				if (empty($cSpousePassword)) {
-					$errors['spouse_confirm_password'] = "Please enter a Confirm Spouse Password";
-				}elseif (0 === preg_match("/.{6,}/", $cSpousePassword)) {
-					$errors['spouse_confirm_password'] = "Password must be at least six characters";
-				}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $cSpousePassword))
-				{
-					$errors['spouse_confirm_password'] = "Please enter alphanumeric characters only";
-				}elseif (0 !== strcmp($spousePassword, $cSpousePassword)) {
+				$passwordResponse = $this->isPasswordValid($cSpousePassword);
+				if($passwordResponse['status'] == 0){ $errors['spouse_confirm_password'] = $passwordResponse['message'];}
+				elseif (0 !== strcmp($spousePassword, $cSpousePassword)) {
 					$errors['spouse_confirm_password'] = "Spouse Passwords do not match";
 				}
 				
@@ -1648,15 +1622,22 @@ class Osa_Membership_Public
 			if (empty($recaptcha_value)) {
 				$errors['recaptcha_value'] = "Please check reCAPTCHA";
 			}
-			
-		//echo "<pre>";print_r($_POST['post_fields']);die;
-		
+
 		echo json_encode($errors);
 		wp_die();
 	}
 
 	public function osa_redirects($is_rediect)
 	{
+		if ( is_page('logout')) {
+			wp_destroy_current_session();
+			wp_clear_auth_cookie();
+			wp_logout();
+			unset($_SESSION['user_id']);
+			$url_logout = home_url('login');
+			wp_redirect( $url_logout );
+			exit();
+		}
 		if (isset($_SESSION['user_id'])) {
 			wp_set_current_user($_SESSION['user_id']);
 		}
@@ -1675,9 +1656,6 @@ class Osa_Membership_Public
 				exit();
 			}
 		}
-
-
-		
 		
 	}
 }

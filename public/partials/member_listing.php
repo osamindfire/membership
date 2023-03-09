@@ -17,7 +17,7 @@
                                                                                 echo "active";
                                                                               } ?>"><img src="<?= DIR_URL; ?>/profile_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Profile</strong></a></p>
     <p style="margin-right: 10px;
-    width: 200px;"><a href="<?php echo wp_logout_url('login'); ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
+    width: 200px;"><a href="<?php echo home_url('member-dashboard/logout/')/* echo wp_logout_url('login') */; ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
   </div>
   <div class="column col-2">
     <?php
