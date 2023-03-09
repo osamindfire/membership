@@ -37,8 +37,8 @@
 <form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
         
         <p class=" et_pb_contact_field ui-sortable">
-            <label for="" class="et_pb_contact_form_label">Username</label>
-            <input type="text" name="username"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Username" value="<?php if(!empty($_REQUEST['username'])) { echo $_REQUEST['username']; } ?>">
+            <label for="" class="et_pb_contact_form_label">Email</label>
+            <input type="text" name="username"  class="input <?php if(!empty($errors['email'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Email" value="<?php if(!empty($_REQUEST['username'])) { echo $_REQUEST['username']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['email'])) { echo $errors['email']; } ?></span>
         </p>
         
