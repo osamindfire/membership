@@ -1656,6 +1656,10 @@ class Osa_Membership_Public
 				exit();
 			}
 		}
+		if( is_page( 'member-dashboard' ) &&  !is_user_logged_in()){
+			wp_redirect( '/login' );
+			exit();
+		}
 		
 	}
 }
