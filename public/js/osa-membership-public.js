@@ -41,29 +41,7 @@ $(document).ready(function () {
 	$(wrapper).on("click", ".remove_child", function (e) { //user click on remove text
 		e.preventDefault(); $(this).parent('p').parent('div').remove(); x--;
 	});
-	//$('#register_submit_button').attr('disabled', 'disabled');
-	//if(!$('#register_submit_button').hasClass('register_submit_button'))
-	//$('#register_submit_button').addClass('register_submit_button');
-
-	/* checkAgreement();
-	$('.agreement_error').hide();
-	$('#register_submit_button').click(function () {
-		if ($(this).is(':checked')) {
-			checkAgreement();
-		} else {
-			checkAgreement();
-
-		}
-	});
-	$('#agreement_page_id').click(function () {
-		if ($(this).is(':checked')) {
-			checkAgreement();
-		} else {
-			checkAgreement();
-
-		}
-	}); */
-
+	
 	if (window.location.pathname == '/member-dashboard/') {
 		getStates();
 		getChapters();
@@ -189,80 +167,242 @@ function getChapters() {
 
 };
 
-function validate() {
-		
-	/* var valid = true;
-	valid = checkEmpty($("#agreement_page_id"));
-	valid = checkEmpty($("#first_name"));
-	valid = checkEmpty($("#last_name"));
-	valid = checkEmpty($("#email"));
-	valid = checkEmpty($("#main_member_phone_no"));
-	valid = checkEmpty($("#password"));
-	valid = checkEmpty($("#confirm_password"));
-	if($("#spouse_first_name").val()  != "")
-	{
-		valid = checkEmpty($("#spouse_first_name"));
-		valid = checkEmpty($("#spouse_last_name"));
-		valid = checkEmpty($("#spouse_email"));
-		valid = checkEmpty($("#partner_member_phone_no"));
-		valid = checkEmpty($("#spouse_password"));
-		valid = checkEmpty($("#spouse_confirm_password"));
+function recaptchaCallback() {
+		$('#recaptcha_value').val(1);
+		validatedata();
+};
+function validatedata() {
+	var arr = {};
+	arr['first_name']= $("#first_name").val();
+	arr['last_name']= $("#last_name").val();
+	arr['email']= $("#email").val();
+	arr['main_member_phone_no']= $("#main_member_phone_no").val();
+	arr['password']= $("#password").val();
+	arr['confirm_password']= $("#confirm_password").val();
+	
+	arr['spouse_first_name']= $("#spouse_first_name").val();
+	arr['spouse_last_name']= $("#spouse_last_name").val();
+	arr['spouse_email']= $("#spouse_email").val();
+	arr['partner_member_phone_no']= $("#partner_member_phone_no").val();
+	arr['spouse_password']= $("#spouse_password").val();
+	arr['spouse_confirm_password']= $("#spouse_confirm_password").val();
+
+	arr['address_line_1']= $("#address_line_1").val();
+	arr['country']= $("#country").val();
+	arr['state']= $("#state").val();
+	arr['city']= $("#city").val();
+	arr['postal_code']= $("#postal_code").val();
+	if ($('#agreement_page_id').is(':checked')) {
+		arr['agreement_page_id']= 'yes';
+	} else {
+		arr['agreement_page_id']= 'no';
+
 	}
-	
-	valid = checkEmpty($("#address_line_1"));
-	valid = checkEmpty($("#country"));
-	valid = checkEmpty($("#state"));
-	valid = checkEmpty($("#city"));
-	valid = checkEmpty($("#postal_code"));
-	
-	
-	if(valid) {
-		$('#register_submit_button').removeAttr('disabled');
-		$('#register_submit_button').removeClass('register_submit_button');
-	}	 */
-	var valid = false;
-	
-	if($("#first_name").val() != "" && $("#last_name").val() != "" && $("#email").val() != "" && $("#main_member_phone_no").val() != "" && $("#password").val() != "" && $("#confirm_password").val() != "" && $("#address_line_1").val() != "" && $("#country").val() != "" && $("#state").val() != "" && $("#city").val() != "" && $("#postal_code").val() != ""){
+	arr['recaptcha_value']= $("#recaptcha_value").val();
+	/* if ($('#recaptcha-accessible-status').text() == 'You are verified') {
+		arr['recaptcha-anchor']= 'yes';
+	} else {
+		arr['recaptcha-anchor']= 'no';
 
-		if ($('#agreement_page_id').is(':checked')) {
-			var valid = true;
-		} else {
-			var valid = false;
+	} */
+	//console.log(arr);
+	
+	let data = {
+		action: "register_validate",
+		post_fields: arr,
+	}
+	$.ajax({
+		url: ajax_url,
+		type: "POST",
+		data: data,
+		success: function (response) {
 
+			if (response) {
+				
+				var blank='';
+				var valid = true;
+				if(response['first_name']){
+					valid = false;
+					$("#first_name_error_messages").text(response['first_name']);
+					$("#first_name").addClass('et_contact_error');
+				}else{
+					$("#first_name_error_messages").text(blank);
+					$("#first_name").removeClass('et_contact_error');
+				}
+				
+				if(response['last_name']){
+					valid = false;
+					$("#last_name_error_messages").text(response['last_name']);
+					$("#last_name").addClass('et_contact_error');
+				}else{
+					$("#last_name_error_messages").text(blank);
+					$("#last_name").removeClass('et_contact_error');
+				}
+
+				if(response['email']){
+					valid = false;
+					$("#email_error_messages").text(response['email']);
+					$("#email").addClass('et_contact_error');
+				}else{
+					$("#email_error_messages").text(blank);
+					$("#email").removeClass('et_contact_error');
+				}
+
+				if(response['main_member_phone_no']){
+					valid = false;
+					$("#main_member_phone_no_error_messages").text(response['main_member_phone_no']);
+					$("#main_member_phone_no").addClass('et_contact_error');
+				}else{
+					$("#main_member_phone_no_error_messages").text(blank);
+					$("#main_member_phone_no").removeClass('et_contact_error');
+				}
+
+				if(response['password']){
+					valid = false;
+					$("#password_error_messages").text(response['password']);
+					$("#password").addClass('et_contact_error');
+				}else{
+					$("#password_error_messages").text(blank);
+					$("#password").removeClass('et_contact_error');
+				}
+				if(response['confirm_password']){
+					valid = false;
+					$("#confirm_password_error_messages").text(response['confirm_password']);
+					$("#confirm_password").addClass('et_contact_error');
+				}else{
+					$("#confirm_password_error_messages").text(blank);
+					$("#confirm_password").removeClass('et_contact_error');
+				}
+				if(response['spouse_first_name']){
+					valid = false;
+					$("#spouse_first_name_error_messages").text(response['spouse_first_name']);
+					$("#spouse_first_name").addClass('et_contact_error');
+					$("#spouse_first_name_label").addClass('required_field');
+				}else{
+					$("#spouse_last_name_error_messages").text(blank);
+					$("#spouse_last_name").removeClass('et_contact_error');
+					$("#spouse_first_name_label").removeClass('required_field');
+				}
+				if(response['spouse_last_name']){
+					valid = false;
+					$("#spouse_last_name_error_messages").text(response['spouse_last_name']);
+					$("#spouse_last_name").addClass('et_contact_error');
+					$("#spouse_last_name_label").addClass('required_field');
+				}else{
+					$("#spouse_last_name_error_messages").text(blank);
+					$("#spouse_last_name").removeClass('et_contact_error');
+					$("#spouse_last_name_label").removeClass('required_field');
+				}
+
+				if(response['spouse_email']){
+					valid = false;
+					$("#spouse_email_error_messages").text(response['spouse_email']);
+					$("#spouse_email").addClass('et_contact_error');
+					$("#spouse_email_label").addClass('required_field');
+				}else{
+					$("#spouse_email_error_messages").text(blank);
+					$("#spouse_email").removeClass('et_contact_error');
+					$("#spouse_email_label").removeClass('required_field');
+				}
+
+				if(response['spouse_password']){
+					valid = false;
+					$("#spouse_password_error_messages").text(response['spouse_password']);
+					$("#spouse_password").addClass('et_contact_error');
+					$("#spouse_password_label").addClass('required_field');
+				}else{
+					$("#spouse_password_error_messages").text(blank);
+					$("#spouse_password").removeClass('et_contact_error');
+					$("#spouse_password_label").removeClass('required_field');
+				}
+
+				if(response['spouse_confirm_password']){
+					valid = false;
+					$("#spouse_confirm_password_error_messages").text(response['spouse_confirm_password']);
+					$("#spouse_confirm_password").addClass('et_contact_error');
+					$("#spouse_confirm_password_label").addClass('required_field');
+					
+				}else{
+					$("#spouse_confirm_password_error_messages").text(blank);
+					$("#spouse_confirm_password").removeClass('et_contact_error');
+					$("#spouse_confirm_password_label").removeClass('required_field');
+				}
+
+				if(response['address_line_1']){
+					valid = false;
+					$("#address_line_1_error_messages").text(response['address_line_1']);
+					$("#address_line_1").addClass('et_contact_error');
+				}else{
+					$("#address_line_1_error_messages").text(blank);
+					$("#address_line_1").removeClass('et_contact_error');
+				}
+				if(response['country']){
+					valid = false;
+					$("#country_error_messages").text(response['country']);
+					$("#country").addClass('et_contact_error');
+				}else{
+					$("#country_error_messages").text(blank);
+					$("#country").removeClass('et_contact_error');
+				}
+
+				if(response['state']){
+					valid = false;
+					$("#state_id_error_messages").text(response['state']);
+					$("#state").addClass('et_contact_error');
+				}else{
+					$("#state_id_error_messages").text(blank);
+					$("#state").removeClass('et_contact_error');
+				}
+				if(response['city']){
+					valid = false;
+					$("#city_error_messages").text(response['city']);
+					$("#city").addClass('et_contact_error');
+				}else{
+					$("#city_error_messages").text(blank);
+					$("#city").removeClass('et_contact_error');
+				}
+
+				if(response['postal_code']){
+					valid = false;
+					$("#postal_code_error_messages").text(response['postal_code']);
+					$("#postal_code").addClass('et_contact_error');
+				}else{
+					$("#postal_code_error_messages").text(blank);
+					$("#postal_code").removeClass('et_contact_error');
+				}
+				if(response['agreement_page_id']){
+					valid = false;
+					$("#agreement_page_id_error_messages").text(response['agreement_page_id']);
+					$("#agreement_page_id").addClass('et_contact_error');
+				}else{
+					$("#agreement_page_id_error_messages").text(blank);
+					$("#agreement_page_id").removeClass('et_contact_error');
+				}
+				if(response['recaptcha_value']){
+					valid = false;
+					$("#recaptcha_value_error_messages").text(response['recaptcha_value']);
+					//$("#recaptcha_value").addClass('et_contact_error');
+				}else{
+					$("#recaptcha_value_error_messages").text(blank);
+					//$("#recaptcha_value").removeClass('et_contact_error');
+				}
+				var recaptcha_value=$('#recaptcha_value').val();
+				if(valid && recaptcha_value) {
+					$('#recaptcha_value').val(1);
+					$('#register_submit_button').removeAttr('disabled');
+					$('#register_submit_button').removeClass('register_submit_button');
+				}else{
+					$('#valid_form').val(0);
+					$('#register_submit_button').attr('disabled','disabled');
+					$('#register_submit_button').addClass('register_submit_button');
+				}
+
+				
+	
+			}
+		},
+		error: function (e, response) {
+			console.log("error");
 		}
-		
-	}else{
-		var valid = false;
-	}
-	if(valid) {
-		$('#register_submit_button').removeAttr('disabled');
-		$('#register_submit_button').removeClass('register_submit_button');
-	}else{
-		$('#register_submit_button').attr('disabled','disabled');
-		$('#register_submit_button').addClass('register_submit_button');
-	}
-
-}
-
-function validatePartner() {
-	var valid = false;
-	if($("#spouse_first_name").val() != "" && $("#spouse_last_name").val() != "" && $("#spouse_email").val() != "" && $("#spouse_password").val() != "" && $("#spouse_confirm_password").val() != ""){
-
-		if ($('#agreement_page_id').is(':checked')) {
-			var valid = true;
-		} else {
-			var valid = false;
-		}
-		
-	}else{
-		var valid = false;
-	}
-	if(valid) {
-		$('#register_submit_button').removeAttr('disabled');
-		$('#register_submit_button').removeClass('register_submit_button');
-	}else{
-		$('#register_submit_button').attr('disabled','disabled');
-		$('#register_submit_button').addClass('register_submit_button');
-	}
-
-}
+	});
+};

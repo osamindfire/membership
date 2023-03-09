@@ -57,8 +57,8 @@
                 <span class="error_messages"><?php if(!empty($errors['agree'])) { echo $errors['agree']; } ?></span>
 		</p>
         <p class="et_pb_contact_field ui-sortable" data-type="checkbox">
-        <a href="<?php echo home_url() . '/forgot-password';?>">Forgot password ?</a>
-        <a href="<?php echo home_url() . '/become-a-member';?>" style="float:right">Become a member</a>
+        <a class="anchor_as_button" href="<?php echo home_url() . '/forgot-password';?>">Forgot password ?</a>
+        <a class="anchor_as_button" href="<?php echo home_url() . '/become-a-member';?>" style="float:right">Become a member</a>
 		</p>
 		<button type="submit" class="et_pb_contact_submit et_pb_button" data-quickaccess-id="button">Login</button>
     </form>

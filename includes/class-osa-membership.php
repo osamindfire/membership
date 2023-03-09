@@ -224,6 +224,7 @@ class Osa_Membership {
 		$this->loader->add_action( 'wp_enqueue_scripts', $this->plugin_public, 'enqueue_scripts' );
 		//$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
 		$this->loader->add_action( 'init', $this->plugin_public, 'initFunction' );
+		$this->loader->add_action('template_redirect', $this->plugin_public, 'osa_redirects');
 		$this->loader->add_action('wp_ajax_getStates',$this->plugin_public, 'getStates');
 		$this->loader->add_action('wp_ajax_nopriv_getStates',$this->plugin_public, 'getStates');
 		$this->loader->add_action('profile_update',$this->plugin_public, 'profile');
@@ -235,15 +236,9 @@ class Osa_Membership {
 		$this->loader->add_action('wp_ajax_country_action', $this->plugin_public, 'country_action');
 		$this->loader->add_action('wp_ajax_state_action', $this->plugin_public, 'state_action');
 		$this->loader->add_action('wp_ajax_chapter_action', $this->plugin_public, 'chapter_action');
-		/* if ( SLUG_VALUE == 'cancel-payment') {
-			$this->loader->add_filter('template_include',$this->plugin_public, 'cancelPayment');
-		}elseif(SLUG_VALUE == 'success-payment') {
-			$this->loader->add_filter('template_include',$this->plugin_public, 'successPayment');
-		}elseif(SLUG_VALUE == 'payment-notify'){
-			$this->loader->add_filter('template_include',$this->plugin_public, 'membershipPlan');
-		} */
-		
 
+		$this->loader->add_action('wp_ajax_register_validate', $this->plugin_public, 'register_validate');
+		$this->loader->add_action('wp_ajax_nopriv_register_validate',$this->plugin_public, 'register_validate');
 		/**
 		 * Cron job for sending membership expire notification mail 
 		 */

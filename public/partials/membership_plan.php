@@ -1,17 +1,17 @@
-<?php if (isset($_GET["register_success"])){  ?>
+<?php if (isset($_GET["register_success"])){?>
   <div class="alert" style="background-color: #003772 !important;">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-  <strong>Member has been registered successfully. Please select the membership plan !</strong>
+  <strong>Welcome <?= $loggedUser->data->display_name;?>!<br>You have registered successfully. Please select a membership plan!</strong>
   </div>
 <?php }elseif(isset($_GET["membership_expired"])){ ?>
   <div class="alert" style="background-color: #003772 !important;">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-  <strong>Your membership has expired. Please renew the membership plan !</strong>
+  <strong>Your membership has expired. Please renew the membership plan!</strong>
   </div>
 <?php }elseif(isset($_GET["no_membership_plan"])){ ?>
   <div class="alert" style="background-color: #003772 !important;">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
-  <strong>Please buy membership plan then you will be able to search other Odia members and manage several activities with this access !</strong>
+  <strong>Please buy membership plan then you will be able to search other Odia members and manage several activities with this access!</strong>
   </div>
 
 <?php } ?>

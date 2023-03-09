@@ -115,25 +115,21 @@ class Osa_Membership_Public
 
 	public function initFunction()
 	{
-		//ob_start();
+		ob_start();
 		error_reporting(0);
 		if (!isset($_SESSION)) {
 			session_start();
-		}
+		} 
+		
 		if (stristr($_SERVER['REQUEST_URI'], 'logout') && !current_user_can('administrator')) {
 			wp_logout();
 			unset($_SESSION['user_id']);
 			wp_redirect('login');
 			exit;
 		}
-		if (current_user_can('administrator') && SLUG_VALUE == 'member-dashboard') {
-			$redirectTo = home_url() . '/wp-admin';
-			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-			exit();
-		}
-		if (isset($_SESSION['user_id'])) {
+		/* if (isset($_SESSION['user_id'])) {
 			wp_set_current_user($_SESSION['user_id']);
-		}
+		} */
 		add_rewrite_endpoint('profile', EP_PERMALINK | EP_PAGES);
 		add_rewrite_endpoint('member-info', EP_PERMALINK | EP_PAGES);
 		add_rewrite_endpoint('change-password', EP_PERMALINK | EP_PAGES);
@@ -158,6 +154,7 @@ class Osa_Membership_Public
 	public function membershipPlan()
 	{
 		if (!empty($_SESSION['user_id'])) {
+			$loggedUser = wp_get_current_user();
 			global $wpdb, $user_ID;
 			/* $type = '';
 			if ($this->getTotalParent($_SESSION['user_id']) > 1) {
@@ -307,7 +304,7 @@ class Osa_Membership_Public
 	*/
 	public function memberLogin()
 	{
-		if (!is_user_logged_in()) {
+
 			global $wpdb, $user_ID;
 			if ($_POST) {
 				//We shall SQL escape all inputs  
@@ -384,17 +381,6 @@ class Osa_Membership_Public
 			ob_start();
 			include_once(plugin_dir_path(__FILE__) . 'partials/authentication/login.php');
 			return ob_get_clean();
-		} else {
-
-			if (current_user_can('administrator')) {
-				$redirectTo = home_url() . '/wp-admin';
-				echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-				exit();
-			}
-			$redirectTo = home_url() . '/member-dashboard';
-			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-			exit();
-		}
 	}
 
 	/* 
@@ -403,7 +389,6 @@ class Osa_Membership_Public
 	*/
 	public function memberRegister()
 	{
-		if (!is_user_logged_in()) {
 			global $wpdb, $user_ID;
 			$countries = $wpdb->get_results("SELECT * FROM wp_countries order by priority ASC");
 
@@ -431,11 +416,6 @@ class Osa_Membership_Public
 			ob_start();
 			include_once(plugin_dir_path(__FILE__) . 'partials/authentication/register.php');
 			return ob_get_clean();
-		} else {
-			$redirectTo = home_url() . '/member-dashboard';
-			echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
-			exit();
-		}
 	}
 
 	public function forgotPassword()
@@ -974,7 +954,6 @@ class Osa_Membership_Public
 		global $current_user;
 		$logged_user = wp_get_current_user();
 		$membershipExpiryDate = $this->getMembershipExpireDate();
-		//$totalParent = $this->getTotalParent($user_ID);
 		if (is_user_logged_in() && strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
 			if ($_POST) {
 				$errors = $this->validateProfileForm();
@@ -1339,18 +1318,23 @@ class Osa_Membership_Public
 							$errors['new_password'] = "Please enter a New Password";
 						} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
 							$errors['new_password'] = "Password must be at least six characters";
+						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['new_password']))
+						{
+							$errors['new_password'] = "Please enter alphanumeric characters only";
 						}
 
 						$cPassword = esc_sql($_REQUEST['confirm_password']);
 						if (empty($cPassword)) {
-							$errors['confirm_password'] = "Please Confirm Password";
-						} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
+							$errors['confirm_password'] = "Please enter a Confirm Password";
+						} elseif (0 === preg_match("/.{6,}/", $_POST['confirm_password'])) {
+							$errors['confirm_password'] = "Password must be at least six characters";
+						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['confirm_password']))
 						{
-							$errors['confirm_password'] = "Passwords do not match";
-						}
-						if ($_REQUEST['old_password'] == $newPassword) {
+							$errors['confirm_password'] = "Please enter alphanumeric characters only";
+						}elseif ($_POST['old_password'] == $newPassword) {
 							$errors['confirm_password'] = "Your new password cannot be the same as your current password";
 						}
+
 					}
 
 					if (empty($errors)) {
@@ -1467,17 +1451,21 @@ class Osa_Membership_Public
 							$errors['new_password'] = "Please enter a New Password";
 						} elseif (0 === preg_match("/.{6,}/", $_POST['new_password'])) {
 							$errors['new_password'] = "Password must be at least six characters";
+						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['new_password']))
+						{
+							$errors['new_password'] = "Please enter alphanumeric characters only";
 						}
 
 						$cPassword = esc_sql($_POST['confirm_password']);
 						if (empty($cPassword)) {
-							$errors['confirm_password'] = "Please Confirm Password";
-						} elseif (0 !== strcmp($_POST['new_password'], $_POST['confirm_password'])) // Check password confirmation_matches 
+							$errors['confirm_password'] = "Please enter a Confirm Password";
+						} elseif (0 === preg_match("/.{6,}/", $_POST['confirm_password'])) {
+							$errors['confirm_password'] = "Password must be at least six characters";
+						}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['confirm_password']))
 						{
-							$errors['confirm_password'] = "Passwords do not match";
-						}
-						if ($_POST['old_password'] == $newPassword) {
-							$errors['confirm_password'] = "Your new password cannot be the same as your current password";
+							$errors['confirm_password'] = "Please enter alphanumeric characters only";
+						}elseif ($_POST['confirm_password'] != $_POST['new_password']) {
+							$errors['confirm_password'] = "Your new password and confirm password does not match";
 						}
 					}
 				}
@@ -1509,5 +1497,187 @@ class Osa_Membership_Public
 		ob_start();
 		include_once(plugin_dir_path(__FILE__) . 'partials/authentication/reset_password.php');
 		return ob_get_clean();
+	}
+
+	public function register_validate()
+	{
+		header("Content-Type: application/json");
+		global $wpdb;
+		
+
+			$errors = array();
+			
+			$firstName = $_POST['post_fields']['first_name'];
+			if (empty($firstName)) {
+				$errors['first_name'] = "Please enter a First Name";
+			}
+			$lastName = $_POST['post_fields']['last_name'];
+			if (empty($lastName)) {
+				$errors['last_name'] = "Please enter a Last Name";
+			}
+
+			// Check email address is present and valid  
+			$email = $_POST['post_fields']['email'];
+			if (empty($email)) {
+				$errors['email'] = "Please enter a Email";
+			} elseif (!is_email($email)) {
+				$errors['email'] = "Please enter a valid Email";
+			} elseif (email_exists($email) || username_exists($email)) {
+				$errors['email'] = "This email address is already in use";
+			}
+
+			$mobileNo = $_POST['post_fields']['main_member_phone_no'];
+			if (empty($mobileNo)) {
+				$errors['main_member_phone_no'] = "Please enter a Mobile No.";
+			}else{
+				$mobileNoValid= $this->validatePhoneNo($mobileNo);
+				if($mobileNoValid == 0)
+				{
+					$errors['main_member_phone_no'] = "Incorrect format. Please use this format : +1-XXX-XXX-XXXX";
+				}
+				
+			}
+
+			// Check password is valid 
+			$password = $_POST['post_fields']['password'];
+			if (empty($password)) {
+				$errors['password'] = "Please enter a Password";
+			} elseif (0 === preg_match("/.{6,}/", $_POST['post_fields']['password'])) {
+				$errors['password'] = "Password must be at least six characters";
+			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['post_fields']['password']))
+			{
+				$errors['password'] = "Please enter alphanumeric characters only";
+			}
+
+			$cPassword = $_POST['post_fields']['confirm_password'];
+			if (empty($cPassword)) {
+				$errors['confirm_password'] = "Please enter Confirm Password";
+			}elseif (0 === preg_match("/.{6,}/", $cPassword)) {
+				$errors['confirm_password'] = "Password must be at least six characters";
+			}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $cPassword))
+			{
+				$errors['confirm_password'] = "Please enter alphanumeric characters only";
+			} elseif (0 !== strcmp($password, $cPassword)) // Check password confirmation_matches 
+			{
+				$errors['confirm_password'] = "Passwords do not match";
+			}
+			//echo "<pre>";print_r($errors);die;
+
+			if (!empty($_POST['post_fields']['spouse_first_name'])) {
+				// Validate spouse  
+				$spouseFirstName = esc_sql($_POST['post_fields']['spouse_first_name']);
+				if (empty($spouseFirstName)) {
+					$errors['spouse_first_name'] = "Please enter a Spouse First Name";
+				}
+				$spouseLastName = esc_sql($_POST['post_fields']['spouse_last_name']);
+				if (empty($spouseLastName)) {
+					$errors['spouse_last_name'] = "Please enter a Spouse Last Name";
+				}
+
+				// Check email address is present and valid  
+				$spouseEmail = esc_sql($_POST['post_fields']['spouse_email']);
+				if (empty($spouseEmail)) {
+					$errors['spouse_email'] = "Please enter a Spouse Email";
+				} elseif (!is_email($spouseEmail)) {
+					$errors['spouse_email'] = "Please enter a valid Email";
+				} elseif (email_exists($spouseEmail) || username_exists($spouseEmail)) {
+					$errors['spouse_email'] = "This email address is already in use";
+				}
+				$secondaryMobileNo = esc_sql($_POST['post_fields']['secondary_mobile_no']);
+				if (isset($secondaryMobileNo) && !empty($secondaryMobileNo)) {
+					$secondaryMobileNoValid= $this->validatePhoneNo($secondaryMobileNo);
+					if($secondaryMobileNoValid == 0)
+					{
+						$errors['partner_member_phone_no'] = "Incorrect format. Please use this format : +1-XXX-XXX-XXXX";
+					}
+				}
+
+				// Check password is valid  
+				$spousePassword = esc_sql($_POST['post_fields']['spouse_password']);
+				if (empty($spousePassword)) {
+					$errors['spouse_password'] = "Please enter a Spouse Password";
+				} elseif (0 === preg_match("/.{6,}/", $_POST['post_fields']['spouse_password'])) {
+					$errors['spouse_password'] = "Password must be at least six characters";
+				}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['post_fields']['spouse_password']))
+				{
+					$errors['spouse_password'] = "Please enter alphanumeric characters only";
+				}
+
+				// Check password confirmation_matches
+				
+				$cSpousePassword = esc_sql($_POST['post_fields']['spouse_confirm_password']);
+				if (empty($cSpousePassword)) {
+					$errors['spouse_confirm_password'] = "Please enter a Confirm Spouse Password";
+				}elseif (0 === preg_match("/.{6,}/", $cSpousePassword)) {
+					$errors['spouse_confirm_password'] = "Password must be at least six characters";
+				}elseif( !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $cSpousePassword))
+				{
+					$errors['spouse_confirm_password'] = "Please enter alphanumeric characters only";
+				}elseif (0 !== strcmp($spousePassword, $cSpousePassword)) {
+					$errors['spouse_confirm_password'] = "Spouse Passwords do not match";
+				}
+				
+			}
+
+			$addressLine1 = esc_sql($_POST['post_fields']['address_line_1']);
+			if (empty($addressLine1)) {
+				$errors['address_line_1'] = "Please enter address";
+			}
+
+			$city = esc_sql($_POST['post_fields']['city']);
+			if (empty($city)) {
+				$errors['city'] = "Please enter city";
+			}
+			$postalCode = esc_sql($_POST['post_fields']['postal_code']);
+			if (empty($postalCode)) {
+				$errors['postal_code'] = "Please enter Postal Code";
+			}
+			$country = esc_sql($_POST['post_fields']['country']);
+			if (empty($country)) {
+				$errors['country'] = "Please select Country";
+			}
+			$state = esc_sql($_POST['post_fields']['state']);
+			if (empty($state)) {
+				$errors['state'] = "Please select State";
+			}
+			// Check terms of service is agreed to  
+			if (isset($_POST['post_fields']['agreement_page_id']) && $_POST['post_fields']['agreement_page_id'] == "no") {
+				$errors['agreement_page_id'] = "You must agree to Terms of Service";
+			}
+			$recaptcha_value = esc_sql($_POST['post_fields']['recaptcha_value']);
+			if (empty($recaptcha_value)) {
+				$errors['recaptcha_value'] = "Please check reCAPTCHA";
+			}
+			
+		//echo "<pre>";print_r($_POST['post_fields']);die;
+		
+		echo json_encode($errors);
+		wp_die();
+	}
+
+	public function osa_redirects($is_rediect)
+	{
+		if (isset($_SESSION['user_id'])) {
+			wp_set_current_user($_SESSION['user_id']);
+		}
+		if( (is_page( 'login' ) || is_page( 'become-a-member' ) ) &&  is_user_logged_in() && current_user_can('administrator')){
+			wp_redirect( '/wp-admin' );
+			exit();
+		}
+		if( (is_page( 'login' ) || is_page( 'become-a-member' ) ) && is_user_logged_in() && current_user_can('subscriber')){
+			wp_redirect( '/member-dashboard' );
+			exit();
+		}
+		if( is_page( 'membership-plan' ) && is_user_logged_in() && current_user_can('subscriber')){
+			$membershipExpiryDate = $this->getMembershipExpireDate();
+			if (strtotime($membershipExpiryDate) >= strtotime(date('Y-m-d'))) {
+				wp_redirect( '/member-dashboard' );
+				exit();
+			}
+		}
+
+
+		
+		
 	}
 }

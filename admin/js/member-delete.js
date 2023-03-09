@@ -51,7 +51,7 @@
                 // let html = '<a id="deactivate_member" class="dashicons-before dashicons-trash vers" title="Deactivate Members " href=""></a>';
                 let html = ' <input type="button" name="" id="deactivate_member" class="button" value="Deactivate Member" />  ';
                 html += '<input type="button" name="" id="delete_member" class="button" value="Delete Member" /> ';
-                $('#members-filter').find('.actions').append(html);
+                $('#members-filter').find('#delete_and_deactive').append(html);
             }
             else if (DeactivateArr.length === 0) {
                 $('#members-filter .actions').find('#deactivate_member , #delete_member').remove();

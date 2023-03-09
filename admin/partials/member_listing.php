@@ -40,7 +40,7 @@
 
     <form id="members-filter" method="get">
         <div class="tablenav top">
-            <div class="alignleft actions">
+            <div class="alignleft actions" id="delete_and_deactive">
                 <span id="filter_input_area_0">
                     <label class="screen-reader-text" for="cat">Filter by category</label>
                     <select name="filter_option" id="category_filter_0" data-filter-id="0" class="postform member_filter_option">
@@ -72,7 +72,6 @@
                 <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">
 
                 <a class="dashicons-before dashicons-update vers" title="Reload this page" href=""></a>
-
             </div>
 
             <!-- CSV Download -->

@@ -613,7 +613,10 @@ class Osa_Membership_Admin
 					$errors['password'] = "Password must be at least six characters";
 				} else if (!empty($_POST['password']) && empty($_POST['confirm_password'])) {
 					$errors['confirmPassword'] = 'Please confirm your password';
-				} else if (!empty($_POST['password']) && !empty($_POST['confirm_password'] && strlen($_POST['password']) >= '6')) {
+				}elseif( !empty($_POST['password']) && !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['password']))
+				{
+					$errors['password'] = "Please enter alphanumeric characters only";
+				}else if (!empty($_POST['password']) && !empty($_POST['confirm_password'] && strlen($_POST['password']) >= '6')) {
 
 					if ($_POST['password'] == $_POST['confirm_password']) {
 						$update_pass = wp_set_password(esc_sql($_POST['password']), $user_id);
@@ -788,13 +791,13 @@ class Osa_Membership_Admin
 			if (!empty($phone)) {
 				$valid = $this->validatePhoneNo($phone);
 				if (!$valid) {
-					$errors['phone_no'] = "Please enter valid format<br> (eg: +1-XXX-XXX-XXXX)";
+					$errors['phone_no'] = "Please enter valid format";
 				};
 			}
 			if (!empty($spousePhone)) {
 				$sValid = $this->validatePhoneNo($spousePhone);
 				if (!$sValid) {
-					$errors['spouse_phone_no'] = "Please enter valid format<br> (eg: +1-XXX-XXX-XXXX)";
+					$errors['spouse_phone_no'] = "Please enter valid format";
 				};
 			}
 
@@ -840,14 +843,19 @@ class Osa_Membership_Admin
 					$errors['spouse_password'] = "Please enter a Partner Password";
 				} elseif (isset($_POST['spouse_password']) && (0 === preg_match("/.{6,}/", $_POST['spouse_password']))) {
 					$errors['spouse_password'] = "Password must be at least six";
+				}elseif( isset($_POST['spouse_password']) && !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['spouse_password']))
+				{
+					$errors['spouse_password'] = "Please enter alphanumeric characters only";
 				}
 
 				// Check password confirmation_matches
 				$cSpousePassword = esc_sql($_POST['spouse_confirm_password']);
 				if (isset($_POST['spouse_password']) && empty($cSpousePassword)) {
 					$errors['spouse_confirm_password'] = "Please enter a Partner Password";
-				} else 
-				if (isset($_POST['spouse_password']) && (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password']))) {
+				}elseif( isset($_POST['spouse_confirm_password']) && !preg_match("/^(?!(?:[a-z]+|[0-9]+)$)[a-z0-9]+$/i", $_POST['spouse_confirm_password']))
+				{
+					$errors['spouse_confirm_password'] = "Please enter alphanumeric characters only";
+				} elseif (isset($_POST['spouse_password']) && (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password']))) {
 					$errors['spouse_confirm_password'] = "Spouse Passwords do not match";
 				}
 			} else if ($parentCount == 1) {
@@ -1235,8 +1243,8 @@ class Osa_Membership_Admin
 
 		
 			WHERE
-			t1.type != 'child'
-			AND t1.is_deleted = 0 ";
+			t1.type != 'child'/* 
+			AND t1.is_deleted = 0  */";
 
 			/**
 			 * Proceed for search
@@ -1291,7 +1299,9 @@ class Osa_Membership_Admin
 						$query .= " AND wp_member_other_info.membership_type = $filter_input[$i] ";
 					}  else if ($filter_option[$i] == "is_member") {
 						$query .= " AND t1.alive = $filter_input[$i] ";
-					} 
+					}   else if ($filter_option[$i] == "member_status") {
+						$query .= " AND t1.is_deleted = $filter_input[$i] ";
+					}
 				}
 			}
 

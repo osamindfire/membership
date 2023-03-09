@@ -146,6 +146,14 @@
                         if (response[i]['membership_type_id'] == 3 ) {
                             response[i]['membership_expiry_date'] = 'N/A';
                         }
+                        if (response[i]['is_deleted'] == 0 ) {
+                            response[i]['is_deleted'] = 'Active';
+                        }else if(response[i]['is_deleted'] == 1 ) {
+                            response[i]['is_deleted'] = 'Inactive';
+                        }else{
+                            response[i]['is_deleted'] = 'N/A';
+                        }
+
 
                         resArray.push([
                             response[i]['member_id'],
@@ -162,7 +170,8 @@
                             '"'+response[i]['city']+'"',
                             response[i]['postal_code'],
                             response[i]['membership'],
-                            response[i]['souvenir']
+                            response[i]['souvenir'],
+                            response[i]['is_deleted']
                         ])
                     }
 
@@ -171,7 +180,7 @@
                     const rows = [
                         ["MEMBER ID", "NAME", "EMAIL", "JOIN DATE", "EXPIRY DATE",
                             "PHONE NUMBER", "ADDRESS LINE 1", "ADDRESS LINE 2",
-                            "COUNTRY", "STATE", "CHAPTER", "CITY", "POSTAL CODE", "MEMBERSHIP", "SOUVENIR"],
+                            "COUNTRY", "STATE", "CHAPTER", "CITY", "POSTAL CODE", "MEMBERSHIP", "SOUVENIR", "MEMBER STATUS"],
                     ];
 
                     let data_rows = rows.concat(resArray);
