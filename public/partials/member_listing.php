@@ -11,13 +11,13 @@
     <p style="margin-right: 10px;
     width: 200px;"><a href="<?php echo home_url('member-dashboard'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard' || home_url($wp->request) == home_url() . '/member-dashboard/member-info') {
                                                                       echo "active";
-                                                                    } ?>"><img src="<?= DIR_URL; ?>/dashboard_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Dashboard</strong></a></p>
+                                                                    } ?>"><i class="fa fa-dashboard" style="font-size: 26px;margin-right: 15px;margin-left: 13px;"></i><!-- <img src="<?= DIR_URL; ?>/dashboard_icon.png" style="width:36px;margin-bottom: -11px;" /> --> <strong>Dashboard</strong></a></p>
     <p style="margin-right: 10px;
     width: 200px;"><a href="<?php echo home_url('member-dashboard/profile/'); ?>" class="<?php if (home_url($wp->request) == home_url() . '/member-dashboard/profile') {
                                                                                 echo "active";
-                                                                              } ?>"><img src="<?= DIR_URL; ?>/profile_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Profile</strong></a></p>
+                                                                              } ?>"><i class="fa fa-user" style="font-size: 26px;margin-right: 15px;margin-left: 13px;"></i><!-- <img src="<?= DIR_URL; ?>/profile_icon.png" style="width:36px;margin-bottom: -11px;" />  --><strong>Profile</strong></a></p>
     <p style="margin-right: 10px;
-    width: 200px;"><a href="<?php echo home_url('member-dashboard/logout/')/* echo wp_logout_url('login') */; ?>"><img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> <strong>Logout</strong></a></p>
+    width: 200px;"><a href="<?php echo home_url('member-dashboard/logout/')/* echo wp_logout_url('login') */; ?>"><i class="fa fa-sign-out" style="font-size: 26px;margin-right: 15px;margin-left: 13px;"></i><!-- <img src="<?= DIR_URL; ?>/logout_icon.png" style="width:36px;margin-bottom: -11px;" /> --> <strong>Logout</strong></a></p>
   </div>
   <div class="column col-2">
     <?php
