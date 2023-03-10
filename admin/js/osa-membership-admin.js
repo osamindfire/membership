@@ -39,7 +39,8 @@
 		});
 		function populateMembershipPlan(){
 
-			let membership_type_id = $("#membership_type_id").val();
+			let membership_type_id = $("#membership_type_id").val() || 0;
+			if(membership_type_id){
 			let data = {
 				action: "get_membership_plan_ajax_action",
 				id: membership_type_id,
@@ -63,6 +64,7 @@
 					 console.log("error");
 				}
 			});
+		}
 		};
 
 		// $('.loader').hide();

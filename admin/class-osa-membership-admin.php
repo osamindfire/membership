@@ -1432,7 +1432,7 @@ class Osa_Membership_Admin
 		global $wpdb;
 
 		if (isset($_GET['id'])) {
-			$query = "SELECT * from wp_membership_type where membership_type_id= " . $_GET['id'] . " ";
+			$query = "SELECT * from wp_membership_type where status= 1 and membership_type_id= " . $_GET['id'] . " ";
 			$data = $wpdb->get_results($query);
 			wp_reset_query();
 			echo json_encode($data);

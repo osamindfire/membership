@@ -52,6 +52,7 @@
                             "First Name" => "first_name",
                             "Last Name" => "last_name",
                             "Is Member" => "is_member",
+                            "Country" => "country",
                             "State" => "state",
                             "City" => "city",
                             "Chapter" => "chapter",

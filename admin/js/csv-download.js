@@ -134,7 +134,7 @@
                         if (response[i]['phone_no'] == null || response[i]['phone_no'] == '') {
                             response[i]['phone_no'] = 'N/A';
                         }else{
-                            response[i]['phone_no'] = response[i]['phone_no'].toString() ;
+                            response[i]['phone_no'] = response[i]['phone_no'].replace('+','');
                         }
 
                         if (response[i]['membership'] == null) {
