@@ -426,7 +426,7 @@
                                                         </td>
 
                                                         <td><strong><label for="spouse_phone_no" class="">Phone</label></strong><br>
-                                                            <input type="text" name="spouse_phone_no" id="add_spouse_phone_no" class="phone_no" value="<?php if (isset($_POST['spouse_phone_no'])) {
+                                                            <input type="text" name="spouse_phone_no" maxlenght="15" id="add_spouse_phone_no" class="phone_no" value="<?php if (isset($_POST['spouse_phone_no'])) {
                                                                                                                     echo $_POST['spouse_phone_no'];
                                                                                                                 } ?>"><br>
 

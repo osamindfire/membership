@@ -790,13 +790,13 @@ class Osa_Membership_Admin
 			if (!empty($phone)) {
 				$valid = $this->validatePhoneNo($phone);
 				if (!$valid) {
-					$errors['phone_no'] = "Please enter valid format";
+					$errors['phone_no'] = "Please enter valid format +1-XXX-XXX-XXXX";
 				};
 			}
 			if (!empty($spousePhone)) {
 				$sValid = $this->validatePhoneNo($spousePhone);
 				if (!$sValid) {
-					$errors['spouse_phone_no'] = "Please enter valid format";
+					$errors['spouse_phone_no'] = "Please enter valid format +1-XXX-XXX-XXXX";
 				};
 			}
 
