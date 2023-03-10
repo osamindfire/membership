@@ -113,7 +113,7 @@
                 <th scope="col" id="tags" class="manage-column">Expiry Date</th>
                 <th scope="col" id="tags" class="manage-column">Phone</th>
                 <th scope="col" id="tags" class="manage-column">Membership Status</th>
-                <th scope="col" id="tags" class="manage-column">Action</th>
+                <th scope="col" id="tags" class="manage-column" style="width: 12%;">Action</th>
             </tr>
         </thead>
 
