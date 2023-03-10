@@ -235,7 +235,9 @@ class Osa_Membership {
 		
 		$this->loader->add_action('wp_ajax_country_action', $this->plugin_public, 'country_action');
 		$this->loader->add_action('wp_ajax_state_action', $this->plugin_public, 'state_action');
+		$this->loader->add_action('wp_ajax_nopriv_state_action', $this->plugin_public, 'state_action');
 		$this->loader->add_action('wp_ajax_chapter_action', $this->plugin_public, 'chapter_action');
+		$this->loader->add_action('wp_ajax_nopriv_chapter_action', $this->plugin_public, 'chapter_action');
 
 		$this->loader->add_action('wp_ajax_register_validate', $this->plugin_public, 'register_validate');
 		$this->loader->add_action('wp_ajax_nopriv_register_validate',$this->plugin_public, 'register_validate');

@@ -82,12 +82,12 @@
       <table class="table et_pb_with_background et_pb_inner_shadow price responsive-table">
         <thead class="thead">
           <tr class="et_pb_pricing_heading" style="background-color: deepskyblue;font-size:initial">
-            <th class="text-center vertical_line" >Member ID</th>
-            <th class="text-center vertical_line" >Name</th>
-            <th class="text-center vertical_line" >City</th>
-            <th class="text-center vertical_line" >State</th>
-            <th class="text-center vertical_line" >Join Date</th>
-            <th class="text-center vertical_line" >Membership Status</th>
+            <th class="text-center vertical_line table_text_align" >ID</th>
+            <th class="text-center vertical_line table_text_align" >Name</th>
+            <th class="text-center vertical_line table_text_align" >City</th>
+            <th class="text-center vertical_line table_text_align" >State</th>
+            <th class="text-center vertical_line table_text_align" >Join Date</th>
+            <th class="text-center vertical_line table_text_align" >Plan</th>
             <!-- <th class="text-center vertical_line" >Email</th>
             <th class="text-center vertical_line" >Phone</th> -->
             <th class="text-center vertical_line" >Details</th>
@@ -97,12 +97,12 @@
           <?php if ($rowcount > 0) {
             foreach ($rows as $member) { ?>
               <tr class="price" style="color: #000;">
-                <td class="text-center vertical_line" ><?= $member->member_id; ?></td>
-                <td class="text-center vertical_line" ><?= $member->first_name . ' ' . $member->last_name; ?></td>
-                <td class="text-center vertical_line" ><?= $member->city; ?></td>
-                <td class="text-center vertical_line" ><?= $member->state; ?></td>
-                <td class="text-center vertical_line" ><?= $member->user_registered; ?></td>
-                <td class="text-center vertical_line" ><?= $member->membership; ?></td>
+                <td class="text-center vertical_line table_text_align" ><?= $member->member_id; ?></td>
+                <td class="text-center vertical_line table_text_align" ><?= $member->first_name . ' ' . $member->last_name; ?></td>
+                <td class="text-center vertical_line table_text_align" ><?= $member->city; ?></td>
+                <td class="text-center vertical_line table_text_align" ><?= $member->state; ?></td>
+                <td class="text-center vertical_line table_text_align" ><?= $member->user_registered; ?></td>
+                <td class="text-center vertical_line table_text_align" ><?= $member->membership; ?></td>
                 <!-- <td class="text-center vertical_line" ><?= $member->user_email; ?></td>
                 <td class="text-center vertical_line" ><?= $member->phone_no; ?></td> -->
                 <td class="text-center vertical_line" ><a href="<?php echo home_url('member-dashboard/member-info/?id='.$member->user_id); ?>"><i class="fa fa-eye" style="font-size:20px;color:deepskyblue"></i></a></td>

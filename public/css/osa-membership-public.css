@@ -291,12 +291,13 @@ td{
   }
   
   .vertical-menu a:hover {
-    background-color: #5cb85c;
+    background-color: #003772;
     border: 1px solid #fff;
+    color: #fff;
   }
   
   .vertical-menu a.active {
-    background-color: #5cb85c;
+    background-color: #003772;
     color: white;
     border: 1px solid #000;
   }
@@ -369,3 +370,7 @@ td{
     overflow-x: auto;
     width: 100%;
   }
+
+.table_text_align{
+    text-align: left !important;
+}
