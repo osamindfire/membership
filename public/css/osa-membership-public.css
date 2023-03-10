@@ -1,6 +1,7 @@
 .error_messages {
-    color: red;
-    font-weight: 300;
+    /* color: red; */
+    color: #F44336;
+    font-weight: 700;
     font-size: 14px;
   }
 

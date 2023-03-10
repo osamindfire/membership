@@ -20,7 +20,7 @@ $partnerCount= count($userInfo['oth_member_info']);
 <p><a style="float:left; margin-bottom:50px;" href="<?php echo home_url('member-dashboard/transaction/'); ?>" class="active anchor_as_button"><img src="<?= DIR_URL; ?>/transaction_icon_new.png" style="width:36px;margin-bottom: -11px;"/> <strong> <?= $userInfo[0]->membership;?></strong></a>
 <a style="float:right;margin-bottom:50px;" href="<?php echo home_url('member-dashboard/change-password/'); ?>" class="active anchor_as_button"><img src="<?= DIR_URL; ?>/change_password.png" style="width:36px;margin-bottom: -11px;"/> <strong>Change Password</strong></a></p>
 
-<form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+<form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" autocomplete="off">
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half anchor_as_button">
         <strong>Member ID:</strong> <?= $userInfo[0]->member_id;?>
         </p>

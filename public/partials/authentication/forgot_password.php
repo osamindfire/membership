@@ -9,7 +9,7 @@
 <div class="et_pb_row et_pb_row_0">
 <div class="et_pb_contact">
 
-<form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post">
+<form class="et_pb_contact_form clearfix" action="<?php echo $_SERVER['REQUEST_URI']; ?>" method="post" autocomplete="off">
         
         <p class=" et_pb_contact_field ui-sortable">
             <label for="" class="et_pb_contact_form_label">Email</label>
