@@ -482,6 +482,11 @@
 		}
 		//Filter ends here
 
+		//On change row limit per page
+		$(document).on('change', '#row_limit',function (e) {
+			filteredData(e);
+		});
+
 
 		/**
 		 * Ajax function to retrive member details
@@ -522,6 +527,9 @@
 				mafs.find("#the-member-list").append('<tr></tr><tr><td></td><td></td><td></td><td></td><td><div class="lds-dual-ring loader"></div></td></tr>');
 			}
 
+			//row limit
+			let rowLimit = $("#row_limit").val();
+
 			let data = {
 				action: "member_ajax_action",
 				search: search,
@@ -530,7 +538,7 @@
 				type: type,
 				filter_option: filter_option,
 				filter_input: filter_input,
-
+				row_limit: rowLimit
 			}
 
 			$.ajax({
@@ -552,7 +560,7 @@
 					else if (response) {
 
 						// pagination code
-						let results_per_page = 20;
+						let results_per_page = rowLimit;
 
 						let number_of_result = result.totalrows;
 

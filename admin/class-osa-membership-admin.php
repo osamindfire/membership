@@ -992,6 +992,7 @@ class Osa_Membership_Admin
 			$type = $_GET['type'];
 			$filter_option = $_GET['filter_option'];
 			$filter_input = $_GET['filter_input'];
+			$rowLimit = $_GET['row_limit'];
 
 			$query = "SELECT
 			DATE_FORMAT(
@@ -1111,7 +1112,7 @@ class Osa_Membership_Admin
 			 * pagination 
 			 */
 			$paged = $_GET['page'];
-			$results_per_page = 20;
+			$results_per_page = $rowLimit;
 
 			/**
 			 * determine the sql LIMIT starting number for the results on the displaying page 
@@ -1255,6 +1256,7 @@ class Osa_Membership_Admin
 			$search = $_GET['search'];
 			$filter_option = $_GET['filter_option'];
 			$filter_input = $_GET['filter_input'];
+			$checkedID = $_GET['checked'];
 
 			$query = "SELECT
 			DATE_FORMAT(
@@ -1294,13 +1296,15 @@ class Osa_Membership_Admin
 				foreach ($search_keywords as $search) {
 
 					$query .= " AND ( ";
-					if (DateTime::createFromFormat('m-d-Y', $search) !== false) {
-						$date = date('Y-m-d', strtotime($search));
+					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
+						// $date = date('Y-m-d', strtotime($search));
+						$date= DateTime::createFromFormat('m-d-Y', $search)->format('Y-m-d');
 						$query .= " wp_users.user_registered LIKE '%$date%' ";
 					}
 
-					if (DateTime::createFromFormat('m-d-Y', $search) !== false) {
-						$date = date('Y-m-d', strtotime($search));
+					if (DateTime::createFromFormat('d-m-Y', $search) !== false) {
+						// $date = date('Y-m-d', strtotime($search));
+						$date= DateTime::createFromFormat('m-d-Y', $search)->format('Y-m-d');
 						$query .= "OR wp_member_other_info.membership_expiry_date LIKE '%$date%' OR";
 					}
 
@@ -1342,6 +1346,13 @@ class Osa_Membership_Admin
 						$query .= " AND t1.is_deleted = $filter_input[$i] ";
 					}
 				}
+			}
+
+			// for selected rows
+			if(!empty($checkedID)){
+				$checkedID = array_unique($checkedID);
+				$membersIdToString = implode(",", $checkedID);
+				$query .= " AND t1.member_id IN(" . $membersIdToString . ") ";
 			}
 
 			$query .= " ORDER BY wp_users.user_registered ASC";

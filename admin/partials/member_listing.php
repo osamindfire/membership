@@ -18,7 +18,7 @@
 
 <!-- This file should primarily consist of HTML with a little bit of PHP. -->
 <div class="wrap member_list" id="member-ajax-filter-search">
-    
+
     <h1 class="wp-heading-inline">Members</h1>
     <div id="alertMessage"></div>
 
@@ -72,14 +72,28 @@
                 <input type="button" name="" id="add_more_criteria" class="button" value="Add More Criteria">
                 <input type="submit" name="filter_action" id="post-query-submit" class="button" value="Filter">
 
-                <a class="dashicons-before dashicons-update vers" title="Reload this page" href=""></a>
+                <a class="dashicons-before dashicons-update" title="Reload this page" href=""></a>
             </div>
 
             <!-- CSV Download -->
             <div class="tablenav-pages">
-                <!-- <button type="submit"><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button> -->
-                <button type="submit" id="csv_download" ><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
 
+                <button type="submit" id="csv_download"><a href="/wp-admin/admin.php?page=members&action=download_csv_file">Download CSV</a></button>
+
+                <label for="row_limit" class="vers">Number of rows:</label>
+                <select name="row_limit" id="row_limit" data-filter-id="0" class="postform">
+                    <?php
+                    $limit_option = array(
+                        "25" => "25",
+                        "50" => "50",
+                        "100" => "100",
+                        "200" => "200"
+                    );
+                    foreach ($limit_option as $key => $value) {
+                    ?><option class="level-0" value="<?php echo $value; ?>"><?php echo $key; ?></option>
+                    <?php } ?>
+
+                </select>
                 <!-- <input type="button" name="csv" id="csv_download" class="button" value="Download CSV"> -->
 
             </div>
@@ -101,7 +115,7 @@
     <h2 class="screen-reader-text">Members list</h2>
     <!-- <br> -->
     <table id="members" class="wp-list-table widefat fixed striped table-view-list members">
-    
+
         <thead>
             <tr>
                 <td id="cb" class="manage-column column-cb check-column deactivate_checked"><label class="screen-reader-text" for="cb-select-all-1">Select All</label><input class="isChecked" type="checkbox"></td>
@@ -118,7 +132,16 @@
         </thead>
 
         <tbody id="the-member-list">
-            <tr></tr><tr><td></td><td></td><td></td><td></td><td><div class="lds-dual-ring loader"></div></td></tr>
+            <tr></tr>
+            <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>
+                    <div class="lds-dual-ring loader"></div>
+                </td>
+            </tr>
         </tbody>
 
         <tfoot>
@@ -153,7 +176,7 @@
         </div>
         <br class="clear">
     </div>
-   
+
     <!-- <div class="">
             <span><a class="dashicons-before dashicons-visibility"></a>  <a class="dashicons-before dashicons-edit"></a></span>
         </div> -->
