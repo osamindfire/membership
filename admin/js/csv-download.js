@@ -74,6 +74,7 @@
 
         });
 
+
         /**
          * Ajax function to retrive member details for csv downloads
          */
@@ -106,11 +107,18 @@
                 }
             }
 
+            //selected data
+            let checkedArr = [];
+            $("input:checkbox[name=member_id]:checked").each(function () {
+                checkedArr.push($(this).val());
+            });
+
             let data = {
                 action: "csv_download_action",
                 search: search,
                 filter_option: filter_option,
                 filter_input: filter_input,
+                checked:checkedArr
             }
 
             $.ajax({
