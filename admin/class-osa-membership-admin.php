@@ -506,7 +506,7 @@ class Osa_Membership_Admin
 				'%m-%d-%Y'
 			) AS end_date, t2.membership, t2.fee FROM wp_member_membership t1
 			INNER JOIN wp_membership_type t2 ON t1.membership_type_id = t2.membership_type_id
-			 where t1.member_id = $member_id ;");
+			 where t1.member_id = $member_id order by t1.id DESC;");
 
 
 
