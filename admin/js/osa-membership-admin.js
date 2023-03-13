@@ -584,14 +584,19 @@
 							}
 
 							let dActivateClass = '';
+							let display_icon='';
 							// let disabled = '';
 							if (response[i]['is_deleted'] == 1) {
 								dActivateClass = 'out-red';
+								display_icon = 'style="display:none"';
 								// disabled = "disabled";
 							}
-							let addMembership = '<a class="vers dashicons-before dashicons-plus" title="Add Membership" href="?page=assign-membership&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a>';
+							let addMembership='';
+							/* let addMembership = '<a class="vers dashicons-before dashicons-plus" title="Add Membership" href="?page=assign-membership&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a>'; */
 							if (response[i]['membership_type']) {
-								addMembership = '<a style="display:none" class="vers dashicons-before dashicons-plus" title="Add Membership" href="?page=assign-membership&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a>';
+								 addMembership = '<a '+display_icon+' class="vers dashicons-before dashicons-admin-users" title="Update Membership Plan" href="?page=update-membership&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a>';
+							}else{
+								 addMembership = '<a '+display_icon+' class="vers dashicons-before dashicons-plus" title="Add Membership" href="?page=assign-membership&mid=' + response[i]['member_id'] + '&id=' + response[i]['id'] + '"></a>';
 							}
 
 

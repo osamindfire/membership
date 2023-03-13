@@ -153,6 +153,7 @@ class Osa_Membership_Admin
 			add_submenu_page('members', 'Membership Edit', null, 'administrator', 'membershipplan-edit', array($this, 'render_membershipplan_edit_page'));
 		}
 		add_submenu_page('members', 'Assign Membership', null, 'administrator', 'assign-membership', array($this, 'render_assign_membership'));
+		add_submenu_page('members', 'Update Membership', null, 'administrator', 'update-membership', array($this, 'render_update_membership'));
 	}
 
 	/**
@@ -547,7 +548,7 @@ class Osa_Membership_Admin
 				wp_member_other_info.membership_expiry_date,
 				'%m-%d-%Y'
 			) AS membership_expiry_date,
-			wp_membership_type.membership,wp_membership_type.type as membership_type, wp_member_other_info.souvenir, 
+			wp_membership_type.membership,wp_membership_type.type as membership_type, wp_member_other_info.souvenir,wp_member_other_info.membership_type,
 			wp_member_other_info.city, wp_member_other_info.state_id, wp_member_other_info.country_id, wp_member_other_info.chapter_type_id as chapter_id,
 			wp_member_other_info.postal_code,
 			wp_countries.country, wp_states.state, wp_states.chapter_type_id, wp_chapters.name as chapter_name
@@ -585,6 +586,7 @@ class Osa_Membership_Admin
 			$states = $wpdb->get_results("SELECT  * FROM wp_states ;");
 
 			$chapters = $wpdb->get_results("SELECT  * FROM wp_chapters ;");
+			$membership_plans = $wpdb->get_results("SELECT  * FROM wp_membership_type ORDER BY membership_type_id ASC;");
 
 
 			$childCount = count($childs);
@@ -1440,5 +1442,72 @@ class Osa_Membership_Admin
 			// no posts found
 		}
 		wp_die();
+	}
+
+	public function render_update_membership()
+	{
+		global $wpdb,$user_ID;
+		$membershipPlans = $wpdb->get_results("SELECT  wp_membership_type.* FROM wp_membership_type where status= 1 ");
+		$currentMembershipInfo = $wpdb->get_results("SELECT wp_member_other_info.membership_type ,wp_membership_type.membership FROM wp_member_other_info INNER JOIN wp_membership_type ON wp_member_other_info.membership_type=wp_membership_type.membership_type_id WHERE wp_member_other_info.member_id  = " . $_GET['mid'] . " limit 1");
+		if (isset($_POST['update_membershiplan_form']) && wp_verify_nonce($_POST['update_membershiplan_form'], 'update_membership_plan')) {
+			try {
+				$errors = [];
+				$membership = esc_sql($_POST['membership_type']);
+				if (empty($membership)) {
+					$errors['membership_type'] = "Please select Membership Plan";
+				}
+
+				$fee = esc_sql($_POST['transaction_id_and_check_no']);
+				if (empty($fee)) {
+					$errors['transaction_id_and_check_no'] = "Please enter Reason for update";
+				}
+
+				if (0 === count($errors)) {
+					$userInfo = $wpdb->get_results("SELECT wp_users.user_nicename, wp_users.user_email,wp_member_user.user_id,wp_member_user.member_id,wp_member_user.first_name,wp_member_user.last_name,wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = " . $_GET['mid'] . " limit 1");
+					$starttDate = date('Y-m-d');
+					$endDate = date('Y-m-d', strtotime($starttDate . ' + ' . $_POST['total_days'] . ' days'));
+					$membershipType =  $_POST['membership_type'];
+					$wpdb->query($wpdb->prepare(
+						"INSERT INTO wp_member_membership (user_id, member_id, start_date, end_date, membership_type_id, comment , update_by,payment_info) VALUES ( %d, %d, %s, %s, %d, %s, %s,%s)",
+						array(
+							'user_id' => $userInfo[0]->user_id,
+							'member_id' => $_GET['mid'],
+							'start_date' =>  $starttDate,
+							'end_date' => $endDate,
+							'membership_type_id' => $membershipType,
+							'comment' => $_POST['transaction_id_and_check_no'],
+							'update_by' => $user_ID,
+							'payment_info' => serialize($_POST),
+						)
+					));
+					$result= $wpdb->query(
+					$wpdb->prepare("UPDATE wp_member_other_info 
+					SET membership_expiry_date = %s,membership_type = %d 
+					WHERE member_id = %d", $endDate, $membershipType, $_GET['mid'])
+					);
+					/* $otherPartenruserInfo = $wpdb->get_results("SELECT wp_users.user_email FROM wp_users INNER JOIN wp_member_user ON wp_users.ID=wp_member_user.user_id WHERE wp_member_user.member_id  = " . $_GET['mid'] . " and type !='child' ");
+
+					$membershipPackage = $wpdb->get_results("SELECT wp_membership_type.* FROM wp_membership_type  WHERE membership_type_id  = " . $membershipType . " limit 1");
+					if($result)
+					{
+					$subject = "Membership Plan Assigned and Approved successfully";
+					$userInfo[0]->user_membership = $membershipPackage[0];
+					$this->sendMail($userInfo[0]->user_email, $subject, (array)$userInfo[0]);
+
+					$gsuite = new Osa_Membership_G_Suite();
+					foreach($otherPartenruserInfo as $othMemberValue){
+					$accessToken = $gsuite->reFreshGsuiteAccessToken();
+					$gsuite->addMemberToGsuiteGroup($accessToken, $othMemberValue->user_email);
+					}
+					} */
+					$successMessage = "Membership Plan updated successfully";
+					$url = home_url('/wp-admin/admin.php?page=member-view&mid='.$_GET['mid'].'&id='.$_GET['id'].'&message='.$successMessage.' ');
+					echo "<script type='text/javascript'>window.location.href='" . $url . "'</script>";
+				}
+			} catch (Exception $e) {
+				echo 'Error writing to database: ',  $e->getMessage(), "\n";
+			}
+		}
+		include_once(plugin_dir_path(__FILE__) . 'partials/update_membership.php');
 	}
 }

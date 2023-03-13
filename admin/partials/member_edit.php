@@ -262,7 +262,7 @@
                                             <tbody>
                                                 <tr>
                                                     <td><strong><label for="password">Password</label></strong><br>
-                                                        <input type="text" name="password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['password'])) {
+                                                        <input type="password" name="password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['password'])) {
                                                                                                                                                                                                                 echo $_POST['password'];
                                                                                                                                                                                                             } ?>"><br>
                                                         <error><?php if (!empty($errors['password'])) {
@@ -272,7 +272,7 @@
                                                         <input type="text" name="user_id" hidden value="<?php echo $val->user_id; ?>">
                                                     </td>
                                                     <td><strong><label for="confirm_password">Confirm Password</label></strong><br>
-                                                        <input type="text" name="confirm_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['confirm_password'])) {
+                                                        <input type="password" name="confirm_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['confirm_password'])) {
                                                                                                                                                                                                                         echo $_POST['confirm_password'];
                                                                                                                                                                                                                     } ?>"><br>
                                                         <error><?php if (!empty($errors['confirmPassword'])) {
@@ -435,7 +435,7 @@
 
                                                     <tr>
                                                         <td><strong><label for="spouse_password" class="">Password</label></strong><br>
-                                                            <input type="text" name="spouse_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_password'])) {
+                                                            <input type="password" name="spouse_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_password'])) {
                                                                                                                     echo $_POST['spouse_password'];
                                                                                                                 } ?>"><br>
                                                             <error><?php if (!empty($errors['spouse_password'])) {
@@ -444,7 +444,7 @@
                                                         </td>
 
                                                         <td><strong><label for="spouse_confirm_password" class="">Confirm Password</label></strong><br>
-                                                            <input type="text" name="spouse_confirm_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_confirm_password'])) {
+                                                            <input type="password" name="spouse_confirm_password" oninput="this.value = this.value.replace(/[^0-9|a-z|A-Z|!@#$%^&*_=+-]/g, '').replace(/(\..*)\./g, '$1');" value="<?php if (isset($_POST['spouse_confirm_password'])) {
                                                                                                                             echo $_POST['spouse_confirm_password'];
                                                                                                                         } ?>" required><br>
                                                             <error><?php if (!empty($errors['spouse_confirm_password'])) {

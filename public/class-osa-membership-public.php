@@ -358,6 +358,10 @@ class Osa_Membership_Public
 						$redirectTo = home_url() . '/membership-plan?no_membership_plan=1';
 						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 						exit();
+					}elseif(strtotime($memberData[0]->membership_expiry_date) < strtotime($currentDate)){
+						$redirectTo = home_url() . '/membership-plan?membership_expired=1';
+						echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
+						exit();
 					}
 				}
 			} else {
@@ -430,7 +434,7 @@ class Osa_Membership_Public
 				} elseif (!is_email($email)) {
 					$errors['email'] = "Please enter a valid Email";
 				} elseif (!email_exists($email)) {
-					$errors['email'] = "This email address is not exist";
+					$errors['email'] = "This email address does not exist";
 				} elseif (!empty($response['error-codes'])) {
 					$errors['googlecaptcha'] = 'CAPTCHA is invalid';
 				}

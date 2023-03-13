@@ -11,7 +11,7 @@
 
 
             <div class="postbox" id="heading">
-                <h1><strong>Assign Membership Plan</strong></h1>
+                <h1><strong>Update Membership Plan</strong></h1>
             </div>
 
             <form method="post" action="" novalidate="novalidate">
@@ -23,7 +23,7 @@
                                     <div class="inside">
                                         <table class="form-table" role="presentation">
                                             <tbody>
-
+                                            <h2>Current Membership Plan: <strong><?= $currentMembershipInfo[0]->membership;?></strong></h2>
                                                 <tr>
                             
                                                     <td><strong><label for="country">Membership Plan</label></strong><br>
@@ -32,7 +32,7 @@
 
                                                             <?php
                                                             foreach ($membershipPlans as $key=>$plan) {?>
-                                                             <?php if($plan->type == 1){ $type= "Single";}elseif($type==2){ $type= "Family";}else{ $type= "Other";} ?>
+                                                            <?php if($plan->type == 1){ $type= "Single";}elseif($type==2){ $type= "Family";}else{ $type= "Other";} ?>
                                                             <option class="level-0" value="<?php echo $plan->membership_type_id; ?>" <?php if(isset($_POST['membership_type']) && $_POST['membership_type'] == $plan->membership_type_id ) { echo "selected";}?>><?php echo $plan->membership; ?>( <?= $type;?> )</option>
                                                             <?php } ?>
 
@@ -48,7 +48,7 @@
                                                     <td><strong><label for="total_days">Duration (In days)</label></strong><br>
                                                         <input type="text" name="total_days" id="total_days" value="" readonly>
                                                     </td>
-                                                    <td><strong><label for="transaction_id_and_check_no">Comment (Txn Id/Check No./Cash)</label></strong><br>
+                                                    <td><strong><label for="transaction_id_and_check_no">Reason for update</label></strong><br>
                                                         <input type="text" name="transaction_id_and_check_no" value="<?php if(isset($_POST['transaction_id_and_check_no'])) { echo $_POST['transaction_id_and_check_no']; } ?>" required><br>
                                                         <error><?php if (!empty($errors['transaction_id_and_check_no'])) { echo $errors['transaction_id_and_check_no'];} ?></error>
                                                     </td>
@@ -65,7 +65,7 @@
                         </div>
 
                     </div>
-                    <?php wp_nonce_field("assign_membership_plan","assign_membershiplan_form"); ?>
+                    <?php wp_nonce_field("update_membership_plan","update_membershiplan_form"); ?>
                 </div>
 
                 <p class=""><input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes"></p>

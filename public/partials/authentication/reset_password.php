@@ -7,12 +7,12 @@
         
         <p class="et_pb_contact_field ui-sortable">
         <label for="" class="et_pb_contact_form_label">New Password</label>
-            <input type="text" name="new_password"  class="input <?php if(!empty($errors['new_password'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="New Password" value="<?php if(!empty($_REQUEST['new_password'])) { echo $_REQUEST['new_password']; } ?>">
+            <input type="password" name="new_password"  class="input <?php if(!empty($errors['new_password'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="New Password" value="<?php if(!empty($_REQUEST['new_password'])) { echo $_REQUEST['new_password']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['new_password'])) { echo $errors['new_password']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable">
         <label for="" class="et_pb_contact_form_label">Confirm New Password</label>
-            <input type="text" name="confirm_password"  class="input <?php if(!empty($errors['confirm_password'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Confirm New Password" value="<?php if(!empty($_REQUEST['confirm_password'])) { echo $_REQUEST['confirm_password']; } ?>">
+            <input type="password" name="confirm_password"  class="input <?php if(!empty($errors['confirm_password'])) { echo "et_contact_error"; } ?>"  data-field_type="input" placeholder="Confirm New Password" value="<?php if(!empty($_REQUEST['confirm_password'])) { echo $_REQUEST['confirm_password']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['confirm_password'])) { echo $errors['confirm_password']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable">
