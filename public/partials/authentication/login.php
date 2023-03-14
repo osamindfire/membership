@@ -24,7 +24,7 @@
 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 <strong>Your account is marked as Deceased !</strong>
 </div><br>
-<?php }elseif(isset($_GET["email_updated"])){ ?>
+<?php }elseif(isset($_GET["email_updated"]) && empty($errors)){ ?>
 <div class="alert">
 <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
 <strong>Your email has been updated. Please login again !</strong>

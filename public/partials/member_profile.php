@@ -4,7 +4,7 @@ $partnerCount= count($userInfo['oth_member_info']);
 
 <div class="et_pb_inner_shadow form_background responsive-table">
 <div class="et_pb_row et_pb_row_0">
-<?php if (isset($_GET["success"])){  ?>
+<?php if (isset($_GET["success"]) && empty($errors)){  ?>
     <div class="alert">
   <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span> 
   <strong>Your profile has been updated successfully !</strong>
@@ -31,11 +31,11 @@ $partnerCount= count($userInfo['oth_member_info']);
         </p>
         <input type='hidden' name="main_id" value="<?= $userInfo[0]->id;?>">
         <input type='hidden' name="parent_id" value="<?= $userInfo[0]->parent_id;?>">
-        <input type='hidden' name="other_id" value="<?= $userInfo['oth_member_info'][0]->id;?>">
+        <input type='hidden' name="other_id" value="<?php if(isset($userInfo['oth_member_info'][0]->id)) { echo $userInfo['oth_member_info'][0]->id; }?>">
         <input type='hidden' name="member_id" value="<?= $userInfo[0]->member_id;?>">
         <input type='hidden' name="partner_exist" value="<?= $userInfo[0]->partner_exist;?>">
         <input type='hidden' name="main_member_user_id" value="<?= $userInfo[0]->user_id;?>">
-        <input type='hidden' name="partner_member_user_id" value="<?= $userInfo['oth_member_info'][0]->user_id;?>">
+        <input type='hidden' name="partner_member_user_id" value="<?php if(isset($userInfo['oth_member_info'][0]->user_id)) { echo $userInfo['oth_member_info'][0]->user_id; }?>">
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="required_field">Last Name</label>
@@ -58,36 +58,36 @@ $partnerCount= count($userInfo['oth_member_info']);
             
         <p class=" et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="<?php if($userInfo[0]->partner_exist == 1 || !empty($_REQUEST['spouse_first_name']) ){ echo "required_field";}?>">Partner First Name</label>
-            <input type="text" name="spouse_first_name"  class="input <?php if(!empty($errors['spouseFirstName'])) { echo $errors['spouseFirstName']; } ?>" data-required_mark="required" placeholder="Partner First Name" value="<?php if(isset($_REQUEST['spouse_first_name'])) { echo $_REQUEST['spouse_first_name']; }else{ echo $userInfo['oth_member_info'][0]->first_name; }  ?>">
+            <input type="text" name="spouse_first_name"  class="input <?php if(!empty($errors['spouseFirstName'])) { echo $errors['spouseFirstName']; } ?>" data-required_mark="required" placeholder="Partner First Name" value="<?php if(isset($_REQUEST['spouse_first_name'])) { echo $_REQUEST['spouse_first_name']; }elseif(isset($userInfo['oth_member_info'][0]->first_name)){ echo $userInfo['oth_member_info'][0]->first_name; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseFirstName'])) { echo $errors['spouseFirstName']; } ?></span>
         </p>
             
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="<?php if($userInfo[0]->partner_exist == 1 || !empty($_REQUEST['spouse_first_name']) ){ echo "required_field";}?>">Partner Last Name</label>
-            <input type="text" name="spouse_last_name"  class="input <?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?>" data-required_mark="required" placeholder="Partner Last Name" value="<?php if(isset($_REQUEST['spouse_last_name'])) { echo $_REQUEST['spouse_last_name']; }else{ echo $userInfo['oth_member_info'][0]->last_name; }  ?>">
+            <input type="text" name="spouse_last_name"  class="input <?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?>" data-required_mark="required" placeholder="Partner Last Name" value="<?php if(isset($_REQUEST['spouse_last_name'])) { echo $_REQUEST['spouse_last_name']; }elseif(isset($userInfo['oth_member_info'][0]->last_name)){ echo $userInfo['oth_member_info'][0]->last_name; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseLastName'])) { echo $errors['spouseLastName']; } ?></span>
         </p>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="<?php if($userInfo[0]->partner_exist == 1 || !empty($_REQUEST['spouse_first_name']) ){ echo "required_field";}?>">Partner Email</label>
-            <input type="text" name="spouse_email"  class="input <?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?>" data-required_mark="required" placeholder="Spouse Email" value="<?php if(isset($_REQUEST['spouse_email'])) { echo $_REQUEST['spouse_email']; }else{ echo $userInfo['oth_member_info'][0]->user_email; } ?>">
+            <input type="text" name="spouse_email"  class="input <?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?>" data-required_mark="required" placeholder="Spouse Email" value="<?php if(isset($_REQUEST['spouse_email'])) { echo $_REQUEST['spouse_email']; }elseif(isset($userInfo['oth_member_info'][0]->user_email)){ echo $userInfo['oth_member_info'][0]->user_email; } ?>">
             <span class="error_messages"><?php if(!empty($errors['spouseEmail'])) { echo $errors['spouseEmail']; } ?></span>
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="<?php if(empty($userInfo['oth_member_info'][0]->parent_id) && count($userInfo['oth_member_info']) >= 1) { echo "required_field"; } ?>">Partner Mobile No.</label>
-            <input type="text" maxlength="15" id="partner_member_phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input <?php if(!empty($errors['partnerPhoneNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }else{ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
+            <input type="text" maxlength="15" id="partner_member_phone_no" oninput="this.value = this.value.replace(/[^0-9-+() ]/g, '').replace(/(\..*)\./g, '$1');" name="partner_phone_no"  class="input <?php if(!empty($errors['partnerPhoneNo'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Partner Mobile No." value="<?php if(isset($_REQUEST['partner_phone_no'])) { echo $_REQUEST['partner_phone_no']; }elseif(isset($userInfo['oth_member_info'][0]->partner_member_phone)){ echo $userInfo['oth_member_info'][0]->partner_member_phone; }  ?>">
             <span class="error_messages"><?php if(!empty($errors['partnerPhoneNo'])) { echo $errors['partnerPhoneNo']; } ?></span>
         </p>
         <?php if(count($userInfo['oth_member_info']) == 0){ ?>
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half">
             <label for="" class="<?php if($userInfo[0]->partner_exist == 1 || !empty($_REQUEST['spouse_first_name'])){ echo "required_field";}?>">Spouse Password</label>
-            <input type="text" name="spouse_password"  class="input <?php if(!empty($errors['spousePassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Password" value="<?php if(isset($_REQUEST['spouse_password'])) { echo $_REQUEST['spouse_password']; } ?>">
+            <input type="password" name="spouse_password"  class="input <?php if(!empty($errors['spousePassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Password" value="<?php if(isset($_REQUEST['spouse_password'])) { echo $_REQUEST['spouse_password']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['spousePassword'])) { echo $errors['spousePassword']; } ?></span>
         </p>
 
         <p class="et_pb_contact_field ui-sortable et_pb_contact_field_half et_pb_contact_field_last">
             <label for="" class="<?php if($userInfo[0]->partner_exist == 1 || !empty($_REQUEST['spouse_first_name'])){ echo "required_field";}?>">Spouse Confirm Password</label>
-            <input type="text" name="spouse_confirm_password"  class="input <?php if(!empty($errors['confirmSpousePassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Confirm Password" value="<?php if(isset($_REQUEST['spouse_confirm_password'])) { echo $_REQUEST['spouse_confirm_password']; } ?>">
+            <input type="password" name="spouse_confirm_password"  class="input <?php if(!empty($errors['confirmSpousePassword'])) { echo "et_contact_error"; } ?>" data-required_mark="required" placeholder="Spouse Confirm Password" value="<?php if(isset($_REQUEST['spouse_confirm_password'])) { echo $_REQUEST['spouse_confirm_password']; } ?>">
             <span class="error_messages"><?php if(!empty($errors['confirmSpousePassword'])) { echo $errors['confirmSpousePassword']; } ?></span>
         </p>
         <?php } ?>
@@ -97,7 +97,7 @@ $partnerCount= count($userInfo['oth_member_info']);
             <select name="partner_alive" class="et_pb_contact_select input <?php if(!empty($errors['alive'])) { echo "alive"; } ?>" data-required_mark="required" placeholder="">
             <?php if(count($userInfo['oth_member_info']) >= 1) { $status_array = ['1'=>'Alive','0'=>'Deceased'];}else{ $status_array = ['1'=>'Alive']; } ;?>
             <?php foreach($status_array as $status_key=>$status_value) { ?> 
-                <option class="option_feild" value="<?= $status_key;?>" <?php if(isset($_REQUEST['alive']) && $_REQUEST['alive'] == $status_value ){ echo "selected";}elseif( $userInfo['oth_member_info'][0]->alive == $status_key){ echo "selected";} ?> > <?= $status_value;?> </option>
+                <option class="option_feild" value="<?= $status_key;?>" <?php if(isset($_REQUEST['alive']) && $_REQUEST['alive'] == $status_value ){ echo "selected";}elseif( isset($userInfo['oth_member_info'][0]->alive) && $userInfo['oth_member_info'][0]->alive == $status_key){ echo "selected";} ?> > <?= $status_value;?> </option>
             <?php } ?>
             </select>
             <span class="error_messages"><?php if(!empty($errors['country'])) { echo $errors['country']; } ?></span>

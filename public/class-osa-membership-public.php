@@ -317,7 +317,7 @@ class Osa_Membership_Public
 					$_SESSION['user_id'] = $user_verify->ID;
 					wp_set_auth_cookie($user_verify->ID);
 					$loggedUser = wp_get_current_user();
-					if ($loggedUser->caps['administrator'] == 1) {
+					if (current_user_can('administrator')) {
 						wp_logout();
 						unset($_SESSION['user_id']);
 						$redirectTo = home_url() . '/login';
@@ -1003,8 +1003,9 @@ class Osa_Membership_Public
 						$mailUpdated= 1;
 						$wpdb->update('wp_users', ['user_login'=>$_POST['email'],'user_email'=>$_POST['email']], array('ID' => $_POST['main_member_user_id']), array('%s', '%s'), array('%d'));
 					}
-					$partnerMemberEmailExist = $wpdb->get_results("SELECT user_email FROM wp_users WHERE user_email  = '" .$_POST['spouse_email']. "' ");
-					if(isset($_POST['partner_member_user_id']) && trim($partnerMemberEmailExist[0]->user_email) != trim($_POST['email']))
+					//$partnerMemberEmailExist = $wpdb->get_results("SELECT user_email FROM wp_users WHERE user_email  = '" .$_POST['spouse_email']. "' ");
+					
+					if(isset($_POST['partner_member_user_id']))
 					{
 						$wpdb->update('wp_users', ['user_login'=>$_POST['spouse_email'],'user_email'=>$_POST['spouse_email']], array('ID' => $_POST['partner_member_user_id']), array('%s', '%s'), array('%d'));
 					}
@@ -1068,6 +1069,8 @@ class Osa_Membership_Public
 					$wpdb->delete('wp_member_user', array('member_id' => $_POST['member_id'], 'type' => 'child'));
 
 					//child update
+					if(isset($_POST['child_first_name']))
+					{
 					foreach ($_POST['child_first_name'] as $childKey => $childValues) {
 						if (!empty($_POST['child_first_name'][$childKey])) {
 							$res = $wpdb->query($wpdb->prepare(
@@ -1088,6 +1091,7 @@ class Osa_Membership_Public
 							));
 						}
 					}
+				}
 					if($mailUpdated == 1)
 					{
 						wp_logout();
@@ -1162,17 +1166,17 @@ class Osa_Membership_Public
 		global $wpdb;
 		if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-			$firstName = esc_sql($_REQUEST['first_name']);
+			$firstName = esc_sql($_POST['first_name']);
 			if (empty($firstName)) {
 				$errors['firstName'] = "Please enter a First Name";
 			}
-			$lastName = esc_sql($_REQUEST['last_name']);
+			$lastName = esc_sql($_POST['last_name']);
 			if (empty($lastName)) {
 				$errors['lastName'] = "Please enter a Last Name";
 			}
 
-			$mobileNo = esc_sql($_REQUEST['main_member_phone_no']);
-			if (empty($mobileNo) && $_REQUEST['parent_id'] == 0) {
+			$mobileNo = esc_sql($_POST['main_member_phone_no']);
+			if (empty($mobileNo) && $_POST['parent_id'] == 0) {
 				$errors['mainMemberMobileNo'] = "Please enter a Mobile";
 			}elseif(isset($mobileNo) && !empty($mobileNo)){
 
@@ -1183,28 +1187,28 @@ class Osa_Membership_Public
 				}
 			}
 			// Check email address is present and valid 
-			$email = esc_sql($_REQUEST['email']);
-			if (isset($_REQUEST['email']) && empty($email)) {
+			$email = esc_sql($_POST['email']);
+			if (isset($_POST['email']) && empty($email)) {
 				$errors['email'] = "Please enter a Partner Email";
-			} elseif (isset($_REQUEST['email']) && !is_email($email)) {
+			} elseif (isset($_POST['email']) && !is_email($email)) {
 				$errors['email'] = "Please enter a valid Email";
-			} elseif (isset($_REQUEST['email']) && isset($_REQUEST['main_member_user_id']) && ($wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" .$_REQUEST['main_member_user_id']. " and user_email  = '" .$_REQUEST['email']. "' "))) {
+			} elseif (isset($_POST['email']) && isset($_POST['main_member_user_id']) && ($wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" .$_POST['main_member_user_id']. " and user_email  = '" .$_POST['email']. "' "))) {
 				$errors['email'] = "This email address is already in use";
 			}
 
 			
-			if (!empty($_REQUEST['spouse_first_name']) || $_REQUEST['partner_exist']) {
+			if (!empty($_POST['spouse_first_name']) || $_POST['partner_exist']) {
 				// Validate spouse  
-				$spouseFirstName = esc_sql($_REQUEST['spouse_first_name']);
+				$spouseFirstName = esc_sql($_POST['spouse_first_name']);
 				if (empty($spouseFirstName)) {
 					$errors['spouseFirstName'] = "Please enter a Partner First Name";
 				}
-				$spouseLastName = esc_sql($_REQUEST['spouse_last_name']);
+				$spouseLastName = esc_sql($_POST['spouse_last_name']);
 				if (empty($spouseLastName)) {
 					$errors['spouseLastName'] = "Please enter a Partner Last Name";
 				}
-				$spouseMobileNo = esc_sql($_REQUEST['partner_phone_no']);
-				if (empty($spouseMobileNo) && $_REQUEST['parent_id'] != 0) {
+				$spouseMobileNo = esc_sql($_POST['partner_phone_no']);
+				if (empty($spouseMobileNo) && $_POST['parent_id'] != 0) {
 					$errors['partnerPhoneNo'] = "Please enter a Mobile";
 				}elseif(isset($spouseMobileNo) && !empty($spouseMobileNo)){
 
@@ -1215,46 +1219,51 @@ class Osa_Membership_Public
 					}
 				}
 				// Check email address is present and valid  
-				$spouseEmail = esc_sql($_REQUEST['spouse_email']);
-				if (isset($_REQUEST['spouse_email']) && empty($spouseEmail)) {
+				$spouseEmail = esc_sql($_POST['spouse_email']);
+				if (isset($_POST['spouse_email']) && empty($spouseEmail)) {
 					$errors['spouseEmail'] = "Please enter a Partner Email";
-				} elseif (isset($_REQUEST['spouse_email']) && !is_email($spouseEmail)) {
+				} elseif (isset($_POST['spouse_email']) && !is_email($spouseEmail)) {
 					$errors['spouseEmail'] = "Please enter a valid Email";
-				} elseif (isset($_REQUEST['spouse_email']) && isset($_REQUEST['partner_member_user_id']) &&($wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" .$_REQUEST['partner_member_user_id']. " and user_email  = '" .$_REQUEST['spouse_email']. "' "))) {
+				} elseif (isset($_POST['spouse_email']) && !empty($_POST['partner_member_user_id']) &&($wpdb->get_results("SELECT user_email FROM wp_users WHERE ID !=" .$_POST['partner_member_user_id']. " and user_email  = '" .$_POST['spouse_email']. "' "))) {
+					$errors['spouseEmail'] = "This email address is already in use";
+				}elseif (isset($_POST['spouse_email']) && isset($_POST['partner_exist']) && $_POST['partner_exist']==0 && ($wpdb->get_results("SELECT user_email FROM wp_users WHERE user_email  = '" .$_POST['spouse_email']. "' "))) {
 					$errors['spouseEmail'] = "This email address is already in use";
 				}
 				// Check password is valid  
-				$spousePassword = esc_sql($_REQUEST['spouse_password']);
-				if (isset($_REQUEST['spouse_password']) && !empty($spousePassword)) {
+				if($_POST['partner_exist'] == 0)
+				{
+				$spousePassword = esc_sql($_POST['spouse_password']);
+				if (isset($_POST['partner_exist']) && $_POST['partner_exist'] == 0) {
 				$passwordResponse = $this->isPasswordValid($spousePassword);
 				if($passwordResponse['status'] == 0){ $errors['spousePassword'] = $passwordResponse['message'];}
 				}
 				// Check password confirmation_matches
-				$cSpousePassword = esc_sql($_REQUEST['spouse_password']);
-				if (isset($_REQUEST['spouse_password']) && !empty($cSpousePassword)) {
+				$cSpousePassword = esc_sql($_POST['spouse_password']);
+				if (isset($_POST['partner_exist']) && $_POST['partner_exist'] == 0) {
 					$passwordResponse = $this->isPasswordValid($spousePassword);
 					if($passwordResponse['status'] == 0){ $errors['confirmSpousePassword'] = $passwordResponse['message'];}
 					}
 
-				if (isset($_REQUEST['spouse_password']) && (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password']))) {
+				if (isset($_POST['spouse_password']) && (0 !== strcmp($_POST['spouse_password'], $_POST['spouse_confirm_password']))) {
 					$errors['confirmSpousePassword'] = "Spouse Passwords do not match";
 				}
 			}
+			}
 
-			$addressLine1 = esc_sql($_REQUEST['address_line_1']);
+			$addressLine1 = esc_sql($_POST['address_line_1']);
 			if (empty($addressLine1)) {
 				$errors['addressLine1'] = "Please enter address";
 			}
 
-			$city = esc_sql($_REQUEST['city']);
+			$city = esc_sql($_POST['city']);
 			if (empty($city)) {
 				$errors['city'] = "Please enter city";
 			}
-			$postalCode = esc_sql($_REQUEST['postal_code']);
+			$postalCode = esc_sql($_POST['postal_code']);
 			if (empty($postalCode)) {
 				$errors['postalCode'] = "Please enter Postal Code";
 			}
-			$country = esc_sql($_REQUEST['country']);
+			$country = esc_sql($_POST['country']);
 			if (empty($country)) {
 				$errors['country'] = "Please select Country";
 			}
