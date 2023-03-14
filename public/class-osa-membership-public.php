@@ -397,7 +397,7 @@ class Osa_Membership_Public
 							$adminSubject = "New Member Registered";
 							$memberDetails = (array)$userInfo;
 							$this->sendMail($memberDetails['user_email'], $memberSubject, $memberDetails, 'member_register'); //send mail to user
-							$this->sendMail(ADMIN_EMAIL, $adminSubject, $memberDetails, 'admin_member_register'); //send mail to site admin
+							$this->sendMail(ADMIN_EMAIL, $adminSubject, $memberDetails, 'admin_member_register',CC_EMAIL); //send mail to site admin
 							$redirectTo = home_url() . '/membership-plan?register_success=1';
 							echo "<script type='text/javascript'>window.location.href='" . $redirectTo . "'</script>";
 							exit();
@@ -816,7 +816,7 @@ class Osa_Membership_Public
 		die();
 	}
 
-	public function sendMail($to, $subject, $data = array(), $type = '')
+	public function sendMail($to, $subject, $data = array(), $type = '',$cc='')
 	{
 
 		ob_start();
@@ -842,6 +842,13 @@ class Osa_Membership_Public
 			default:
 		}
 		$headers = array('Content-Type: text/html; charset=UTF-8');
+		if(!empty($cc))
+		{
+			$ccEmails = explode(",",$cc);
+			foreach( $ccEmails as $ccEmail ) {
+				$headers[] = 'Cc: ' . $ccEmail;
+			}
+		}
 		try {
 			$response = wp_mail($to, $subject, $emailBody, $headers);
 			return $response;

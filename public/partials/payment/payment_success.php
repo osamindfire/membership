@@ -1,7 +1,8 @@
 <?php ?>
 <div class="et_pb_with_background et_pb_inner_shadow container price">
         <div class="paper-container">
-                    <div class="success-icon">&#10004;</div>
+                    <!-- <div class="success-icon">&#10004;</div> -->
+                    <p style="text-align: center;"><i class="fa fa-check" style="font-size:70px;color:#32a852"></i><p>
                     <div class="success-title">
                         Payment Complete
                     </div>

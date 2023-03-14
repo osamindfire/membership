@@ -49,7 +49,7 @@
                                                         <input type="text" name="total_days" id="total_days" value="" readonly>
                                                     </td>
                                                     <td><strong><label for="transaction_id_and_check_no">Comment (Txn Id/Check No./Cash)</label></strong><br>
-                                                        <input type="text" name="transaction_id_and_check_no" value="<?php if(isset($_POST['transaction_id_and_check_no'])) { echo $_POST['transaction_id_and_check_no']; } ?>" required><br>
+                                                        <input type="text" name="transaction_id_and_check_no" value="<?php if(isset($_POST['transaction_id_and_check_no'])) { echo $_POST['transaction_id_and_check_no']; }else{ echo "Added by Admin";} ?>" required><br>
                                                         <error><?php if (!empty($errors['transaction_id_and_check_no'])) { echo $errors['transaction_id_and_check_no'];} ?></error>
                                                     </td>
                                                 </tr>
